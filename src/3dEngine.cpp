@@ -1,7 +1,7 @@
 #include "../headers/3dEngine.h"
 
 #include <omp.h>
-
+#include <iostream>
 
 Engine::Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_pos, float start_angle) {
 
@@ -35,7 +35,9 @@ Engine::Ray Engine::RayCast(int x) {
 
 	float Ray_angle = (angle - Fov / 2) + (float)x / (float)m_screen_width * Fov;
 
-	sf::Vector2f dir = sf::Vector2f({ cos(Ray_angle), sin(Ray_angle) });
+	sf::Vector2f ray_dir = { cos(Ray_angle), sin(Ray_angle) };
+
+
 
 	bool bHit = false;
 	float dist = 0.f;
@@ -45,7 +47,7 @@ Engine::Ray Engine::RayCast(int x) {
 	float dx_side;
 	float dy_side;
 
-	sf::Vector2f ray = pos + sf::Vector2f{ dist * dir.x, dist * dir.y };
+	sf::Vector2f ray = pos + sf::Vector2f{ dist * ray_dir.x, dist * ray_dir.y };
 	sf::Vector2i test;
 
 	bool isVertical = 0;
@@ -53,7 +55,7 @@ Engine::Ray Engine::RayCast(int x) {
 	while (bHit != true && dist < m_depth) {
 
 		dist += delta;
-		ray = pos + sf::Vector2f{ dist * dir.x, dist * dir.y };
+		ray = pos + sf::Vector2f{ dist * ray_dir.x, dist * ray_dir.y };
 		test.x = ray.x;
 		test.y = ray.y;
 
@@ -68,18 +70,41 @@ Engine::Ray Engine::RayCast(int x) {
 		if (test.x < 0 || test.x > world_size_w || test.y < 0 || test.y > world_size_h) {
 			bHit = true;
 			dist = m_depth;
+
+			if (!isVertical) {
+				dx_side = (pos.x + dist * ray_dir.x) - test.x;
+				return { dist, dx_side };
+			}
+			else {
+				dy_side = (pos.y + dist * ray_dir.y) - test.y;
+				return { dist, dy_side };
+			}
 		}
 
 
 	}
 
+	//sf::Vector2f newP = (ray - pos);
+	//float oldPx = newP.x;
+	//newP.x = newP.x * cos(Ray_angle) - newP.y * sin(Ray_angle);
+	//newP.y = oldPx * sin(Ray_angle) + newP.y * cos(Ray_angle);
+
+
+	//float sqrtNewP = newP.x * newP.x + newP.y * newP.y;
+	//float  prPx = newP.y;
+
+	////std::cout << "prPx = " << prPx << std::endl;
+
+	//if (prPx < 0.66 && prPx > 0) {
+	//	dist = sqrt(sqrtNewP - prPx * prPx);
+	//}
 
 	if (!isVertical) {
-		dx_side = (pos.x + dist * dir.x) - test.x;
+		dx_side = (pos.x + dist * ray_dir.x) - test.x;
 		return { dist, dx_side };
 	}
 	else {
-		dy_side = (pos.y + dist * dir.y) - test.y;
+		dy_side = (pos.y + dist * ray_dir.y) - test.y;
 		return { dist, dy_side };
 	}
 
@@ -99,7 +124,9 @@ void Engine::render(){
 	float y_end_wall;
 	float texture_pos;
 
-#pragma omp parallel for private(wallHeight, y_start_wall,y_end_wall,texture_pos)
+
+
+//#pragma omp parallel for private(wallHeight, y_start_wall,y_end_wall,texture_pos)
 	for (int x = 0; x < m_screen_width; x++) {
 		
 		Ray ray = RayCast(x);
@@ -136,6 +163,8 @@ void Engine::render(){
 void Engine::add_map(std::string map_Name, map MAP) {
 
 	map_name = map_Name;
+	if (MAP.m_world.size() == 0) return;
+
 	MAPS.insert(std::make_pair(map_Name, MAP));
 
 }
@@ -147,6 +176,10 @@ void Engine::run() {
 	float dt;
 	sf::Clock clock;
 	
+	if (MAPS.size() == 0) {
+		std::cerr << "no MAPs" << std::endl;
+		return;
+	}
 
 	while (m_window.isOpen()) {
 
@@ -173,6 +206,7 @@ void Engine::run() {
 
 }
 
+#include <iostream>
 
 void Engine::contol(float dt) {
 
@@ -181,6 +215,12 @@ void Engine::contol(float dt) {
 
 	float speed_rot = 2 * dt;
 
+	sf::Vector2f d_step = { 5 * dt * cos(angle), 5 * dt * sin(angle) };
+
+	bool is_collision_x = false;
+	bool is_collision_y = false;
+	sf::Vector2f normal;
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		angle -= speed_rot;
 	}
@@ -188,17 +228,32 @@ void Engine::contol(float dt) {
 		angle += speed_rot;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		if (collision({ 5 * dt * cos(angle), 5 * dt * sin(angle) })) {
-			position.x += 5 * dt * cos(angle);
-			position.y += 5 * dt * sin(angle);
+		
+		if (collision({ d_step.x,0 })) {
+			position.x += d_step.x;
 		}
+		
+		if (collision({ 0,d_step.y })) {
+			position.y += d_step.y;
+		}
+
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		if (collision({ -5 * dt * cos(angle), -5 * dt * sin(angle) })) {
-			position.x -= 5 * dt * cos(angle);
-			position.y -= 5 * dt * sin(angle);
+
+		if (collision({ -d_step.x,0 })) {
+			position.x -= d_step.x;
 		}
+
+		if (collision({ 0, -d_step.y })) {
+			position.y -= d_step.y;
+		}
+
 	}
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		m_window.close();
+
 	m_player->getAngle() = angle;
 	m_player->getPos() = position;
 

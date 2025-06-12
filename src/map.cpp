@@ -1,21 +1,12 @@
 #include "../headers/map.h"
+#include <fstream>
+#include <iostream>
 
 
-//map::map(int sizeX, int sizeY) {
-//	size_x = sizeX;
-//	size_y = sizeY;
-//
-//	m_world.resize(size_y);
-//	for (int i = 0; i < size_y; i++) {
-//		m_world[i].resize(size_x);
-//	}
-//
-//}
 
 void map::load(int** world, int world_width, int world_height) {
 
-	size_x = world_width;
-	size_y = world_height;
+	init(world_width, world_height);
 
 	for (int i = 0; i < world_width; i++) {
 		for (int j = 0; j < world_height; j++) {
@@ -30,14 +21,51 @@ void map::load(int** world, int world_width, int world_height) {
 
 void map::load(std::vector<std::vector<int>> world) {
 
-	size_x = world.size();
-	size_y = world[0].size();
+	init(world.size(), world[0].size());
 
-	for (int i = 0; i < size_x; i++) {
-		for (int j = 0; j < size_y; j++) {
+	for (int i = 0; i < size_y; i++) {
+		for (int j = 0; j < size_x; j++) {
 			m_world[i][j] = world[i][j];
 		}
 
+	}
+
+}
+
+
+
+void map::load(std::string path) {
+
+	std::ifstream map_file(path);
+
+	if (!map_file.is_open()) {
+		std::cerr << "can't open the file" << std::endl; 
+		return;
+	}
+	map_file >> size_x;
+	map_file >> size_y;
+
+	init(size_x, size_y);
+
+	for (int y = 0; y < size_y; y++) {
+		for (int x = 0; x < size_x; x++) {
+			map_file >> m_world[y][x];
+		}
+	}
+
+
+	map_file.close();
+}
+
+
+void map::init(int world_width, int world_height) {
+
+	size_x = world_width;
+	size_y = world_height;
+
+	m_world.resize(size_y);
+	for (int i = 0; i < size_y; i++) {
+		m_world[i].resize(size_x);
 	}
 
 }
