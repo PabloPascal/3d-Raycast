@@ -14,7 +14,9 @@ Engine::Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_
 
 	m_texture.loadFromFile("../res/walls.png");
 
-	line.setPrimitiveType(sf::Lines);
+	wall.setPrimitiveType(sf::Lines);
+	roof.setPrimitiveType(sf::Lines);
+	floor.setPrimitiveType(sf::Lines);
 }
 
 
@@ -37,7 +39,7 @@ Engine::Ray Engine::RayCast(int x) {
 
 	sf::Vector2f ray_dir = { cos(Ray_angle), sin(Ray_angle) };
 
-
+	sf::Vector2f dir = {cos(angle), sin(angle)};
 
 	bool bHit = false;
 	float dist = 0.f;
@@ -46,6 +48,7 @@ Engine::Ray Engine::RayCast(int x) {
 	//distance from edge of grid
 	float dx_side;
 	float dy_side;
+	sf::Vector2f camera_pos = pos - dir;
 
 	sf::Vector2f ray = pos + sf::Vector2f{ dist * ray_dir.x, dist * ray_dir.y };
 	sf::Vector2i test;
@@ -70,45 +73,97 @@ Engine::Ray Engine::RayCast(int x) {
 		if (test.x < 0 || test.x > world_size_w || test.y < 0 || test.y > world_size_h) {
 			bHit = true;
 			dist = m_depth;
-
-			if (!isVertical) {
-				dx_side = (pos.x + dist * ray_dir.x) - test.x;
-				return { dist, dx_side };
-			}
-			else {
-				dy_side = (pos.y + dist * ray_dir.y) - test.y;
-				return { dist, dy_side };
-			}
 		}
 
 
 	}
 
-	//sf::Vector2f newP = (ray - pos);
-	//float oldPx = newP.x;
-	//newP.x = newP.x * cos(Ray_angle) - newP.y * sin(Ray_angle);
-	//newP.y = oldPx * sin(Ray_angle) + newP.y * cos(Ray_angle);
-
-
-	//float sqrtNewP = newP.x * newP.x + newP.y * newP.y;
-	//float  prPx = newP.y;
-
-	////std::cout << "prPx = " << prPx << std::endl;
-
-	//if (prPx < 0.66 && prPx > 0) {
-	//	dist = sqrt(sqrtNewP - prPx * prPx);
-	//}
-
 	if (!isVertical) {
 		dx_side = (pos.x + dist * ray_dir.x) - test.x;
-		return { dist, dx_side };
+		return { cos(Ray_angle - angle) * dist, dx_side};
 	}
 	else {
 		dy_side = (pos.y + dist * ray_dir.y) - test.y;
-		return { dist, dy_side };
+		return { cos(Ray_angle - angle) * dist, dy_side};
 	}
 
 }
+
+
+
+
+Engine::Ray Engine::FastRayCast(int x) {
+
+	float cameraX = 2 * (float)x /(float)(m_screen_width) - 1; //-1 <= cameraX <= 1
+	float perpendicualar_dist = 0;
+
+	bool isHorizontal = false;
+
+	sf::Vector2f pos = m_player->getPos();
+	sf::Vector2f rayDir = dir - plane * cameraX;
+	sf::Vector2f sideDist;
+	sf::Vector2f deltaDist = { sqrt(1.0f + (rayDir.y * rayDir.y) / (rayDir.x * rayDir.x)),
+				sqrt(1.0f + (rayDir.x * rayDir.x) / (rayDir.y * rayDir.y)) };
+	sf::Vector2i mapPos(pos);
+	sf::Vector2f step;
+
+	auto world = MAPS[map_name].m_world;
+	int world_size_w = MAPS[map_name].size_x;
+	int world_size_h = MAPS[map_name].size_y;
+
+
+	if (rayDir.x < 0.0f) {
+		step.x = -1;
+		sideDist.x = (pos.x - mapPos.x) * deltaDist.x;
+	}
+	else {
+		step.x = 1;
+		sideDist.x = (mapPos.x + 1.0f - pos.x) * deltaDist.x;
+	}
+	if (rayDir.y < 0.0f) {
+		step.y = -1;
+		sideDist.y = (pos.y - mapPos.y) * deltaDist.y;
+	}
+	else {
+		step.y = 1;
+		sideDist.y = (mapPos.y + 1.0f - pos.y) * deltaDist.y;
+	}
+
+	while (world[mapPos.y][mapPos.x] == 0) {
+
+		if (sideDist.x < sideDist.y) {
+			sideDist.x += deltaDist.x;
+			mapPos.x += step.x;
+			isHorizontal = true;
+			perpendicualar_dist = (mapPos.x - pos.x + (1 - step.x) / 2) / rayDir.x;
+		}
+		else {
+			sideDist.y += deltaDist.y;
+			mapPos.y += step.y;
+			isHorizontal = false;
+			perpendicualar_dist = (mapPos.y - pos.y + (1 - step.y) / 2) / rayDir.y;
+		}
+
+
+	}
+
+	float wall_x;
+	if (isHorizontal) {
+		wall_x = pos.y + perpendicualar_dist * rayDir.y;
+	}
+	else {
+		wall_x = pos.x + perpendicualar_dist * rayDir.x;
+	}
+	wall_x -= std::floor(wall_x);
+
+
+	if (isHorizontal)
+		return { perpendicualar_dist, wall_x };
+	else
+		return {perpendicualar_dist, wall_x};
+
+}
+
 
 
 void Engine::render(){
@@ -117,45 +172,26 @@ void Engine::render(){
 	int texture_block = m_texture.getSize().x / 8;
 	sf::Color shade;
 
-	line.resize(6 * m_screen_width);
-
 	float wallHeight;
 	float y_start_wall;
 	float y_end_wall;
-	float texture_pos;
+	
+	int baseIndex = 0;
 
-
+	wall.resize(2 * m_screen_width);
+	roof.resize(2 * m_screen_width);
+	floor.resize(2 * m_screen_width);
 
 //#pragma omp parallel for private(wallHeight, y_start_wall,y_end_wall,texture_pos)
 	for (int x = 0; x < m_screen_width; x++) {
-		
-		Ray ray = RayCast(x);
+
+		Ray ray = FastRayCast(x);
 		float distToWall = ray.dist;
 		float delta_side = ray.delta_side;
 
-		wallHeight  = 2 * (double)m_screen_height / distToWall;
-		y_start_wall = (m_screen_height - wallHeight) / 2;
-		y_end_wall =(m_screen_height + wallHeight) / 2;
-
-
-		texture_pos = delta_side * texture_block;
-
-		shade = shading(distToWall);
-
-		int base_index = x * 6;
-		//roof
-		line[base_index] = (sf::Vertex(sf::Vector2f(x, 0), sf::Color::Black));
-		line[base_index + 1] = (sf::Vertex(sf::Vector2f(x, y_start_wall), sf::Color::Black));
-		//wall
-		line[base_index + 2] = (sf::Vertex(sf::Vector2f(x, y_start_wall), shade, sf::Vector2f(128 + texture_pos, 0)));
-		line[base_index + 3] = (sf::Vertex(sf::Vector2f(x, y_end_wall), shade, sf::Vector2f(128 + texture_pos, m_texture.getSize().y / 4)));
-		//floor
-		line[base_index + 4] = (sf::Vertex(sf::Vector2f(x, y_end_wall), sf::Color::Green));
-		line[base_index + 5] = (sf::Vertex(sf::Vector2f(x, m_screen_height), sf::Color::Green));
-		
+		texturing(x, distToWall, delta_side, texture_block);
 
 	}
-#pragma omp barrier
 }
 
 
@@ -173,9 +209,11 @@ void Engine::add_map(std::string map_Name, map MAP) {
 
 void Engine::run() {
 
-	float dt;
+	sf::Time timeSinceLastUpdate;
+	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	sf::Clock clock;
-	
+
+
 	if (MAPS.size() == 0) {
 		std::cerr << "no MAPs" << std::endl;
 		return;
@@ -183,7 +221,7 @@ void Engine::run() {
 
 	while (m_window.isOpen()) {
 
-		dt = clock.restart().asSeconds();
+		timeSinceLastUpdate += clock.restart();
 
 		sf::Event event;
 		while (m_window.pollEvent(event)) {
@@ -192,15 +230,18 @@ void Engine::run() {
 
 		}
 
-
 		render();
-		
-		contol(dt);
+		//contol(2*TimePerFrame.asSeconds());
+		transformation_coords(TimePerFrame.asSeconds());
 
 		m_window.clear();
-		m_window.draw(line, &m_texture);
+		m_window.draw(wall, &m_texture);
+		m_window.draw(roof);
+		m_window.draw(floor);
 		m_window.display();
-		line.clear();
+		wall.clear();
+		floor.clear();
+		roof.clear();
 		
 	}
 
@@ -214,12 +255,11 @@ void Engine::contol(float dt) {
 	sf::Vector2f position = m_player->getPos();
 
 	float speed_rot = 2 * dt;
+	float speed = 5;
 
-	sf::Vector2f d_step = { 5 * dt * cos(angle), 5 * dt * sin(angle) };
-
-	bool is_collision_x = false;
-	bool is_collision_y = false;
-	sf::Vector2f normal;
+	sf::Vector2f d_step = { speed * dt * cos(angle), speed * dt * sin(angle) };
+	
+	sf::Vector2f dir = { cos(angle), sin(angle) };
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		angle -= speed_rot;
@@ -229,22 +269,22 @@ void Engine::contol(float dt) {
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		
-		if (collision({ d_step.x,0 })) {
+		if (collision({position.x + d_step.x,0 })) {
 			position.x += d_step.x;
 		}
 		
-		if (collision({ 0,d_step.y })) {
+		if (collision({ 0,position.y + d_step.y})) {
 			position.y += d_step.y;
 		}
 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 
-		if (collision({ -d_step.x,0 })) {
+		if (collision({position.x - d_step.x,0 })) {
 			position.x -= d_step.x;
 		}
 
-		if (collision({ 0, -d_step.y })) {
+		if (collision({ 0,position.y - d_step.y })) {
 			position.y -= d_step.y;
 		}
 
@@ -261,13 +301,11 @@ void Engine::contol(float dt) {
 }
 
 
-bool Engine::collision(sf::Vector2f delta) {
+bool Engine::collision(sf::Vector2f pos) {
 
 	auto world = MAPS[map_name].m_world;
 
-	sf::Vector2f pos = m_player->getPos();
-	
-	if (world[(int)(pos.x + delta.x)][(int)(pos.y + delta.y)] > 0) {
+	if (world[(int)(pos.y)][(int)(pos.x)] > 0) {
 
 		return false;
 
@@ -282,28 +320,152 @@ bool Engine::collision(sf::Vector2f delta) {
 sf::Color Engine::shading(float dist) {
 
 	sf::Color shade = sf::Color::White;
+	if (dist >= m_depth - 1) {
+		shade.a = 0.01;
+		shade = sf::Color::Black;
+	}
 
-	if (dist > 20) {
+	if (dist > m_depth/1.5) {
 		shade.r /= 8;
 		shade.g /= 8;
 		shade.b /= 8;
 	}
-	if (dist < 20 && dist > 15) {
+	if (dist < m_depth/1.5 && dist > m_depth/2.f) {
 		shade.r /= 5;
 		shade.g /= 5;
 		shade.b /= 5;
 	}
-	if (dist < 15 && dist > 10) {
+	if (dist < m_depth/2.f && dist > m_depth/2.5) {
 		shade.r /= 3;
 		shade.g /= 3;
 		shade.b /= 3;
 	}
-	if (dist < 10 && dist > 5) {
+	if (dist < m_depth/2.5 && dist > m_depth/3) {
 		shade.r /= 2;
 		shade.g /= 2;
 		shade.b /= 2;
 	}
 
 	return shade;
+
+}
+
+
+
+void Engine::texturing(int x, float distToWall, float delta_side, int texture_block) {
+	
+	sf::Color shade = shading(distToWall);
+
+	int baseIndex = 2 * x;
+
+	float wallHeight = 2 * (float)m_screen_height / distToWall;
+	float y_start_wall = (m_screen_height - wallHeight) / 2;
+	float y_end_wall = (m_screen_height + wallHeight) / 2;
+	float texture_pos;
+
+
+	texture_pos = delta_side * texture_block;
+	//wall
+	wall[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_start_wall), shade, sf::Vector2f(128 + texture_pos, 0)));
+	wall[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, y_end_wall), shade, sf::Vector2f(128 + texture_pos, m_texture.getSize().y / 4)));
+	//std::cout << distToWall << std::endl;
+
+	//roof
+	roof[baseIndex] = (sf::Vertex(sf::Vector2f(x, 0), sf::Color(187, 211, 255)));
+	roof[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, y_start_wall), sf::Color(187, 211, 255)));
+	//floor
+	floor[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_end_wall), sf::Color::Black));
+	floor[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, m_screen_height), sf::Color::Black));
+
+}
+
+
+
+void Engine::transformation_coords(float dt) {
+
+	float angle = m_player->getAngle();
+	sf::Vector2f position = m_player->getPos();
+
+	float rot_speed = 5;
+	float rot = rot_speed * dt;
+	float speed = 5;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		float prev_dirX = dir.x;
+		dir.x = prev_dirX * cos(rot) - dir.y * sin(rot);
+		dir.y = prev_dirX * sin(rot) + dir.y * cos(rot);
+		
+		float prev_planeX = plane.x;
+		plane.x = prev_planeX * cos(rot) - plane.y * sin(rot);
+		plane.y = prev_planeX * sin(rot) + plane.y * cos(rot);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+		float prev_dirX = dir.x;
+		dir.x = prev_dirX * cos(-rot) - dir.y * sin(-rot);
+		dir.y = prev_dirX * sin(-rot) + dir.y * cos(-rot);
+
+		float prev_planeX = plane.x;
+		plane.x = prev_planeX * cos(-rot) - plane.y * sin(-rot);
+		plane.y = prev_planeX * sin(-rot) + plane.y * cos(-rot);
+	}
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+
+		if (collision({position.x + speed * dir.x * dt , position.y})) {
+			position.x += speed * dir.x * dt;
+		}
+
+		if (collision({position.x, position.y + speed * dir.y * dt})) {
+			position.y += speed * dir.y * dt;
+		}
+
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+		if (collision({ position.x - speed * dir.x * dt , position.y })) {
+			position.x -= speed * dir.x * dt;
+		}
+
+		if (collision({position.x ,position.y - speed * dir.y * dt })) {
+			position.y -= speed * dir.y * dt;
+		}
+
+	}
+
+	m_player->getPos() = position;
+
+}
+
+
+void Engine::EventProcess() {
+
+	sf::Event event;
+	while (m_window.pollEvent(event)) {
+
+		if (event.type == sf::Event::Closed) m_window.close();
+
+		if (sf::Event::KeyPressed) {
+
+		}
+
+	}
+
+}
+
+
+void handlePlayerInput(sf::Event event, bool isPressed) {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+		
+
+	}
 
 }

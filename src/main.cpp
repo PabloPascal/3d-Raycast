@@ -72,6 +72,8 @@ int main() {
 
 	map world;
     world.load("../maps/map1.txt");
+    //world.load(World);
+
 
 	engine->add_map( "my", world);
 

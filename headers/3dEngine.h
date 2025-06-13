@@ -15,7 +15,7 @@ class Engine {
 
 	int m_screen_width;
 	int m_screen_height;
-	float m_depth = 25;
+	float m_depth = 15;
 
 	sf::RenderWindow m_window;
 
@@ -30,7 +30,12 @@ class Engine {
 	std::unique_ptr<Player> m_player;
 	sf::Texture m_texture;
 
-	sf::VertexArray line;
+	sf::VertexArray roof;
+	sf::VertexArray wall;
+	sf::VertexArray floor;
+
+	sf::Vector2f plane = {0, 0.66};
+	sf::Vector2f dir = {1.f, 0.f};
 
 public:
 	Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_pos, float start_angle = 0.f);
@@ -43,7 +48,13 @@ public:
 
 private:
 
+	void EventProcess();
+
+	void handlePlayerInput(sf::Event, bool);
+
 	Ray RayCast(int x);
+
+	Ray FastRayCast(int x);
 
 	void render();
 
@@ -51,7 +62,11 @@ private:
 
 	void contol(float dt);
 
+	void transformation_coords(float dt);
+
 	sf::Color shading(float dist);
+
+	void texturing(int x, float distToWall, float delta_side, int texture_block);
 };
 
 
