@@ -28,14 +28,16 @@ class Engine {
 	};
 
 	std::unique_ptr<Player> m_player;
-	sf::Texture m_texture;
+	sf::Texture m_texture_wall;
+	sf::Texture m_texture_floor;
 
 	sf::VertexArray roof;
 	sf::VertexArray wall;
 	sf::VertexArray floor;
+	sf::VertexArray buffer;
 
-	sf::Vector2f plane = {0, 0.66};
-	sf::Vector2f dir = {1.f, 0.f};
+	sf::Vector2f plane = {0, 0.66f};
+	sf::Vector2f dir = {0.5f, 0.f};
 
 public:
 	Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_pos, float start_angle = 0.f);
@@ -67,6 +69,8 @@ private:
 	sf::Color shading(float dist);
 
 	void texturing(int x, float distToWall, float delta_side, int texture_block);
+
+	void texturing_buffer(int x, float distToWall, float delta_side, int texture_block);
 };
 
 
