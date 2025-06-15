@@ -21,9 +21,9 @@ Engine::Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_
 	float aspect = m_screen_width / (float)m_screen_height;
 	plane = 0.5f * aspect * plane;
 
-	m_texture_wall.loadFromFile("../res/walls.png");
-	m_texture_floor.loadFromFile("../res/greystone.png");
+	resources = resources->getResourseHolder();
 
+	
 	wall.setPrimitiveType(sf::Lines);
 	roof.setPrimitiveType(sf::Lines);
 	floor.setPrimitiveType(sf::Lines);
@@ -43,9 +43,8 @@ Engine::Ray Engine::RayCast(int x) {
 	float angle = m_player->getAngle();
 	float Fov = m_player->getFov();
 	sf::Vector2f pos = m_player->getPos();
-	auto world = MAPS[map_name].m_world;
-	int world_size_w = MAPS[map_name].size_x;
-	int world_size_h = MAPS[map_name].size_y;
+	//get world parameters
+	auto world = resources->getMap(map_name).m_world;
 
 	float Ray_angle = (angle - Fov / 2) + (float)x / (float)m_screen_width * Fov;
 
@@ -82,7 +81,7 @@ Engine::Ray Engine::RayCast(int x) {
 
 		}
 
-		if (test.x < 0 || test.x > world_size_w || test.y < 0 || test.y > world_size_h) {
+		if (test.x < 0 || test.x > world_width || test.y < 0 || test.y > world_height) {
 			bHit = true;
 			dist = m_depth;
 		}
@@ -118,10 +117,8 @@ Engine::Ray Engine::FastRayCast(int x) {
 				sqrt(1.0f + (rayDir.x * rayDir.x) / (rayDir.y * rayDir.y)) };
 	sf::Vector2i mapPos(pos);
 	sf::Vector2f step;
-
-	auto world = MAPS[map_name].m_world;
-	int world_size_w = MAPS[map_name].size_x;
-	int world_size_h = MAPS[map_name].size_y;
+	
+	auto world = resources->getMap(map_name).m_world;
 
 
 	if (rayDir.x < 0.0f) {
@@ -181,10 +178,11 @@ Engine::Ray Engine::FastRayCast(int x) {
 void Engine::render(){
 
 	Ray ray;
-	int texture_block = m_texture_wall.getSize().x / 8;
+	int texture_block = resources->getTexture(wall_name).getSize().x;
 
-	float textureFloor_h = m_texture_floor.getSize().y;
-	float textureFloor_w = m_texture_floor.getSize().x;
+	float textureFloor_w = resources->getTexture(floor_name).getSize().x;
+	float textureFloor_h = resources->getTexture(floor_name).getSize().y;
+
 
 	sf::Color shade;
 
@@ -262,13 +260,20 @@ for (int x = 0; x < m_screen_width; x++) {
 
 
 
-void Engine::add_map(std::string map_Name, map MAP) {
+void Engine::add_map(std::string path, std::string map_Name) {
 
 	map_name = map_Name;
-	if (MAP.m_world.size() == 0) return;
+	resources->loadMap(path, map_Name);
+	world_width = resources->getMap(map_Name).size_x;
+	world_height = resources->getMap(map_Name).size_y;
+}
 
-	MAPS.insert(std::make_pair(map_Name, MAP));
+void Engine::add_map(map newMap, std::string map_Name) {
 
+	map_name = map_Name;
+	resources->loadMap(newMap, map_Name);
+	world_width = resources->getMap(map_Name).size_x;
+	world_height = resources->getMap(map_Name).size_y;
 }
 
 
@@ -278,12 +283,6 @@ void Engine::run() {
 	sf::Time timeSinceLastUpdate;
 	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	sf::Clock clock;
-
-
-	if (MAPS.size() == 0) {
-		std::cerr << "no MAPs" << std::endl;
-		return;
-	}
 
 
 	while (m_window.isOpen()) {
@@ -311,12 +310,12 @@ void Engine::run() {
 
 		m_window.clear();
 #if FLOOR_TEX
-		m_window.draw(buffer, &m_texture_floor);
+		m_window.draw(buffer, &resources->getTexture(floor_name));
 #else
 		m_window.draw(floor);
 #endif
 
-		m_window.draw(wall, &m_texture_wall);
+		m_window.draw(wall, &resources->getTexture(wall_name));
 		m_window.draw(roof);
 
 		m_window.display();
@@ -384,7 +383,7 @@ void Engine::contol(float dt) {
 
 bool Engine::collision(sf::Vector2f pos) {
 
-	auto world = MAPS[map_name].m_world;
+	auto world = resources->getMap(map_name).m_world;
 
 	if (world[(int)(pos.y)][(int)(pos.x)] > 0) {
 
@@ -444,10 +443,11 @@ void Engine::texturing(int x, float distToWall, float delta_side, int texture_bl
 	float y_end_wall = (m_screen_height + wallHeight) / 2;
 	float texture_pos = delta_side* texture_block;
 
+	//sf::Vector2u tex_size = resources->getTexture("walls").getSize();
 
 	//wall
-	wall[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_start_wall), shade, sf::Vector2f(128 + texture_pos, 0)));
-	wall[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, y_end_wall), shade, sf::Vector2f(128 + texture_pos, m_texture_wall.getSize().y / 4)));
+	wall[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_start_wall), shade, sf::Vector2f(texture_pos, 0)));
+	wall[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, y_end_wall), shade, sf::Vector2f(texture_pos, 64)));
 	//std::cout << distToWall << std::endl;
 
 	//roof
@@ -536,6 +536,25 @@ void Engine::EventProcess() {
 }
 
 
+
+void Engine::loadWallTexture(std::string path, std::string wallName)
+{
+	resources->loadTexture(path, wallName);
+	wall_name = wallName;
+}
+
+void Engine::loadFloorTexture(std::string path, std::string floorName)
+{
+	resources->loadTexture(path, floorName);
+	floor_name = floorName;
+}
+
+
+
+void Engine::loadImage(std::string path){
+
+
+}
 
 
 void handlePlayerInput(sf::Event event, bool isPressed) {}

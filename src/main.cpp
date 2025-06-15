@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
-
+#include <string>
 #include "../headers/3dEngine.h"
 
 #define mapWidth 24
@@ -66,7 +66,9 @@ void print(map world){
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    std::cout << "argv[0] = " << argv[0] << std::endl;
 
 	Engine* engine = new Engine(w, h, Fov, { 1,2 });
 
@@ -75,8 +77,13 @@ int main() {
     //world.load("../maps/map1.txt");
     world.load(World);
 
+    int found = (std::string(argv[0]).find_last_of("/\\"));
 
-	engine->add_map( "my", world);
+    std::string path = std::string(argv[0]).substr(0, found);
+
+	engine->add_map(world, "world");
+    engine->loadFloorTexture(path + "/../../res/greystone.png", "floor");
+    engine->loadWallTexture(path + "/../../res/redbrick.png", "wall");
 
     //print(world);
 

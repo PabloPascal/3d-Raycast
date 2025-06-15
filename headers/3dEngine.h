@@ -7,20 +7,30 @@
 
 #include "../headers/map.h"
 #include "../headers/Player.h";
+#include "ResourceHolder.h"
 
 #include <SFML/Graphics.hpp>
 
 
+
 class Engine {
+
+	ResourceHolder* resources;
 
 	int m_screen_width;
 	int m_screen_height;
 	float m_depth = 15;
 
+	int world_width;
+	int world_height;
+
+
 	sf::RenderWindow m_window;
 
-	std::map<std::string, map> MAPS;
 	std::string map_name;
+	std::string wall_name;
+	std::string floor_name;
+
 
 	struct Ray{
 		float dist;
@@ -28,8 +38,6 @@ class Engine {
 	};
 
 	std::unique_ptr<Player> m_player;
-	sf::Texture m_texture_wall;
-	sf::Texture m_texture_floor;
 
 	sf::VertexArray roof;
 	sf::VertexArray wall;
@@ -44,7 +52,13 @@ public:
 
 	void run();
 
-	void add_map(std::string map_Name, map MAP);
+	void add_map(std::string path, std::string map_Name);
+	void add_map(map newMap, std::string map_Name);
+
+	void loadWallTexture(std::string path, std::string wallName);
+	void loadFloorTexture(std::string path, std::string floorName);
+
+	void loadImage(std::string path);
 
 	void changeMapName(std::string name);
 
