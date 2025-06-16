@@ -4,8 +4,11 @@
 #include <iostream>
 #include <string>
 
+#if NDEBUG
 #define FLOOR_TEX 1
-
+#else 
+#define FLOOR_TEX 0
+#endif
 
 
 Engine::Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_pos, float start_angle) {
@@ -178,8 +181,6 @@ Engine::Ray Engine::FastRayCast(int x) {
 void Engine::render(){
 
 	Ray ray;
-	int texture_block = resources->getTexture(wall_name).getSize().x;
-
 	float textureFloor_w = resources->getTexture(floor_name).getSize().x;
 	float textureFloor_h = resources->getTexture(floor_name).getSize().y;
 
@@ -206,44 +207,9 @@ plane = { sin(angle), -cos(angle)};*/
 
 
 #if FLOOR_TEX  
-//#pragma omp parallel for
-
-for (int y = m_screen_height / 2 + 1; y < m_screen_height; y++) {
-
-	sf::Vector2f rayDirLeft = dir - plane;
-	sf::Vector2f rayDirRight = dir + plane;
-	
-
-	int p = y - m_screen_height / 2.f;
-	float posZ = 0.5 * m_screen_height;
-
-	float rowDistance = posZ / (float)p;
-	sf::Vector2f floorStep = rowDistance * (rayDirLeft - rayDirRight) / (float)m_screen_width;
-		
-	sf::Vector2f floorPos = m_player->getPos() + rowDistance*rayDirRight;
-
-
-
-	for (int x = 0; x < m_screen_width; x++) {
-
-		sf::Vector2i cell(floorPos);
-
-		sf::Vector2i texCoords = {
-			(int)(textureFloor_w * (floorPos.x - cell.x)) & (int)(textureFloor_w - 1),
-			(int)(textureFloor_h * (floorPos.y - cell.y)) & (int)(textureFloor_h - 1)
-		};
-
-		floorPos += floorStep;
-
-		int index = (y - m_screen_height / 2.f) * m_screen_width + x;
-		buffer[index] = sf::Vertex(sf::Vector2f(x, y), sf::Vector2f(texCoords));
-
-	}
-
-}
-
-
+	texturingFloor(textureFloor_w, textureFloor_h);
 #endif
+
 //#pragma omp parallel for
 for (int x = 0; x < m_screen_width; x++) {
 
@@ -252,7 +218,7 @@ for (int x = 0; x < m_screen_width; x++) {
 	float delta_side = ray.delta_side;
 
 	//texturing_buffer(x, distToWall, delta_side, texture_block);
-	texturing(x, distToWall, delta_side, texture_block);
+	texturingWall(x, distToWall, delta_side, textureFloor_w);
 
 }
 
@@ -432,7 +398,7 @@ sf::Color Engine::shading(float dist) {
 
 
 
-void Engine::texturing(int x, float distToWall, float delta_side, int texture_block) {
+void Engine::texturingWall(int x, float distToWall, float delta_side, int texture_block) {
 	
 	sf::Color shade = shading(distToWall);
 
@@ -561,5 +527,41 @@ void handlePlayerInput(sf::Event event, bool isPressed) {}
 
 
 
+void Engine::texturingFloor(int textureFloor_w, int textureFloor_h) {
 
-void Engine::texturing_buffer(int x, float distToWall, float delta_side, int texture_block) {}
+//#pragma omp parallel for
+	for (int y = m_screen_height / 2 + 1; y < m_screen_height; y++) {
+
+		sf::Vector2f rayDirLeft = dir - plane;
+		sf::Vector2f rayDirRight = dir + plane;
+
+
+		int p = y - m_screen_height / 2.f;
+		float posZ = 0.5 * m_screen_height;
+
+		float rowDistance = posZ / (float)p;
+		sf::Vector2f floorStep = rowDistance * (rayDirLeft - rayDirRight) / (float)m_screen_width;
+
+		sf::Vector2f floorPos = m_player->getPos() + rowDistance * rayDirRight;
+
+
+
+		for (int x = 0; x < m_screen_width; x++) {
+
+			sf::Vector2i cell(floorPos);
+
+			sf::Vector2i texCoords = {
+				(int)(textureFloor_w * (floorPos.x - cell.x)) & (int)(textureFloor_w - 1),
+				(int)(textureFloor_h * (floorPos.y - cell.y)) & (int)(textureFloor_h - 1)
+			};
+
+			floorPos += floorStep;
+
+			int index = (y - m_screen_height / 2.f) * m_screen_width + x;
+			buffer[index] = sf::Vertex(sf::Vector2f(x, y), sf::Vector2f(texCoords));
+
+		}
+
+	}
+
+}

@@ -74,6 +74,8 @@ private:
 
 	void render();
 
+	void texturingFloor(int, int);
+
 	bool collision(sf::Vector2f delta);
 
 	void contol(float dt);
@@ -82,9 +84,7 @@ private:
 
 	sf::Color shading(float dist);
 
-	void texturing(int x, float distToWall, float delta_side, int texture_block);
-
-	void texturing_buffer(int x, float distToWall, float delta_side, int texture_block);
+	void texturingWall(int x, float distToWall, float delta_side, int texture_block);
 };
 
 
