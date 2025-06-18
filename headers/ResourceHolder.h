@@ -2,30 +2,61 @@
 #include <string>
 #include "map.h"
 #include <unordered_map>
+#include <fstream>
+#include <memory>
 #include <SFML/Graphics.hpp>
+#include <cassert>
 
+
+template <typename Identifier,typename Resource>
 class ResourceHolder {
 
-	std::unordered_map<std::string, map> Maps; //our game map
-	std::unordered_map<std::string, sf::Texture> Textures;
-	std::unordered_map<std::string, sf::Image> Images;
-
-
-	static ResourceHolder* resourseHolder;
+	std::unordered_map<Identifier, std::unique_ptr<Resource>> mResourceMap;
 
 public:
 
-	static ResourceHolder* getResourseHolder();
+	void load(Identifier id, std::string& filename);
 
-	//name is the key, (name of map)
-	void loadMap(std::string path, std::string name);
-	void loadMap(map, std::string name);
-	
-	void loadTexture(std::string path, std::string name);
-	void loadImage(std::string path, std::string name);
-	
+	Resource& get(Identifier id);
 
-	map getMap(std::string map_name);
-	sf::Texture getTexture(std::string texture_name);
-	sf::Image getImage(std::string image_name);
+	const Resource& get(Identifier id) const;
+
 };
+
+template <typename Identifier, typename Resource>
+void ResourceHolder<Identifier, Resource>::load(Identifier id, std::string& filename){
+
+	std::unique_ptr<Resource> res = std::make_unique<Resource>(Resource());
+	
+	if (!res->loadFromFile(filename)) {
+		throw std::runtime_error("ResourceHolder::load can't load file" + filename);
+	}
+
+	auto inserted = mResourceMap.insert(std::make_pair(id, std::move(res)));
+	assert(inserted.second);
+
+}
+
+
+template <typename Identifier, typename Resource>
+Resource& ResourceHolder<Identifier, Resource>::get(Identifier id) {
+
+	auto it = mResourceMap.find(id);
+
+	//assert(it != mResourceMap.end());
+
+	return (*it->second);
+}
+
+
+template <typename Identifier, typename Resource>
+const Resource& ResourceHolder<Identifier, Resource>::get(Identifier id) const
+{
+
+	auto it = mResourceMap.find(id);
+
+	assert(it != mResourceMap.end());
+
+	return (*it->second);
+}
+

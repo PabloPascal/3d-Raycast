@@ -69,3 +69,21 @@ void map::init(int world_width, int world_height) {
 	}
 
 }
+
+
+
+
+void map::operator=(map& other) {
+	m_world = other.m_world;
+	size_x = other.size_x;
+	size_y = other.size_y;
+}
+
+
+void map::operator=(map&& other) noexcept
+{
+	m_world = std::move(other.m_world);
+	size_x = other.size_x;
+	size_y = other.size_y;
+
+}

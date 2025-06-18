@@ -13,9 +13,22 @@
 
 
 
+
+enum class textureID{
+	wallbrick,
+	floor
+};
+
+enum class imageID {
+	map1
+};
+
+
 class Engine {
 
-	ResourceHolder* resources;
+	ResourceHolder<textureID, sf::Texture> mTextures;
+	ResourceHolder<imageID, sf::Image> mImages;
+	map mMaps;
 
 	int m_screen_width;
 	int m_screen_height;
@@ -24,13 +37,9 @@ class Engine {
 	int world_width;
 	int world_height;
 
+	float cameraHeight;
 
 	sf::RenderWindow m_window;
-
-	std::string map_name;
-	std::string wall_name;
-	std::string floor_name;
-
 
 	struct Ray{
 		float dist;
@@ -52,29 +61,23 @@ public:
 
 	void run();
 
-	void add_map(std::string path, std::string map_Name);
-	void add_map(map newMap, std::string map_Name);
-
-	void loadWallTexture(std::string path, std::string wallName);
-	void loadFloorTexture(std::string path, std::string floorName);
-
+	
+	void loadMap(std::string path);
+	void loadMap(map& Maps);
+	void loadTexture(std::string path);
+	void loadTexture();
 	void loadImage(std::string path);
-
-	void changeMapName(std::string name);
+	void loadImage();
 
 private:
 
 	void EventProcess();
 
-	void handlePlayerInput(sf::Event, bool);
-
-	Ray RayCast(int x);
-
 	Ray FastRayCast(int x);
 
 	void render();
 
-	void texturingFloor(int, int);
+	void texturingFloor();
 
 	bool collision(sf::Vector2f delta);
 
@@ -84,7 +87,7 @@ private:
 
 	sf::Color shading(float dist);
 
-	void texturingWall(int x, float distToWall, float delta_side, int texture_block);
+	void texturingWall(int x, float distToWall, float delta_side);
 };
 
 

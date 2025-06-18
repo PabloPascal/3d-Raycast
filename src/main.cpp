@@ -81,10 +81,8 @@ int main(int argc, char* argv[]) {
 
     std::string path = std::string(argv[0]).substr(0, found);
 
-	engine->add_map(world, "world");
-    engine->loadFloorTexture(path + "/../../res/greystone.png", "floor");
-    engine->loadWallTexture(path + "/../../res/redbrick.png", "wall");
-
+    engine->loadTexture();
+    engine->loadMap(world);
     //print(world);
 
 
