@@ -1,66 +1,21 @@
 #include "../headers/3dEngine.h"
 
-#include <omp.h>
 #include <iostream>
 #include <string>
 
 #if NDEBUG
 #define FLOOR_TEX 1
 #else 
-#define FLOOR_TEX 0
+#define FLOOR_TEX 1
 #endif
 
 
-Engine::Engine(int ScreenWidth, int ScreenHeight, float fov, sf::Vector2f start_pos, float start_angle) 
+Engine::Engine(size_t screen_width, size_t screen_hight)
 {
-
-	m_screen_width = ScreenWidth;
-	m_screen_height = ScreenHeight;
-
-	cameraHeight = 0.5;
-
-	m_window.create(sf::VideoMode(m_screen_width, m_screen_height), "3d");
-
-	m_player = std::make_unique<Player>(fov, start_angle, start_pos);
-
-	float aspect = m_screen_width / (float)m_screen_height;
-	plane = 0.5f * aspect * plane;
-	
-	wall.setPrimitiveType(sf::Lines);
-	roof.setPrimitiveType(sf::Lines);
-	floor.setPrimitiveType(sf::Lines);
-	buffer.setPrimitiveType(sf::Points);
-
+	m_window.create(sf::VideoMode(screen_width, screen_hight), "3d");
+	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
 }
 
-
-void Engine::loadMap(std::string path) {
-
-	mMaps.load(path);
-
-}
-
-
-void Engine::loadMap(map& Map) {
-	mMaps = Map;
-}
-
-
-void Engine::loadTexture() {
-
-	mTextures.load(textureID::wallbrick, std::string("../res/redbrick.png"));
-	mTextures.load(textureID::floor, std::string("../res/colorstone.png"));
-	
-}
-
-void Engine::loadTexture(std::string path) {
-
-	mTextures.load(textureID::wallbrick, path);
-
-}
-
-void Engine::loadImage() {
-}
 
 
 void Engine::run() {
@@ -80,220 +35,67 @@ void Engine::run() {
 		while (m_window.pollEvent(event)) {
 
 			if (event.type == sf::Event::Closed) m_window.close();
-			if (event.type == sf::Event::KeyPressed){
-				if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+			if (event.type == sf::Event::KeyPressed) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 					m_window.close();
 			}
-			
-			
 
 		}
 
-		render();
-		//contol(timeSinceLastUpdate.asSeconds());
-		transformation_coords(timeSinceLastUpdate.asSeconds());
+		m_player->control(mMaps[0], sprites, timeSinceLastUpdate.asSeconds());
 
-		m_window.clear();
-#if FLOOR_TEX
-		m_window.draw(buffer, &mTextures.get(textureID::floor));
-#else
-		m_window.draw(floor);
-#endif
-
-		m_window.draw(wall, &mTextures.get(textureID::wallbrick));
-		m_window.draw(roof);
+		renderer.render(m_window.getSize(), mMaps[0], m_player->getCamera(),
+			mTextures.get(textureID::floor), mTextures.get(textureID::wallbrick), mTextures.get(textureID::spriteTexture), sprites);
+		
+		renderer.draw(m_window, mTextures.get(textureID::floor), mTextures.get(textureID::wallbrick), mTextures.get(textureID::spriteTexture));
 
 		m_window.display();
 
-
-#if FLOOR_TEX
-		buffer.clear();
-#else		
-	floor.clear();
-#endif
-	wall.clear();
-	roof.clear();
-	}
-	
-}
-
-
-void Engine::contol(float dt) {
-
-	float angle = m_player->getAngle();
-	sf::Vector2f position = m_player->getPos();
-
-	float speed_rot = 3;
-	float speed = 5;
-
-	sf::Vector2f d_step = { speed * dt * cos(angle), speed * dt * sin(angle) };
-	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		angle -= speed_rot * dt;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		angle += speed_rot * dt;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-
-		if (collision({ position.x + speed * dir.x * dt , position.y })) {
-			position.x += speed * dir.x * dt;
-		}
-
-		if (collision({ position.x, position.y + speed * dir.y * dt })) {
-			position.y += speed * dir.y * dt;
-		}
-
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-
-		if (collision({ position.x - speed * dir.x * dt , position.y })) {
-			position.x -= speed * dir.x * dt;
-		}
-
-		if (collision({ position.x ,position.y - speed * dir.y * dt })) {
-			position.y -= speed * dir.y * dt;
-		}
-
-	}
-
-	m_player->getAngle() = angle;
-	m_player->getPos() = position;
-
-
-}
-
-
-bool Engine::collision(sf::Vector2f pos) {
-
-	auto world = mMaps.m_world;
-
-	if (world[(int)(pos.y)][(int)(pos.x)] > 0) {
-
-		return false;
-
-	}
-	else {
-		return true;
 	}
 }
 
 
 
+void Engine::loadMap(const std::string& path) {
+
+	Map map;
+	map.load(path);
+	mMaps.push_back(std::move(map));
+}
 
 
-void Engine::transformation_coords(float dt) {
+void Engine::loadMap(Map& map) {
 
-	float angle = m_player->getAngle();
-	sf::Vector2f position = m_player->getPos();
+	mMaps.push_back(std::move(map));
+}
 
-	float rot_speed = 3;
-	float rot = rot_speed * dt;
-	float speed = 5;
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		float prev_dirX = dir.x;
-		dir.x = prev_dirX * cos(rot) - dir.y * sin(rot);
-		dir.y = prev_dirX * sin(rot) + dir.y * cos(rot);
-		
-		float prev_planeX = plane.x;
-		plane.x = prev_planeX * cos(rot) - plane.y * sin(rot);
-		plane.y = prev_planeX * sin(rot) + plane.y * cos(rot);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		float prev_dirX = dir.x;
-		dir.x = prev_dirX * cos(-rot) - dir.y * sin(-rot);
-		dir.y = prev_dirX * sin(-rot) + dir.y * cos(-rot);
 
-		float prev_planeX = plane.x;
-		plane.x = prev_planeX * cos(-rot) - plane.y * sin(-rot);
-		plane.y = prev_planeX * sin(-rot) + plane.y * cos(-rot);
-	}
+void Engine::loadTexture() {
 
-	float size = m_player->getPlayerSize();
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		if (dir.x > 0 && collision({ position.x + speed * dir.x * dt + size, position.y})) {
-			position.x += speed * dir.x * dt;
-		}
-		
-		if (dir.x < 0 && collision({ position.x + speed * dir.x * dt - size, position.y })) {
-			position.x += speed * dir.x * dt;
-		}
+	mTextures.load(textureID::wallbrick, std::string("../res/redbrick.png"));
+	mTextures.load(textureID::floor, std::string("../res/colorstone.png"));
+	sf::Image image;
+	image.loadFromFile("../res/prigojin.png");
+	image.createMaskFromColor(sf::Color::Black);
+	mTextures.load(textureID::spriteTexture, image);
 
-		if (dir.y > 0 && collision({position.x, position.y + speed * dir.y * dt + size})) {
-			position.y += speed * dir.y * dt;
-		}
+}
 
-		if (dir.y < 0 && collision({ position.x, position.y + speed * dir.y * dt - size })) {
-			position.y += speed * dir.y * dt;
-		}
+void Engine::loadTexture(textureID id, const std::string& path) {
 
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	mTextures.load(id, path);
 
-		if (collision({ position.x - speed * dir.x * dt , position.y })) {
-			position.x -= speed * dir.x * dt;
-		}
+}
 
-		if (collision({position.x ,position.y - speed * dir.y * dt })) {
-			position.y -= speed * dir.y * dt;
-		}
-
-	}
-
-#if FLOOR_TEX == 0
-	float vertical_speed = 500 * dt;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		m_player->getVerticalAngle() = m_player->getVerticalAngle() - vertical_speed;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		m_player->getVerticalAngle() = m_player->getVerticalAngle() + vertical_speed;
-	}
-
-	//jump
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !m_player->getIsFalling()) {
-		cameraHeight += 0.1;
-		m_player->getIsJumping() = true;
-
-	}
-
-	if (m_player->getIsJumping()) {
-
-		cameraHeight += dt;
-		if (cameraHeight >= 0.9) {
-			m_player->getIsJumping() = false;
-			m_player->getIsFalling() = true;
-		}
-
-	}
-
-	if (m_player->getIsFalling()) {
-		cameraHeight -= dt;
-		if (cameraHeight < 0.5) {
-			m_player->getIsFalling() = false;
-		}
-	}
-#endif
-
-	m_player->getPos() = position;
+void Engine::loadImage() {
 
 }
 
 
-void Engine::EventProcess() {
+void Engine::loadSprite() {
 
-	sf::Event event;
-	while (m_window.pollEvent(event)) {
-
-		if (event.type == sf::Event::Closed) m_window.close();
-
-		if (sf::Event::KeyPressed) {
-
-		}
-
-	}
-
+	sf::Sprite sprite;
+	sprite.setPosition({ 2,10 });
+	sprites.push_back(std::move(sprite));
 }
-

@@ -2,20 +2,26 @@
 #include <vector>
 #include <string>
 
-struct map {
-	int size_x;
-	int size_y;
+struct Map {
+	int world_width;
+	int world_height;
 
 	std::vector<std::vector<int>> m_world;
 
 	//map(int sizeX, int sizeY);
-
+public:
+	Map() = default;
+	
 	void load(int** world, int world_width, int world_height);
-	void load(std::vector<std::vector<int>> world);
+	void load(std::vector<std::vector<int>>& world);
+	void load(std::vector<std::vector<int>>&& world);
 	void load(std::string path);
 	
-	void operator=(map& other);
-	void operator=(map&& other) noexcept;
+	Map(const Map& map);
+
+	void operator=(const Map& other);
+	void operator=(Map&& other) noexcept;
+
 
 private:
 	void init(int world_width, int world_height);

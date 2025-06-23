@@ -1,23 +1,43 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <SFML/Graphics.hpp>
+#include "../headers/Physics.h"
 
+
+struct Camera {
+	float m_angle = 0;//angle with OX
+
+	sf::Vector2f dir = { 0.5f, 0 };
+	sf::Vector2f plane = { 0, 0.66f };
+
+	sf::Vector2f m_position;
+	float posZ;
+
+};
 
 class Player {
 
 	float m_fov;
-	float m_angle = 0;
-	sf::Vector2f m_position;
 	float vertical_angle;
-	float posZ;
 	float playerSize;
 	float jumpHeight;
 
 	bool isJumping;
 	bool isFalling;
+
+	Camera camera;
+
 public:
 
 	Player(float fov, float start_angle, sf::Vector2f start_pos);
+
+	Camera getCamera();
+
+	const Camera getCamera() const;
+
+
+	void control(const Map& map, const std::vector<sf::Sprite> sprites, float dt);
+
 
 	float& getAngle();
 

@@ -3,8 +3,15 @@
 #include <iostream>
 
 
+Map::Map(const Map& map) {
+	world_height = map.world_height;
+	world_width = map.world_width;
+	m_world = map.m_world;
+}
 
-void map::load(int** world, int world_width, int world_height) {
+
+
+void Map::load(int** world, int world_width, int world_height) {
 
 	init(world_width, world_height);
 
@@ -19,22 +26,26 @@ void map::load(int** world, int world_width, int world_height) {
 
 
 
-void map::load(std::vector<std::vector<int>> world) {
+void Map::load(std::vector<std::vector<int>>& world) {
 
 	init(world.size(), world[0].size());
 
-	for (int i = 0; i < size_y; i++) {
-		for (int j = 0; j < size_x; j++) {
-			m_world[i][j] = world[i][j];
-		}
+	m_world = world;
 
-	}
+}
+
+void Map::load(std::vector<std::vector<int>>&& world) {
+
+	init(world.size(), world[0].size());
+
+	m_world = std::move(world);
 
 }
 
 
 
-void map::load(std::string path) {
+
+void Map::load(std::string path) {
 
 	std::ifstream map_file(path);
 
@@ -42,13 +53,13 @@ void map::load(std::string path) {
 		std::cerr << "can't open the file" << std::endl; 
 		return;
 	}
-	map_file >> size_x;
-	map_file >> size_y;
+	map_file >> world_width;
+	map_file >> world_height;
 
-	init(size_x, size_y);
+	init(world_width, world_height);
 
-	for (int y = 0; y < size_y; y++) {
-		for (int x = 0; x < size_x; x++) {
+	for (int y = 0; y < world_height; y++) {
+		for (int x = 0; x < world_width; x++) {
 			map_file >> m_world[y][x];
 		}
 	}
@@ -58,14 +69,14 @@ void map::load(std::string path) {
 }
 
 
-void map::init(int world_width, int world_height) {
+void Map::init(int width, int height) {
 
-	size_x = world_width;
-	size_y = world_height;
+	world_width = width;
+	world_height = height;
 
-	m_world.resize(size_y);
-	for (int i = 0; i < size_y; i++) {
-		m_world[i].resize(size_x);
+	m_world.resize(world_height);
+	for (int i = 0; i < world_height; i++) {
+		m_world[i].resize(world_width);
 	}
 
 }
@@ -73,17 +84,17 @@ void map::init(int world_width, int world_height) {
 
 
 
-void map::operator=(map& other) {
+void Map::operator=(const Map& other) {
 	m_world = other.m_world;
-	size_x = other.size_x;
-	size_y = other.size_y;
+	world_width = other.world_width;
+	world_height = other.world_height;
 }
 
 
-void map::operator=(map&& other) noexcept
+void Map::operator=(Map&& other) noexcept
 {
 	m_world = std::move(other.m_world);
-	size_x = other.size_x;
-	size_y = other.size_y;
+	world_width = other.world_width;
+	world_height = other.world_height;
 
 }

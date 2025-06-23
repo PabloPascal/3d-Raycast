@@ -1,22 +1,92 @@
 #include "../headers/Player.h"
 
 
-
 Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
 
 	m_fov = fov;
-	m_angle = start_angle;
-	m_position = start_pos;
+	camera.m_angle = start_angle;
+	camera.m_position = start_pos;
 	vertical_angle = 0;
-	posZ = 0;
+	camera.posZ = 0;
+	
 	playerSize = 0.15;
 
 	isJumping = false;
 	isFalling = false;
 }
 
+
+Camera Player::getCamera() {
+	return camera;
+}
+
+const Camera Player::getCamera() const {
+	return camera;
+}
+
+
+void Player::control(const Map& map, const std::vector<sf::Sprite> sprites, float dt) {
+
+	float rot_speed = 3;
+	float rot = rot_speed * dt;
+	float speed = 5;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		float prev_dirX = camera.dir.x;
+		camera.dir.x = prev_dirX * cos(rot) - camera.dir.y * sin(rot);
+		camera.dir.y = prev_dirX * sin(rot) + camera.dir.y * cos(rot);
+
+		float prev_planeX = camera.plane.x;
+		camera.plane.x = prev_planeX * cos(rot) - camera.plane.y * sin(rot);
+		camera.plane.y = prev_planeX * sin(rot) + camera.plane.y * cos(rot);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+		float prev_dirX = camera.dir.x;
+		camera.dir.x = prev_dirX * cos(-rot) - camera.dir.y * sin(-rot);
+		camera.dir.y = prev_dirX * sin(-rot) + camera.dir.y * cos(-rot);
+
+		float prev_planeX = camera.plane.x;
+		camera.plane.x = prev_planeX * cos(-rot) - camera.plane.y * sin(-rot);
+		camera.plane.y = prev_planeX * sin(-rot) + camera.plane.y * cos(-rot);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		if (camera.dir.x > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt + playerSize, camera.m_position.y }, sprites)) {
+			camera.m_position.x += speed * camera.dir.x * dt;
+		}
+		if (camera.dir.x < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt - playerSize, camera.m_position.y }, sprites)) {
+			camera.m_position.x += speed * camera.dir.x * dt;
+		}
+		
+		if (camera.dir.y > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt + playerSize }, sprites)) {
+			camera.m_position.y += speed * camera.dir.y * dt;
+		}
+
+		if (camera.dir.y < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt - playerSize }, sprites)) {
+			camera.m_position.y += speed * camera.dir.y * dt;
+		}
+
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+		if (PhysicsEngine::checkCollision(map, { camera.m_position.x - speed * camera.dir.x * dt , camera.m_position.y }, sprites)) {
+			camera.m_position.x -= speed * camera.dir.x * dt;
+		}
+
+		if (PhysicsEngine::checkCollision(map, { camera.m_position.x , camera.m_position.y - speed * camera.dir.y * dt }, sprites)) {
+			camera.m_position.y -= speed * camera.dir.y * dt;
+		}
+
+
+	}
+
+
+
+}
+
+
 float& Player::getAngle() {
-	return m_angle;
+	return camera.m_angle;
 }
 
 float Player::getFov() {
@@ -24,7 +94,7 @@ float Player::getFov() {
 }
 
 sf::Vector2f& Player::getPos() {
-	return m_position;
+	return camera.m_position;
 }
 
 
@@ -34,7 +104,7 @@ float& Player::getVerticalAngle() {
 
 
 float& Player::getZpos() {
-	return posZ;
+	return camera.posZ;
 }
 
 

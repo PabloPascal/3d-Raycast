@@ -7,14 +7,18 @@ set(Raycast3D ${PROJECT_NAME})
 add_executable(${PROJECT_NAME} 
 src/main.cpp
 src/3dEngine.cpp
-src/ResourceHolder.cpp
 src/Player.cpp
 src/map.cpp
+src/renderer.cpp
+src/Physics.cpp 
+
 
 headers/3dEngine.h
 headers/ResourceHolder.h
 headers/Player.h
 headers/map.h
+headers/Render.h
+headers/Physics.h
 )
 
 
