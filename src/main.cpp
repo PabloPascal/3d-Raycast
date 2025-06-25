@@ -37,11 +37,13 @@ int main(int argc, char* argv[]) {
         //engine->loadTexture();
         engine->loadTexture(textureID::wallbrick, path + "/../../res/redbrick.png");
         engine->loadTexture(textureID::floor, path + "/../../res/colorstone.png");
-        engine->loadTexture(textureID::spriteTexture, path + "/../../res/prigojin.png");
-        //engine->loadTexture(textureID::spriteTexture, path + "/../../res/barrel.png");
-        engine->loadSprite();
+        engine->loadTexture(textureID::prigojinTexture, path + "/../../res/prigojin.png");
+        engine->loadTexture(textureID::barrelTexture, path + "/../../res/barrel.png");
+        //engine->loadSprite();
         //engine->loadMap(world);
+        engine->loadImage();
         engine->loadMap(path + "/../../maps/map1.txt");
+        engine->loadThing();
 
         engine->run();
     }

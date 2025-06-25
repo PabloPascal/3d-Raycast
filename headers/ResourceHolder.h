@@ -7,6 +7,14 @@
 #include <SFML/Graphics.hpp>
 #include <cassert>
 
+#include "Enemy.h"
+#include "StaticObject.h"
+
+using EnemyPtr = std::shared_ptr<Enemy>;
+using ObjectPtr = std::shared_ptr<Object>;
+using ThingPtr = std::shared_ptr<Thing>;
+
+
 
 template <typename Identifier,typename Resource>
 class ResourceHolder {

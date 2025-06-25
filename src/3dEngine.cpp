@@ -10,7 +10,7 @@
 #endif
 
 
-Engine::Engine(size_t screen_width, size_t screen_hight)
+Engine::Engine(size_t screen_width, size_t screen_hight) : Renderer(screen_width, screen_hight)
 {
 	m_window.create(sf::VideoMode(screen_width, screen_hight), "3d");
 	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
@@ -42,12 +42,15 @@ void Engine::run() {
 
 		}
 
-		m_player->control(mMaps[0], sprites, timeSinceLastUpdate.asSeconds());
+		m_player->control(mMaps[0], things, timeSinceLastUpdate.asSeconds());
 
-		renderer.render(m_window.getSize(), mMaps[0], m_player->getCamera(),
-			mTextures.get(textureID::floor), mTextures.get(textureID::wallbrick), mTextures.get(textureID::spriteTexture), sprites);
+		for(auto& it: enemies)
+			AI::simpleAI(it, m_player->getPos(), timeSinceLastUpdate.asSeconds());
 		
-		renderer.draw(m_window, mTextures.get(textureID::floor), mTextures.get(textureID::wallbrick), mTextures.get(textureID::spriteTexture));
+
+		render(m_player->getCamera());
+		
+		draw();
 
 		m_window.display();
 
@@ -75,10 +78,8 @@ void Engine::loadTexture() {
 
 	mTextures.load(textureID::wallbrick, std::string("../res/redbrick.png"));
 	mTextures.load(textureID::floor, std::string("../res/colorstone.png"));
-	sf::Image image;
-	image.loadFromFile("../res/prigojin.png");
-	image.createMaskFromColor(sf::Color::Black);
-	mTextures.load(textureID::spriteTexture, image);
+	mTextures.load(textureID::barrelTexture, "../res/barrel.png");
+	mTextures.load(textureID::prigojinTexture, "../res/prigojin.png");
 
 }
 
@@ -89,13 +90,28 @@ void Engine::loadTexture(textureID id, const std::string& path) {
 }
 
 void Engine::loadImage() {
-
+	mImages.load(textureID::wallbrick, std::string("../res/redbrick.png"));
+	mImages.load(textureID::floor, std::string("../res/colorstone.png"));
+	mImages.load(textureID::barrelTexture, "../res/barrel.png");
+	mImages.load(textureID::prigojinTexture, "../res/prigojin.png");
 }
 
 
 void Engine::loadSprite() {
+}
 
-	sf::Sprite sprite;
-	sprite.setPosition({ 2,10 });
-	sprites.push_back(std::move(sprite));
+
+void Engine::loadThing() {
+	
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{2,3}, mTextures.get(textureID::prigojinTexture), 0.5));
+	numThings++;
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{6,4}, mTextures.get(textureID::prigojinTexture), 0.6));
+	numThings++;
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, mTextures.get(textureID::prigojinTexture), 0.8));
+	numThings++;
+	
+	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, mTextures.get(textureID::barrelTexture)));
+	numThings++;
+
+
 }

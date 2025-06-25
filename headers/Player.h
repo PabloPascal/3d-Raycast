@@ -1,8 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include <SFML/Graphics.hpp>
-#include "../headers/Physics.h"
-
+#include "Physics.h"
 
 struct Camera {
 	float m_angle = 0;//angle with OX
@@ -35,8 +33,7 @@ public:
 
 	const Camera getCamera() const;
 
-
-	void control(const Map& map, const std::vector<sf::Sprite> sprites, float dt);
+	void control(const Map& map, const std::vector<ThingPtr>& things, float dt);
 
 
 	float& getAngle();

@@ -3,8 +3,30 @@
 #include "Player.h"
 
 
+
+enum class textureID {
+	wallbrick,
+	floor,
+	prigojinTexture,
+	barrelTexture
+};
+
+
+
 class Renderer
 {
+protected:
+	ResourceHolder<textureID, sf::Texture> mTextures;
+	ResourceHolder<textureID, sf::Image> mImages;
+	std::vector<Map> mMaps;
+	std::vector<EnemyPtr> enemies;
+	std::vector<ObjectPtr> objects;
+	std::vector<ThingPtr> things;
+
+
+	sf::RenderWindow m_window;
+
+	size_t numThings;
 
 	struct Ray {
 		float dist;
@@ -13,37 +35,25 @@ class Renderer
 
 	float m_depth = 15;
 
-	std::vector<float> zBuffer;
-	std::vector<int> spriteOrder;
-	std::vector<float> spriteDist;
-
-	size_t numSprites;
-
-
-	sf::VertexArray roof;
-	sf::VertexArray wall;
-	sf::VertexArray floor;
-	sf::VertexArray floor_buffer;
-	sf::VertexArray sprite_buffer;
-
 public:
 
-	Renderer();
+	Renderer(size_t width, size_t height);
 
-	void render(const sf::Vector2u& windowSize,const Map& map, const Camera& camera,
-		const sf::Texture& floorTexture, const sf::Texture& wallTexture, const sf::Texture& spriteTexture, const std::vector<sf::Sprite>& sprites);
+	void render(const Camera& camera);
 
-	void draw(sf::RenderTarget& target, const sf::Texture& floorTexture, const sf::Texture& wallTexture, const sf::Texture& spriteTexture);
-
+	void draw();
+	
 private:
 
-	Ray FastRayCast(const sf::Vector2u& windowSize, const Map& map, const Camera& camera, int x);
+	Ray FastRayCast(const Camera& camera, int x);
 
-	void texturingFloor(const sf::Vector2u& windowSize, const Camera& camera,const sf::Texture floorTexture, size_t y_start, size_t y_end);
+	void texturingFloor(const Camera& camera, size_t y_start, size_t y_end);
 
-	void texturingFloorFast(const sf::Vector2u& windowSize, const Camera& camera, const sf::Texture floorTexture);
+	void texturingFloorFast(const Camera& camera);
 
-	void texturingSprite(const std::vector<sf::Sprite>& sprites, const sf::Vector2u& windowSize, const Camera& camera,const sf::Texture& spriteTexture);
+	void texturingSprite(const Camera& camera);
+	
+	void texturingPerSprite(const Camera& camera, ThingPtr thing);
 
 	void multithreadingFloor();
 
@@ -51,7 +61,18 @@ private:
 
 	sf::Color shading(float dist);
 
-	void texturingWall(const sf::Vector2u& windowSize, const sf::Texture& texture, int x, float distToWall, float delta_side);
+	void texturingWall(int x, float distToWall, float delta_side);
+
+private:
+
+	std::vector<float> zBuffer;
+	std::vector<int> spriteOrder;
+	std::vector<float> spriteDist;
 
 
+	sf::VertexArray roof;
+	sf::VertexArray wall;
+	sf::VertexArray floor;
+	sf::VertexArray floor_buffer;
+	sf::VertexArray spriteColumns;
 };

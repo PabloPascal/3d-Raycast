@@ -5,33 +5,18 @@
 #include <vector>
 #include <memory>
 
-#include "../headers/map.h"
-#include "../headers/Player.h";
+#include "map.h"
 #include "Render.h"
-#include "ResourceHolder.h"
+#include "AI.h" 
 
 
 
 
-enum class textureID{
-	wallbrick,
-	floor,
-	spriteTexture
-};
+class Engine :public Renderer
+{
 
-
-class Engine {
-
-	ResourceHolder<textureID, sf::Texture> mTextures;
-	ResourceHolder<textureID, sf::Image> mImages;
-	std::vector<Map> mMaps;
-	std::vector<sf::Sprite> sprites;
-
-
+	
 	std::unique_ptr<Player> m_player;
-
-	Renderer renderer;
-	sf::RenderWindow m_window;
 
 public:
 	Engine(size_t screen_width, size_t screen_hight);
@@ -46,6 +31,7 @@ public:
 	void loadImage(const std::string& path);
 	void loadImage();
 	void loadSprite();
+	void loadThing();
 	
 };
 

@@ -24,8 +24,7 @@ const Camera Player::getCamera() const {
 	return camera;
 }
 
-
-void Player::control(const Map& map, const std::vector<sf::Sprite> sprites, float dt) {
+void Player::control(const Map& map, const std::vector<ThingPtr>& things, float dt) {
 
 	float rot_speed = 3;
 	float rot = rot_speed * dt;
@@ -51,29 +50,29 @@ void Player::control(const Map& map, const std::vector<sf::Sprite> sprites, floa
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		if (camera.dir.x > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt + playerSize, camera.m_position.y }, sprites)) {
+		if (camera.dir.x > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt + playerSize, camera.m_position.y }, things)) {
 			camera.m_position.x += speed * camera.dir.x * dt;
 		}
-		if (camera.dir.x < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt - playerSize, camera.m_position.y }, sprites)) {
+		if (camera.dir.x < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt - playerSize, camera.m_position.y }, things)) {
 			camera.m_position.x += speed * camera.dir.x * dt;
 		}
 		
-		if (camera.dir.y > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt + playerSize }, sprites)) {
+		if (camera.dir.y > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt + playerSize }, things)) {
 			camera.m_position.y += speed * camera.dir.y * dt;
 		}
 
-		if (camera.dir.y < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt - playerSize }, sprites)) {
+		if (camera.dir.y < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt - playerSize }, things)) {
 			camera.m_position.y += speed * camera.dir.y * dt;
 		}
 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 
-		if (PhysicsEngine::checkCollision(map, { camera.m_position.x - speed * camera.dir.x * dt , camera.m_position.y }, sprites)) {
+		if (PhysicsEngine::checkCollision(map, { camera.m_position.x - speed * camera.dir.x * dt , camera.m_position.y }, things)) {
 			camera.m_position.x -= speed * camera.dir.x * dt;
 		}
 
-		if (PhysicsEngine::checkCollision(map, { camera.m_position.x , camera.m_position.y - speed * camera.dir.y * dt }, sprites)) {
+		if (PhysicsEngine::checkCollision(map, { camera.m_position.x , camera.m_position.y - speed * camera.dir.y * dt }, things)) {
 			camera.m_position.y -= speed * camera.dir.y * dt;
 		}
 
