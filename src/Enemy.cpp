@@ -1,6 +1,8 @@
 #include "../headers/Enemy.h"
 
-Enemy::Enemy(sf::Vector2f position, sf::Texture& texture, float speed) {
+Enemy::Enemy(sf::Vector2f position, sf::Texture& texture, float speed, bool isCollision,
+	bool isAnimate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate)
+{
 
 	m_position = position;
 	m_texture = texture;
@@ -57,4 +59,23 @@ float Enemy::getSpeed(){
 
 void Enemy::setTexture(sf::Image&& image) {
 	m_image = std::move(image);
+}
+
+
+bool Enemy::getCollisionIndicate() {
+	return m_IsCollision;
+}
+
+
+void Enemy::setCollision(bool collision) {
+	m_IsCollision = collision;
+}
+
+
+bool Enemy::isAnimate() {
+	return m_IsAnimate;
+}
+
+void Enemy::setAnimate(bool isAnimate){
+	m_IsAnimate = isAnimate;
 }

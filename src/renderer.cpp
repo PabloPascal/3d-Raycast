@@ -339,8 +339,11 @@ void Renderer::texturingFloorFast(const Camera& camera) {}
 
 
 
-
+float t = 0;
 void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
+	t++;
+
+	if (t > 1000) t -= 1000;
 
 	sf::Vector2u textureSize = thing->getTexture().getSize();
 
@@ -380,10 +383,14 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 
 			float texCoordX = int(256 * (x - (-spriteSize / 2 + ScreenX)) * textureSize.x / spriteSize) / 256;
 
-			spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
-			spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
-
-
+			if (thing->isAnimate()) {
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY + 6*sin(t/20.f)), sf::Vector2f(texCoordX, 0)));
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY + 6*sin(t/20.f)), sf::Vector2f(texCoordX, textureSize.y)));
+			}
+			else {
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
+			}
 		}
 	}
 

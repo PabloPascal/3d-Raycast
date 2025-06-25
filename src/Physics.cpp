@@ -12,14 +12,16 @@ bool PhysicsEngine::checkCollision(const Map& map, const sf::Vector2f& pos, cons
 	}
 
 	
-	/*for(const auto& thing: things){
-		float dist = std::sqrt(std::pow((pos.x - thing->getPosition().x), 2) +
-			std::pow((pos.y - thing->getPosition().y), 2));
-		if (dist < 0.3) {
-			return false;
+	for(const auto& thing: things){
+		if (thing->getCollisionIndicate()) {
+			float dist = std::sqrt(std::pow((pos.x - thing->getPosition().x), 2) +
+				std::pow((pos.y - thing->getPosition().y), 2));
+			if (dist < 0.3) {
+				return false;
+			}
 		}
 
-	}*/
+	}
 
 	return true;
 

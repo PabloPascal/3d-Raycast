@@ -107,10 +107,10 @@ void Engine::loadThing() {
 	numThings++;
 	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{6,4}, mTextures.get(textureID::prigojinTexture), 0.6));
 	numThings++;
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, mTextures.get(textureID::prigojinTexture), 0.8));
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, mTextures.get(textureID::prigojinTexture), 0.8, 0, 1));
 	numThings++;
 	
-	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, mTextures.get(textureID::barrelTexture)));
+	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, mTextures.get(textureID::barrelTexture), true));
 	numThings++;
 
 

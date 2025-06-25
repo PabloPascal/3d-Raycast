@@ -1,7 +1,9 @@
 #include "../headers/StaticObject.h"
 
 
-Object::Object(sf::Vector2f position, sf::Texture& texture) {
+Object::Object(sf::Vector2f position, sf::Texture& texture, bool isCollision, bool isAnimate) : 
+	m_IsAnimate(isAnimate), m_IsCollision(isCollision)
+{
 	m_position = position;
 	m_texture = texture;
 }
@@ -38,4 +40,22 @@ sf::Image& Object::getImage() {
 
 void Object::setImage(sf::Image& image) {
 	m_image = image;
+}
+
+
+
+bool Object::isAnimate() {
+	return m_IsAnimate;
+}
+
+void Object::setAnimate(bool isAnimate) {
+	m_IsAnimate = isAnimate;
+}
+
+bool Object::getCollisionIndicate() {
+	return m_IsCollision;
+}
+
+void Object::setCollision(bool collision) {
+	m_IsCollision = collision;
 }

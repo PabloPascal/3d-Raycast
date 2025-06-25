@@ -10,10 +10,12 @@ class Enemy :public Thing
 	sf::Image m_image;
 	sf::Texture m_texture;
 	
-
+	bool m_IsCollision = false;
+	bool m_IsAnimate = false;
 public:
 	Enemy() = default;
-	Enemy(sf::Vector2f position, sf::Texture& texture, float speed);
+	Enemy(sf::Vector2f position, sf::Texture& texture, float speed, bool isCollision = false, 
+		bool isAnimate = false);
 
 	void update(float dt);
 
@@ -29,4 +31,9 @@ public:
 	float getSpeed();
 	sf::Vector2f getPosition() override;
 
+	bool isAnimate() override;
+	void setAnimate(bool isAnimate);
+
+	bool getCollisionIndicate() override;
+	void setCollision(bool collision);
 };
