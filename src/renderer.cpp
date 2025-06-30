@@ -2,16 +2,13 @@
 #include <cmath>
 #include <thread>
 #include <algorithm>
+#include <iostream>
 
 #if NDEBUG
 #define FLOOR_TEX 1
 #else 
-#define FLOOR_TEX 1
+#define FLOOR_TEX 0
 #endif
-
-#define MULTI_THREAD 0
-
-#define NUM_THREAD 8
 
 
 Renderer::Renderer(size_t width, size_t height) 
@@ -57,7 +54,7 @@ void Renderer::render(const Camera& camera) {
 	zBuffer.resize(m_window.getSize().x);
 
 #if FLOOR_TEX == 0
-	floor.resize(2 * m_screen_width);
+	floor.resize(2 * m_window.getSize().x);
 #else
 	floor_buffer.resize(m_window.getSize().x * m_window.getSize().y / 2);
 #endif
@@ -74,14 +71,18 @@ void Renderer::render(const Camera& camera) {
 		zBuffer[x] = distToWall;
 	}
 
-
+#if FLOOR_TEX 
 	m_window.draw(floor_buffer, &mTextures.get(textureID::floor));
+#else
+	m_window.draw(floor);
+#endif
 	m_window.draw(wall, &mTextures.get(textureID::wallbrick));
 	m_window.draw(roof);
 
 	//spire casting
 	texturingSprite(camera);
 
+	floor.clear();
 	roof.clear();
 	floor_buffer.clear();
 	wall.clear();
@@ -193,7 +194,7 @@ void Renderer::texturingWall(int x, float distToWall, float delta_side) {
 	//floor
 #if FLOOR_TEX == 0 
 	floor[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_end_wall), sf::Color::Black));
-	floor[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, m_screen_height), sf::Color::White));
+	floor[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, m_window.getSize().y), sf::Color::White));
 #endif
 }
 
@@ -241,7 +242,7 @@ void Renderer::texturingFloor(const Camera& camera, size_t y_start, size_t y_end
 
 
 #if FLOOR_TEX
-//#pragma omp parallel for
+//#pragma omp parallel for schedule(dynamic,1)
 	for (int y = y_start; y < y_end; y++) {
 
 		sf::Vector2f rayDirLeft = camera.dir - camera.plane;
@@ -327,11 +328,6 @@ void Renderer::texturingSprite(const Camera& camera) {
 
 
 
-void Renderer::draw() {
-
-
-}
-
 
 
 void Renderer::texturingFloorFast(const Camera& camera) {}
@@ -345,7 +341,7 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 
 	if (t > 1000) t -= 1000;
 
-	sf::Vector2u textureSize = thing->getTexture().getSize();
+	sf::Vector2u textureSize = mTextures.get(thing->getTextureID()).getSize();
 
 	sf::Vector2f spritePos = thing->getPosition() - camera.m_position;
 
@@ -355,48 +351,51 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 	[ planeY   dirY ]                                        [ -planeY  planeX ]
 	*/
 
-	float determ = 1.0f / (camera.plane.x * camera.dir.y - camera.dir.x * camera.plane.y);
-
-	sf::Vector2f transform = { determ * (camera.dir.y * spritePos.x - camera.dir.x * spritePos.y),
-							  determ * (camera.plane.y * spritePos.x - camera.plane.x * spritePos.y) };
-
-
-	int ScreenX = (m_window.getSize().x / 2) * (1 + transform.x / transform.y);
+	float inverse_determ = 1.0f / (camera.plane.x * camera.dir.y - camera.dir.x * camera.plane.y);
+	sf::Vector2f transform = { inverse_determ * (camera.dir.y * spritePos.x - camera.dir.x * spritePos.y),
+							  -inverse_determ* (-camera.plane.y * spritePos.x + camera.plane.x * spritePos.y) };
 
 
-	float spriteSize = std::abs(int(m_window.getSize().y / transform.y));
+	if (transform.y > 0) {
+		return;
+	}
 
-	int drawStartY = m_window.getSize().y / 2 - spriteSize / 2;
-	int drawEndY = m_window.getSize().y / 2 + spriteSize / 2;
+	int ScreenX = int(m_window.getSize().x / 2.f * (1 + transform.x /transform.y));
+	
+	int spriteSize = std::abs(int(m_window.getSize().y / transform.y ));
 
-	drawStartY = std::max(drawStartY, 0);
-	drawEndY = std::min(drawEndY, int(m_window.getSize().y) - 1);
+
+	float drawStartY = (float)m_window.getSize().y / 2 - (float)spriteSize / 2;
+	float drawEndY = m_window.getSize().y / 2 + spriteSize / 2;
 
 	int drawStartX = -spriteSize / 2 + ScreenX;
 	int drawEndX = spriteSize / 2 + ScreenX;
 
-	drawStartX = std::max(drawStartX, 0);
-	drawEndX = std::min(drawEndX, (int)m_window.getSize().x - 1);
+	int startX = std::max(drawStartX, 0);
+	int endX = std::min(drawEndX, (int)(m_window.getSize().x  - 1));
+	
+	for (int x = startX; x < endX ;  x++) {
+		if (transform.y < 0 && std::abs(transform.y) < zBuffer[x] && x > 0 && x < m_window.getSize().x) {
 
-	for (int x = drawStartX; x < drawEndX; x++) {
-		if (-transform.y > 0 && std::abs(transform.y) < zBuffer[x] && x > 0 && x < m_window.getSize().x) {
-
-			float texCoordX = int(256 * (x - (-spriteSize / 2 + ScreenX)) * textureSize.x / spriteSize) / 256;
+			float texCoordX = (x - (-spriteSize / 2 + ScreenX)) * textureSize.y / spriteSize;
 
 			if (thing->isAnimate()) {
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY + 6*sin(t/20.f)), sf::Vector2f(texCoordX, 0)));
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY + 6*sin(t/20.f)), sf::Vector2f(texCoordX, textureSize.y)));
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY + 3*sin(t/50.f)), sf::Vector2f(texCoordX, 0)));
+				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY + 3*sin(t/50.f)), sf::Vector2f(texCoordX, textureSize.y)));
 			}
 			else {
 				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
 				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
 			}
+
 		}
 	}
 
 
-	m_window.draw(spriteColumns, &thing->getTexture());
+	m_window.draw(spriteColumns, &mTextures.get(thing->getTextureID()));
 
 	spriteColumns.clear();
 
 }
+
+

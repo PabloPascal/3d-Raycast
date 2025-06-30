@@ -1,15 +1,9 @@
 #pragma once
 #include "ResourceHolder.h"
 #include "Player.h"
+#include "MathLib.h"
 
 
-
-enum class textureID {
-	wallbrick,
-	floor,
-	prigojinTexture,
-	barrelTexture
-};
 
 
 
@@ -22,7 +16,6 @@ protected:
 	std::vector<EnemyPtr> enemies;
 	std::vector<ObjectPtr> objects;
 	std::vector<ThingPtr> things;
-
 
 	sf::RenderWindow m_window;
 
@@ -40,8 +33,6 @@ public:
 	Renderer(size_t width, size_t height);
 
 	void render(const Camera& camera);
-
-	void draw();
 	
 private:
 

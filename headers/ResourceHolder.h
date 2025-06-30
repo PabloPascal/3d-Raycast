@@ -16,6 +16,7 @@ using ThingPtr = std::shared_ptr<Thing>;
 
 
 
+
 template <typename Identifier,typename Resource>
 class ResourceHolder {
 

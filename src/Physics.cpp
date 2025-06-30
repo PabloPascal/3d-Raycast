@@ -16,7 +16,7 @@ bool PhysicsEngine::checkCollision(const Map& map, const sf::Vector2f& pos, cons
 		if (thing->getCollisionIndicate()) {
 			float dist = std::sqrt(std::pow((pos.x - thing->getPosition().x), 2) +
 				std::pow((pos.y - thing->getPosition().y), 2));
-			if (dist < 0.3) {
+			if (dist < 0.4) {
 				return false;
 			}
 		}

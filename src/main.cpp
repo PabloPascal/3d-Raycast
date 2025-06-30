@@ -14,8 +14,8 @@ const float PI = 3.1415;
 int w = 1080;
 int h = 720;
 #else
-int w = 900;
-int h = 600;
+int w = 640;
+int h = 480;
 #endif
 
 
@@ -39,11 +39,21 @@ int main(int argc, char* argv[]) {
         engine->loadTexture(textureID::floor, path + "/../../res/colorstone.png");
         engine->loadTexture(textureID::prigojinTexture, path + "/../../res/prigojin.png");
         engine->loadTexture(textureID::barrelTexture, path + "/../../res/barrel.png");
+        engine->loadTexture(textureID::pillar, path + "/../../res/pillar.png");
+        engine->loadTexture(textureID::light, path + "/../../res/light.png");
         //engine->loadSprite();
         //engine->loadMap(world);
-        engine->loadImage();
+        //engine->loadImage();
         engine->loadMap(path + "/../../maps/map1.txt");
-        engine->loadThing();
+        //engine->loadThing();
+
+       engine->loadEnemy({ 3,4 },0.8, textureID::prigojinTexture, 0, 1);
+        engine->loadEnemy({ 10,6 },0.5, textureID::prigojinTexture, 0, 1);
+        engine->loadEnemy({ 10,30 },0.7, textureID::prigojinTexture, 0, 1);
+        engine->loadEnemy({ 3,22 },0.6, textureID::prigojinTexture, 0, 1);
+        engine->loadStaticObject({ 8,2 }, textureID::barrelTexture, 0, 0);
+        engine->loadStaticObject({ 10,2 }, textureID::pillar, 0, 0);
+        engine->loadStaticObject({ 14,2 }, textureID::light, 0, 0);
 
         engine->run();
     }

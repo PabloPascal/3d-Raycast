@@ -7,27 +7,22 @@ class Enemy :public Thing
 {
 	float m_speed = 0.5;
 	sf::Vector2f m_position;
-	sf::Image m_image;
-	sf::Texture m_texture;
-	
+	textureID m_textureID;
+
 	bool m_IsCollision = false;
 	bool m_IsAnimate = false;
 public:
 	Enemy() = default;
-	Enemy(sf::Vector2f position, sf::Texture& texture, float speed, bool isCollision = false, 
+	Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision = false, 
 		bool isAnimate = false);
 
 	void update(float dt);
 
 
 	void setPosition(const sf::Vector2f& pos) override;
-	void setTexture(sf::Texture& texture);
-	void setTexture(sf::Texture&& texture);
-	void setTexture(const std::string& string);
-	void setTexture(sf::Image&& image);
+	void setTexture(textureID texture_id);
 
-	sf::Image& getImage() override;
-	sf::Texture& getTexture() override;
+	textureID getTextureID() override;
 	float getSpeed();
 	sf::Vector2f getPosition() override;
 

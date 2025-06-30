@@ -1,11 +1,11 @@
 #include "../headers/StaticObject.h"
 
 
-Object::Object(sf::Vector2f position, sf::Texture& texture, bool isCollision, bool isAnimate) : 
+Object::Object(sf::Vector2f position, textureID texture_id, bool isCollision, bool isAnimate) : 
 	m_IsAnimate(isAnimate), m_IsCollision(isCollision)
 {
 	m_position = position;
-	m_texture = texture;
+	m_textureID = texture_id;
 }
 
 sf::Vector2f Object::getPosition() {
@@ -21,27 +21,14 @@ void Object::setPosition(const sf::Vector2f& pos) {
 
 }
 
-sf::Texture& Object::getTexture() {
-
-	return m_texture;
-
-}
-
-void Object::setTexture(sf::Texture& texture) {
-	m_texture = texture;
-
+textureID Object::getTextureID(){
+	return m_textureID;
 }
 
 
-sf::Image& Object::getImage() {
-	return m_image;
+void Object::setTexture(textureID texture_id) {
+	m_textureID = texture_id;
 }
-
-
-void Object::setImage(sf::Image& image) {
-	m_image = image;
-}
-
 
 
 bool Object::isAnimate() {

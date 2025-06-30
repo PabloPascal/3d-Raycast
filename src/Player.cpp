@@ -118,10 +118,10 @@ const float Player::getJumpHeight() {
 }
 
 
-bool& Player::getIsJumping() {
+bool Player::getIsJumping() {
 	return isJumping;
 }
 
-bool& Player::getIsFalling() {
+bool Player::getIsFalling() {
 	return isFalling;
 }

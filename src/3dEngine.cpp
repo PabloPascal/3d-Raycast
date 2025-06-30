@@ -3,11 +3,6 @@
 #include <iostream>
 #include <string>
 
-#if NDEBUG
-#define FLOOR_TEX 1
-#else 
-#define FLOOR_TEX 1
-#endif
 
 
 Engine::Engine(size_t screen_width, size_t screen_hight) : Renderer(screen_width, screen_hight)
@@ -49,8 +44,6 @@ void Engine::run() {
 		
 
 		render(m_player->getCamera());
-		
-		draw();
 
 		m_window.display();
 
@@ -103,15 +96,30 @@ void Engine::loadSprite() {
 
 void Engine::loadThing() {
 	
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{2,3}, mTextures.get(textureID::prigojinTexture), 0.5));
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{2,3},textureID::prigojinTexture, 0.5));
 	numThings++;
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{6,4}, mTextures.get(textureID::prigojinTexture), 0.6));
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{6,4}, textureID::prigojinTexture, 0.6));
 	numThings++;
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, mTextures.get(textureID::prigojinTexture), 0.8, 0, 1));
+	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, textureID::prigojinTexture, 0.8, 0, 1));
 	numThings++;
 	
-	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, mTextures.get(textureID::barrelTexture), true));
+	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, textureID::barrelTexture, true));
 	numThings++;
 
 
+}
+
+
+
+void Engine::loadEnemy(sf::Vector2f startPos,float speed, textureID tid, bool isCollsion, bool isAnimate) {
+
+	enemies.push_back(std::make_shared<Enemy>(startPos, tid, speed, isCollsion, isAnimate));
+	numThings++;
+}
+
+
+void Engine::loadStaticObject(sf::Vector2f startPos, textureID tid, bool isCollsion, bool isAnimate) {
+
+	objects.push_back(std::make_shared<Object>(startPos, tid, isCollsion, isAnimate));
+	numThings++;
 }

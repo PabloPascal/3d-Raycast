@@ -5,8 +5,8 @@
 struct Camera {
 	float m_angle = 0;//angle with OX
 
-	sf::Vector2f dir = { 0.5f, 0 };
-	sf::Vector2f plane = { 0, 0.66f };
+	sf::Vector2f dir = { 1, 0 };
+	sf::Vector2f plane = { 0, 0.66 };
 
 	sf::Vector2f m_position;
 	float posZ;
@@ -50,8 +50,8 @@ public:
 
 	const float getJumpHeight();
 
-	bool& getIsJumping();
-	bool& getIsFalling();
+	bool getIsJumping();
+	bool getIsFalling();
 
 };
 

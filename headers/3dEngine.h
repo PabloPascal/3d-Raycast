@@ -32,7 +32,9 @@ public:
 	void loadImage();
 	void loadSprite();
 	void loadThing();
-	
+	void loadEnemy(sf::Vector2f startPos, float speed, textureID tid,bool isCollsion, bool isAnimate);
+	void loadStaticObject(sf::Vector2f startPos, textureID tid, bool isCollsion, bool isAnimate);
+
 };
 
 

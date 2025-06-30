@@ -4,22 +4,19 @@
 class Object : public Thing
 {
 	sf::Vector2f m_position;
-	sf::Texture m_texture;
-	sf::Image m_image;
+	textureID m_textureID;
 
 	bool m_IsCollision = false;
 	bool m_IsAnimate = false;
 
 public:
 	Object() = default;
-	Object(sf::Vector2f position, sf::Texture& texture, bool isCollision = false, bool isAnimate = false);
+	Object(sf::Vector2f position, textureID texture_id, bool isCollision = false, bool isAnimate = false);
 
 	sf::Vector2f getPosition() override;
 	void setPosition(const sf::Vector2f& pos) override;
-	sf::Texture& getTexture() override;
-	sf::Image& getImage() override;
-	void setTexture(sf::Texture& texture);
-	void setImage(sf::Image& image);
+	textureID getTextureID() override;
+	void setTexture(textureID texture_id);
 
 	bool isAnimate() override;
 	void setAnimate(bool isAnimate);

@@ -1,11 +1,11 @@
 #include "../headers/Enemy.h"
 
-Enemy::Enemy(sf::Vector2f position, sf::Texture& texture, float speed, bool isCollision,
+Enemy::Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision,
 	bool isAnimate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate)
 {
 
 	m_position = position;
-	m_texture = texture;
+	m_textureID = texture_id;
 	m_speed = speed;
 
 }
@@ -26,39 +26,21 @@ void Enemy::setPosition(const sf::Vector2f& pos) {
 	m_position = pos;
 }
 
-sf::Image& Enemy::getImage() {
-	return m_image;
-}
 
-sf::Texture& Enemy::getTexture() {
-	return m_texture;
+textureID Enemy::getTextureID() {
+	return m_textureID;
 }
 
 
-void Enemy::setTexture(sf::Texture& texture) {
-
-	m_texture = texture;
+void Enemy::setTexture(textureID texture_id) {
+	m_textureID = texture_id;
 
 }
 
-
-void Enemy::setTexture(sf::Texture&& texture) {
-	m_texture = std::move(texture);
-}
-
-
-void Enemy::setTexture(const std::string& string) {
-	m_texture.loadFromFile(string);
-}
 
 
 float Enemy::getSpeed(){
 	return m_speed;
-}
-
-
-void Enemy::setTexture(sf::Image&& image) {
-	m_image = std::move(image);
 }
 
 
