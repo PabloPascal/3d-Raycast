@@ -5,10 +5,11 @@
 
 
 
-Engine::Engine(size_t screen_width, size_t screen_hight) : Renderer(screen_width, screen_hight)
+Engine::Engine(size_t screen_width, size_t screen_height) : Renderer(screen_width, screen_height)
 {
-	m_window.create(sf::VideoMode(screen_width, screen_hight), "3d");
+	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
+	//m_player->getCamera().posZ = 0.5 * screen_height;
 }
 
 

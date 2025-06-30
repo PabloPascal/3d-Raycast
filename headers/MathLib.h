@@ -4,6 +4,9 @@
 
 namespace myMATH {
 
+	const float PI = 3.1415;
+
+
 	template <typename T>
 	using matrix = std::vector<std::vector<T>>;
 	

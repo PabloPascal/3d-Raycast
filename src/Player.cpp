@@ -1,12 +1,12 @@
 #include "../headers/Player.h"
-
+#include <iostream>
 
 Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
 
-	m_fov = fov;
+	camera.m_fov = fov;
 	camera.m_angle = start_angle;
 	camera.m_position = start_pos;
-	vertical_angle = 0;
+	camera.pitch = 0;
 	camera.posZ = 0;
 	
 	playerSize = 0.15;
@@ -16,7 +16,7 @@ Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
 }
 
 
-Camera Player::getCamera() {
+Camera& Player::getCamera() {
 	return camera;
 }
 
@@ -80,31 +80,53 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 	}
 
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		camera.pitch += 250*dt;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+		camera.pitch -= 250 * dt;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isJumping && !isFalling) {
+		gravity = 1000;
+		isJumping = true;
+	}
+
+
+#define MAX_HEIGHT 250
+	
+	if (isJumping) {
+		gravity -= 10;
+		camera.posZ += gravity * dt;
+	}
+
+	if (camera.posZ > MAX_HEIGHT || gravity < 10) {
+		isFalling = true;
+		isJumping = false;
+		
+	}
+	/*std::cout <<"posZ = " << camera.posZ << std::endl;
+	std::cout << "isFall = " << isFalling << std::endl;*/
+	//std::cout << "gravity = " << gravity << std::endl;
+
+
+	if (isFalling) {
+		gravity += 20;
+		camera.posZ -= gravity * dt;
+	}
+
+	if (camera.posZ <= 0) {
+		isFalling = false;
+	}
 
 }
 
-
-float& Player::getAngle() {
-	return camera.m_angle;
-}
-
-float Player::getFov() {
-	return m_fov;
-}
 
 sf::Vector2f& Player::getPos() {
 	return camera.m_position;
 }
 
-
-float& Player::getVerticalAngle() {
-	return vertical_angle;
-}
-
-
-float& Player::getZpos() {
-	return camera.posZ;
-}
 
 
 float Player::getPlayerSize() {

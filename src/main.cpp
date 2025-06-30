@@ -5,14 +5,12 @@
 #include "../headers/3dEngine.h"
 
 
-const float PI = 3.1415;
-
-
-
 
 #if NDEBUG
 int w = 1080;
 int h = 720;
+//int w = 1920;
+//int h = 1080;
 #else
 int w = 640;
 int h = 480;
@@ -47,11 +45,11 @@ int main(int argc, char* argv[]) {
         engine->loadMap(path + "/../../maps/map1.txt");
         //engine->loadThing();
 
-       engine->loadEnemy({ 3,4 },0.8, textureID::prigojinTexture, 0, 1);
+        /*engine->loadEnemy({ 3,4 },0.8, textureID::prigojinTexture, 0, 1);
         engine->loadEnemy({ 10,6 },0.5, textureID::prigojinTexture, 0, 1);
         engine->loadEnemy({ 10,30 },0.7, textureID::prigojinTexture, 0, 1);
         engine->loadEnemy({ 3,22 },0.6, textureID::prigojinTexture, 0, 1);
-        engine->loadStaticObject({ 8,2 }, textureID::barrelTexture, 0, 0);
+        */engine->loadStaticObject({ 8,2 }, textureID::barrelTexture, 0, 0);
         engine->loadStaticObject({ 10,2 }, textureID::pillar, 0, 0);
         engine->loadStaticObject({ 14,2 }, textureID::light, 0, 0);
 

@@ -52,7 +52,7 @@ private:
 
 	sf::Color shading(float dist);
 
-	void texturingWall(int x, float distToWall, float delta_side);
+	void texturingWall(int x, float distToWall, float delta_side,const Camera& camera);
 
 private:
 

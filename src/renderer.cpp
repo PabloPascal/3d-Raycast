@@ -7,7 +7,7 @@
 #if NDEBUG
 #define FLOOR_TEX 1
 #else 
-#define FLOOR_TEX 0
+#define FLOOR_TEX 1
 #endif
 
 
@@ -56,10 +56,10 @@ void Renderer::render(const Camera& camera) {
 #if FLOOR_TEX == 0
 	floor.resize(2 * m_window.getSize().x);
 #else
-	floor_buffer.resize(m_window.getSize().x * m_window.getSize().y / 2);
+	floor_buffer.resize(m_window.getSize().x * m_window.getSize().y);
 #endif
 	
-	texturingFloor(camera, m_window.getSize().y / 2 + 1, m_window.getSize().y);
+	texturingFloor(camera, 0, m_window.getSize().y);
 
 	for (int x = 0; x < m_window.getSize().x; x++) {
 
@@ -67,7 +67,7 @@ void Renderer::render(const Camera& camera) {
 		float distToWall = ray.dist;
 		float delta_side = ray.delta_side;
 
-		texturingWall(x, distToWall, delta_side);
+		texturingWall(x, distToWall, delta_side, camera);
 		zBuffer[x] = distToWall;
 	}
 
@@ -164,7 +164,7 @@ Renderer::Ray Renderer::FastRayCast(const Camera& camera, int x) {
 
 #include <iostream>
 
-void Renderer::texturingWall(int x, float distToWall, float delta_side) {
+void Renderer::texturingWall(int x, float distToWall, float delta_side, const Camera& camera) {
 
 	float texture_width = mTextures.get(textureID::wallbrick).getSize().x;
 
@@ -173,20 +173,14 @@ void Renderer::texturingWall(int x, float distToWall, float delta_side) {
 	int baseIndex = 2 * x;
 
 	float wallHeight = (float)m_window.getSize().y / distToWall;
-	float y_start_wall = (m_window.getSize().y - wallHeight) / 2;
-	float y_end_wall = (m_window.getSize().y + wallHeight) / 2;
-	//float y_start_wall = windowSize.y * 0.5 + -wallHeight * (1 - 0.5 * windowSize.y);
-	//float y_end_wall = windowSize.y * 0.5 + wallHeight * 0.5 * windowSize.y;
-
-	//std::cout << "y_start_wall = " << y_start_wall << ", ";
-	//std::cout << "y_end_wall = " << y_end_wall << std::endl;
+	float y_start_wall = (m_window.getSize().y - wallHeight) / 2 + camera.pitch + (camera.posZ / distToWall);
+	float y_end_wall = (m_window.getSize().y + wallHeight) / 2 + camera.pitch + (camera.posZ / distToWall);;
 
 	float texture_pos = delta_side * texture_width;
 
 	//wall
 	wall[baseIndex] = (sf::Vertex(sf::Vector2f(x, y_start_wall), shade, sf::Vector2f(texture_pos, 0)));
 	wall[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, y_end_wall), shade, sf::Vector2f(texture_pos, texture_width)));
-	//std::cout << distToWall << std::endl;
 
 	//roof
 	roof[baseIndex] = (sf::Vertex(sf::Vector2f(x, 0), sf::Color(187, 211, 255)));
@@ -248,34 +242,39 @@ void Renderer::texturingFloor(const Camera& camera, size_t y_start, size_t y_end
 		sf::Vector2f rayDirLeft = camera.dir - camera.plane;
 		sf::Vector2f rayDirRight = camera.dir + camera.plane;
 
+		bool is_floor = y > m_window.getSize().y / 2 + camera.pitch;
 
-		int p = y - m_window.getSize().y / 2.f;
-		float posZ = 0.5 * m_window.getSize().y;
 
-		float rowDistance = posZ / (float)p;
+		//int p = y - m_window.getSize().y / 2.f;
+		int p = is_floor ? (y - m_window.getSize().y / 2.f - camera.pitch) : (m_window.getSize().y / 2 - y + camera.pitch);
+
+		//float camZ = 0.5 * m_window.getSize().y;
+		float camZ = is_floor ? (0.5 * m_window.getSize().y + camera.posZ) : (0.5 * m_window.getSize().y - camera.posZ);
+
+		float rowDistance =  camZ / (float)p;
 		sf::Vector2f floorStep = rowDistance * (rayDirLeft - rayDirRight) / (float)m_window.getSize().x;
 
 		sf::Vector2f floorPos = camera.m_position + rowDistance * rayDirRight;
 
 
+		if (is_floor) {
+			for (int x = 0; x < m_window.getSize().x; x++) {
 
-		for (int x = 0; x < m_window.getSize().x; x++) {
+				sf::Vector2i cell(floorPos);
 
-			sf::Vector2i cell(floorPos);
+				sf::Vector2i texCoords = {
+					(int)(textureFloor_w * (floorPos.x - cell.x)) & (int)(textureFloor_w - 1),
+					(int)(textureFloor_h * (floorPos.y - cell.y)) & (int)(textureFloor_h - 1)
+				};
 
-			sf::Vector2i texCoords = {
-				(int)(textureFloor_w * (floorPos.x - cell.x)) & (int)(textureFloor_w - 1),
-				(int)(textureFloor_h * (floorPos.y - cell.y)) & (int)(textureFloor_h - 1)
-			};
+				floorPos += floorStep;
 
-			floorPos += floorStep;
+				int index = (y - y_start) * m_window.getSize().x + x;
+				floor_buffer[index] = sf::Vertex(sf::Vector2f(x, y), sf::Vector2f(texCoords));
 
-			int index = (y - m_window.getSize().y / 2.f) * m_window.getSize().x + x;
-			floor_buffer[index] = sf::Vertex(sf::Vector2f(x, y), sf::Vector2f(texCoords));
-			
 
+			}
 		}
-
 	}
 #endif
 }
@@ -364,9 +363,15 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 	
 	int spriteSize = std::abs(int(m_window.getSize().y / transform.y ));
 
+#define uDiv 1
+#define vDiv 1
+#define vMove 0.0
 
-	float drawStartY = (float)m_window.getSize().y / 2 - (float)spriteSize / 2;
-	float drawEndY = m_window.getSize().y / 2 + spriteSize / 2;
+	int vMoveScreen = int(vMove / -transform.y) + camera.pitch + camera.posZ / -transform.y;
+
+
+	float drawStartY = (float)m_window.getSize().y / 2 - (float)spriteSize / 2 + vMoveScreen;
+	float drawEndY = m_window.getSize().y / 2 + spriteSize / 2 + vMoveScreen;
 
 	int drawStartX = -spriteSize / 2 + ScreenX;
 	int drawEndX = spriteSize / 2 + ScreenX;
