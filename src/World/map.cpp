@@ -1,4 +1,4 @@
-#include "../headers/map.h"
+#include "map.h"
 #include <fstream>
 #include <iostream>
 

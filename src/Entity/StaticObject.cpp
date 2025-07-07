@@ -1,4 +1,4 @@
-#include "../headers/StaticObject.h"
+#include "StaticObject.h"
 
 
 Object::Object(sf::Vector2f position, textureID texture_id, bool isCollision, bool isAnimate) : 

@@ -1,14 +1,15 @@
-#include "../headers/Render.h"
+#include "Renderer.h"
 #include <cmath>
 #include <thread>
 #include <algorithm>
 #include <iostream>
 
 #if NDEBUG
-#define FLOOR_TEX 1
+#define FLOOR_TEX 0
 #else 
-#define FLOOR_TEX 1
+#define FLOOR_TEX 0
 #endif
+
 
 
 Renderer::Renderer(size_t width, size_t height) 
@@ -22,6 +23,11 @@ Renderer::Renderer(size_t width, size_t height)
 	floor_buffer.setPrimitiveType(sf::Points);
 	spriteColumns.setPrimitiveType(sf::Lines);
 
+	//floor_buffer.resize(m_window.getSize().x * m_window.getSize().y);
+
+
+	/*futures.resize(NUM_THREADS);
+	threads.resize(NUM_THREADS);*/
 }
 
 
@@ -53,13 +59,16 @@ void Renderer::render(const Camera& camera) {
 	roof.resize(2 * m_window.getSize().x);
 	zBuffer.resize(m_window.getSize().x);
 
+
 #if FLOOR_TEX == 0
 	floor.resize(2 * m_window.getSize().x);
 #else
-	floor_buffer.resize(m_window.getSize().x * m_window.getSize().y);
-#endif
+	//renderFloor(camera, 0, m_window.getSize().y);
+	//multithreadRenderFloor(camera);
 	
-	texturingFloor(camera, 0, m_window.getSize().y);
+#endif
+
+	textureID texID;
 
 	for (int x = 0; x < m_window.getSize().x; x++) {
 
@@ -67,25 +76,37 @@ void Renderer::render(const Camera& camera) {
 		float distToWall = ray.dist;
 		float delta_side = ray.delta_side;
 
-		texturingWall(x, distToWall, delta_side, camera);
+		texID = ray.wall_id;
+
+		renderWall(x, distToWall, delta_side, camera);
 		zBuffer[x] = distToWall;
+
 	}
 
-#if FLOOR_TEX 
-	m_window.draw(floor_buffer, &mTextures.get(textureID::floor));
-#else
+
+#if FLOOR_TEX == 0
 	m_window.draw(floor);
 #endif
-	m_window.draw(wall, &mTextures.get(textureID::wallbrick));
+	//for (size_t i = 0; i < NUM_THREADS; i++) {
+	//	futures[i].wait();
+	//}
+
 	m_window.draw(roof);
+	m_window.draw(floor_buffer, &mTextures.get(textureID::floor));
+	m_window.draw(wall, &mTextures.get(texID));
 
 	//spire casting
-	texturingSprite(camera);
+	renderSprite(camera);
 
+
+#if FLOOR_TEX == 0 
 	floor.clear();
+#else
+	//floor_buffer.clear();
+#endif
 	roof.clear();
-	floor_buffer.clear();
 	wall.clear();
+
 
 }
 
@@ -98,7 +119,7 @@ Renderer::Ray Renderer::FastRayCast(const Camera& camera, int x) {
 	float perpendicualar_dist = 0;
 
 
-	auto world = mMaps[0].m_world;
+	auto world = mMap.m_world;
 
 	bool isHorizontal = false;
 
@@ -156,15 +177,17 @@ Renderer::Ray Renderer::FastRayCast(const Camera& camera, int x) {
 
 
 	if (isHorizontal)
-		return { perpendicualar_dist, wall_x };
+		return { perpendicualar_dist, wall_x, textureID::wallGrayBrick};
 	else
-		return { perpendicualar_dist, wall_x };
+		return { perpendicualar_dist, wall_x, textureID::wallGrayBrick};
 
 }
 
-#include <iostream>
 
-void Renderer::texturingWall(int x, float distToWall, float delta_side, const Camera& camera) {
+
+
+#include <iostream>
+void Renderer::renderWall(int x, float distToWall, float delta_side, const Camera& camera) {
 
 	float texture_width = mTextures.get(textureID::wallbrick).getSize().x;
 
@@ -191,6 +214,8 @@ void Renderer::texturingWall(int x, float distToWall, float delta_side, const Ca
 	floor[baseIndex + 1] = (sf::Vertex(sf::Vector2f(x, m_window.getSize().y), sf::Color::White));
 #endif
 }
+
+
 
 
 
@@ -228,14 +253,16 @@ sf::Color Renderer::shading(float dist) {
 }
 
 
-void Renderer::texturingFloor(const Camera& camera, size_t y_start, size_t y_end) {
+
+
+
+void Renderer::renderFloor(const Camera& camera, size_t y_start, size_t y_end) {
 
 
 	float textureFloor_w = mTextures.get(textureID::floor).getSize().x;
 	float textureFloor_h = mTextures.get(textureID::floor).getSize().y;
 
 
-#if FLOOR_TEX
 //#pragma omp parallel for schedule(dynamic,1)
 	for (int y = y_start; y < y_end; y++) {
 
@@ -269,20 +296,43 @@ void Renderer::texturingFloor(const Camera& camera, size_t y_start, size_t y_end
 
 				floorPos += floorStep;
 
-				int index = (y - y_start) * m_window.getSize().x + x;
+				int index = y * m_window.getSize().x + x;
 				floor_buffer[index] = sf::Vertex(sf::Vector2f(x, y), sf::Vector2f(texCoords));
+				
+			}//for x
+		}//if
+	}//for y
 
-
-			}
-		}
-	}
-#endif
 }
 
 
 
 
-void Renderer::multithreadingFloor() {
+void Renderer::multithreadRenderFloor(const Camera& camera){
+
+	size_t offset = std::ceil(m_window.getSize().y / NUM_THREADS);
+	size_t remain = m_window.getSize().y % NUM_THREADS;
+	
+
+	size_t index;
+	for (size_t i = 0; i < NUM_THREADS; i++) {
+		index = i * offset;
+		futures[i] = std::async([&camera, &index, &offset, this]{renderFloor(camera, index, index + offset); });
+	}
+	if (offset != 0) {
+		std::async([&camera, &index, &offset,&remain, this] {renderFloor(camera, index + offset, index + offset + remain); });
+	}
+
+	/*for (size_t i = 0; i < NUM_THREADS; i++) {
+		index = i * offset;
+		threads[i] = std::thread([&camera, &index, &offset, this] {renderFloor(camera, index, index + offset); });
+	}
+	
+	for (size_t i = 0; i < NUM_THREADS; i++) {
+		threads[i].join();
+	}*/
+
+
 
 }
 
@@ -309,7 +359,7 @@ void Renderer::spriteSort() {
 }
 
 
-void Renderer::texturingSprite(const Camera& camera) {
+void Renderer::renderSprite(const Camera& camera) {
 	
 	
 	for (int i = 0; i < numThings; i++) {
@@ -320,7 +370,7 @@ void Renderer::texturingSprite(const Camera& camera) {
 
 	spriteSort();
 	for(int i : spriteOrder)
-		texturingPerSprite(camera, things[i]);
+		renderPerSprite(camera, things[i]);
 
 
 }
@@ -328,14 +378,8 @@ void Renderer::texturingSprite(const Camera& camera) {
 
 
 
-
-void Renderer::texturingFloorFast(const Camera& camera) {}
-
-
-
-
 float t = 0;
-void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
+void Renderer::renderPerSprite(const Camera& camera, ThingPtr thing) {
 	t++;
 
 	if (t > 1000) t -= 1000;
@@ -384,14 +428,8 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 
 			float texCoordX = (x - (-spriteSize / 2 + ScreenX)) * textureSize.y / spriteSize;
 
-			if (thing->isAnimate()) {
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY + 3*sin(t/50.f)), sf::Vector2f(texCoordX, 0)));
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY + 3*sin(t/50.f)), sf::Vector2f(texCoordX, textureSize.y)));
-			}
-			else {
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
-				spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
-			}
+			spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
+			spriteColumns.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
 
 		}
 	}
@@ -402,5 +440,6 @@ void Renderer::texturingPerSprite(const Camera& camera, ThingPtr thing) {
 	spriteColumns.clear();
 
 }
+
 
 

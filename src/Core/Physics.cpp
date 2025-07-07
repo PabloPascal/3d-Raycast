@@ -1,4 +1,4 @@
-#include "../headers/Physics.h"
+#include "Physics.h"
 
 
 bool PhysicsEngine::checkCollision(const Map& map, const sf::Vector2f& pos, const std::vector<ThingPtr>& things){

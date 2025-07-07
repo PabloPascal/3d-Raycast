@@ -1,4 +1,4 @@
-#include "../headers/Player.h"
+#include "Player.h"
 #include <iostream>
 
 Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
@@ -81,11 +81,11 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		camera.pitch += 250*dt;
+		camera.pitch += 850*dt;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		camera.pitch -= 250 * dt;
+		camera.pitch -= 850 * dt;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isJumping && !isFalling) {

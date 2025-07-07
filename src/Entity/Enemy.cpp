@@ -1,7 +1,10 @@
-#include "../headers/Enemy.h"
+#include "Enemy.h"
+#include "AI.h"
+
+
 
 Enemy::Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision,
-	bool isAnimate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate)
+	bool isAnimate, bool AIactivate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate), m_AIactivate(AIactivate)
 {
 
 	m_position = position;
@@ -12,8 +15,7 @@ Enemy::Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCo
 
 
 
-void Enemy::update(float dt) {
-
+void Enemy::update(const sf::Vector2f& playerPos,float dt) {
 
 }
 
@@ -60,4 +62,10 @@ bool Enemy::isAnimate() {
 
 void Enemy::setAnimate(bool isAnimate){
 	m_IsAnimate = isAnimate;
+}
+
+
+
+void Enemy::setAIactivate(bool turn) {
+	m_AIactivate = turn;
 }

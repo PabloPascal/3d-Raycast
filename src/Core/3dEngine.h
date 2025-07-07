@@ -6,17 +6,17 @@
 #include <memory>
 
 #include "map.h"
-#include "Render.h"
+#include "Renderer.h"
 #include "AI.h" 
 
 
 
 
-class Engine :public Renderer
+class Engine : public Renderer
 {
 
-	
 	std::unique_ptr<Player> m_player;
+
 
 public:
 	Engine(size_t screen_width, size_t screen_hight);
@@ -32,7 +32,7 @@ public:
 	void loadImage();
 	void loadSprite();
 	void loadThing();
-	void loadEnemy(sf::Vector2f startPos, float speed, textureID tid,bool isCollsion, bool isAnimate);
+	void loadEnemy(sf::Vector2f startPos, float speed, textureID tid,bool isCollsion, bool isAnimate, bool AI);
 	void loadStaticObject(sf::Vector2f startPos, textureID tid, bool isCollsion, bool isAnimate);
 
 };

@@ -3,6 +3,7 @@
 
 enum class textureID {
 	wallbrick,
+	wallGrayBrick,
 	floor,
 	prigojinTexture,
 	barrelTexture,

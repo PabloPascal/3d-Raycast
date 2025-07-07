@@ -1,4 +1,4 @@
-#include "../headers/MathLib.h"
+#include "MathLib.h"
 #include <iostream>
 
 

@@ -6,21 +6,51 @@ set(Raycast3D ${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME} 
 src/main.cpp
-src/3dEngine.cpp
-src/Player.cpp
-src/map.cpp
-src/renderer.cpp
-src/Physics.cpp 
+
+src/Core/3dEngine.cpp
+src/Core/3dEngine.h
+
+src/Core/Physics.h
+src/Core/Physics.cpp 
 
 
-headers/3dEngine.h
-headers/ResourceHolder.h
-headers/Player.h
-headers/map.h
-headers/Render.h
-headers/Physics.h
+src/Entity/StaticObject.h
+src/Entity/StaticObject.cpp
+src/Entity/Thing.h
+src/Entity/Enemy.h
+src/Entity/Enemy.cpp
+src/Entity/Player.cpp
+src/Entity/Player.h
+
+src/World/map.cpp
+src/World/map.h
+
+src/Resources/ResourceHolder.h
+
+
+src/Renderer/Renderer.h
+src/Renderer/Renderer.cpp
+
+src/Ai/AI.cpp 
+src/Ai/AI.h
+
+src/utils/MathLib.cpp
+src/utils/MathLib.h
+
+src/utils/PathFinder.h
+src/utils/PathFinder.cpp
 )
 
+
+include_directories(
+src/Ai
+src/Core 
+src/Entity 
+src/Renderer 
+src/Resources 
+src/utils
+src/World 
+)
 
 set(SFML_DIR "external/SFML-2.6.1/lib/cmake/SFML")
 

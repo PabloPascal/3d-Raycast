@@ -1,4 +1,4 @@
-#include "../headers/3dEngine.h"
+#include "3dEngine.h"
 
 #include <iostream>
 #include <string>
@@ -9,7 +9,7 @@ Engine::Engine(size_t screen_width, size_t screen_height) : Renderer(screen_widt
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
-	//m_player->getCamera().posZ = 0.5 * screen_height;
+	//AI::pathFinder = new PathFinder(mMap);
 }
 
 
@@ -20,12 +20,14 @@ void Engine::run() {
 	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	sf::Clock clock;
 
-
+	float deltaTime;
 	while (m_window.isOpen()) {
 
 		timeSinceLastUpdate = clock.restart();
 
-		m_window.setTitle(std::to_string(1 / timeSinceLastUpdate.asSeconds()) + " FPS");
+		deltaTime = timeSinceLastUpdate.asSeconds();
+
+		m_window.setTitle(std::to_string(1 / deltaTime) + " FPS");
 
 		sf::Event event;
 		while (m_window.pollEvent(event)) {
@@ -38,10 +40,10 @@ void Engine::run() {
 
 		}
 
-		m_player->control(mMaps[0], things, timeSinceLastUpdate.asSeconds());
+		m_player->control(mMap, things, deltaTime);
 
-		for(auto& it: enemies)
-			AI::simpleAI(it, m_player->getPos(), timeSinceLastUpdate.asSeconds());
+		/*for (auto& enemy : enemies)
+			enemy->update(mMap, m_player->getPos(), deltaTime);*/
 		
 
 		render(m_player->getCamera());
@@ -57,13 +59,13 @@ void Engine::loadMap(const std::string& path) {
 
 	Map map;
 	map.load(path);
-	mMaps.push_back(std::move(map));
+	mMap = std::move(map);
 }
 
 
 void Engine::loadMap(Map& map) {
 
-	mMaps.push_back(std::move(map));
+	mMap = std::move(map);
 }
 
 
@@ -112,9 +114,9 @@ void Engine::loadThing() {
 
 
 
-void Engine::loadEnemy(sf::Vector2f startPos,float speed, textureID tid, bool isCollsion, bool isAnimate) {
+void Engine::loadEnemy(sf::Vector2f startPos,float speed, textureID tid, bool isCollsion, bool isAnimate, bool AI) {
 
-	enemies.push_back(std::make_shared<Enemy>(startPos, tid, speed, isCollsion, isAnimate));
+	enemies.push_back(std::make_shared<Enemy>(startPos, tid, speed, isCollsion, isAnimate, AI));
 	numThings++;
 }
 

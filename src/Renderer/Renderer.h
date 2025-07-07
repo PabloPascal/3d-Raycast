@@ -2,9 +2,11 @@
 #include "ResourceHolder.h"
 #include "Player.h"
 #include "MathLib.h"
+#include <thread>
+#include <future>
 
 
-
+#define NUM_THREADS 8
 
 
 class Renderer
@@ -12,7 +14,8 @@ class Renderer
 protected:
 	ResourceHolder<textureID, sf::Texture> mTextures;
 	ResourceHolder<textureID, sf::Image> mImages;
-	std::vector<Map> mMaps;
+	
+	Map mMap;
 	std::vector<EnemyPtr> enemies;
 	std::vector<ObjectPtr> objects;
 	std::vector<ThingPtr> things;
@@ -24,6 +27,7 @@ protected:
 	struct Ray {
 		float dist;
 		float delta_side;
+		textureID wall_id;
 	};
 
 	float m_depth = 15;
@@ -32,27 +36,29 @@ public:
 
 	Renderer(size_t width, size_t height);
 
+	Renderer(const Renderer&) = delete;
+
+	Renderer& operator=(const Renderer&) = delete;
+
 	void render(const Camera& camera);
 	
 private:
 
 	Ray FastRayCast(const Camera& camera, int x);
 
-	void texturingFloor(const Camera& camera, size_t y_start, size_t y_end);
+	void renderFloor(const Camera& camera, size_t y_start, size_t y_end);
 
-	void texturingFloorFast(const Camera& camera);
-
-	void texturingSprite(const Camera& camera);
+	void renderSprite(const Camera& camera);
 	
-	void texturingPerSprite(const Camera& camera, ThingPtr thing);
+	void renderPerSprite(const Camera& camera, ThingPtr thing);
 
-	void multithreadingFloor();
+	void multithreadRenderFloor(const Camera& camera);
 
 	void spriteSort();
 
 	sf::Color shading(float dist);
 
-	void texturingWall(int x, float distToWall, float delta_side,const Camera& camera);
+	void renderWall(int x, float distToWall, float delta_side,const Camera& camera);
 
 private:
 
@@ -66,4 +72,11 @@ private:
 	sf::VertexArray floor;
 	sf::VertexArray floor_buffer;
 	sf::VertexArray spriteColumns;
+
+	uint8_t* floorPixels;
+
+
+	std::vector<std::future<void>> futures;
+	std::vector<std::thread> threads;
+
 };
