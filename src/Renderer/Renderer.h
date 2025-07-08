@@ -47,6 +47,9 @@ private:
 	Ray FastRayCast(const Camera& camera, int x);
 
 	void renderFloor(const Camera& camera, size_t y_start, size_t y_end);
+	
+	void renderRowFloor(const Camera& camera, size_t y);
+
 
 	void renderSprite(const Camera& camera);
 	
@@ -70,13 +73,10 @@ private:
 	sf::VertexArray roof;
 	sf::VertexArray wall;
 	sf::VertexArray floor;
-	sf::VertexArray floor_buffer;
+	//sf::VertexArray floor_buffer;
 	sf::VertexArray spriteColumns;
 
 	uint8_t* floorPixels;
 
-
-	std::vector<std::future<void>> futures;
-	std::vector<std::thread> threads;
 
 };
