@@ -20,7 +20,7 @@ void Enemy::update(const sf::Vector2f& playerPos,float dt) {
 }
 
 
-sf::Vector2f Enemy::getPosition() {
+sf::Vector2f Enemy::getPosition() const {
 	return m_position;
 }
 
@@ -29,7 +29,7 @@ void Enemy::setPosition(const sf::Vector2f& pos) {
 }
 
 
-textureID Enemy::getTextureID() {
+textureID Enemy::getTextureID() const {
 	return m_textureID;
 }
 

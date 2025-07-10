@@ -31,9 +31,9 @@ private:
 
 public:
 
-	//PathFinder(const Map& map);
+	PathFinder(const Map& map);
 	
-	//std::map<Node, std::optional<Node>> bfs(const Node& start, const Node& end);
+	std::map<Node, std::optional<Node>> bfs(const Node& start, const Node& end);
 
-	//std::vector<Node> getPath(const Node& start,const Node& end);
+	std::vector<Node> getPath(const Node& start,const Node& end);
 };

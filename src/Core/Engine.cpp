@@ -1,15 +1,41 @@
-#include "3dEngine.h"
+#include "Engine.h"
 
 #include <iostream>
 #include <string>
 
 
 
-Engine::Engine(size_t screen_width, size_t screen_height) : Renderer(screen_width, screen_height)
+Engine::Engine(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
-	//AI::pathFinder = new PathFinder(mMap);
+
+
+	mTextures.load(textureID::floor, absolute_path + "/../../res/colorstone.png");
+	mTextures.load(textureID::prigojinTexture, absolute_path + "/../../res/prigojin.png");
+	mTextures.load(textureID::barrelTexture, absolute_path + "/../../res/barrel.png");
+	mTextures.load(textureID::pillar, absolute_path + "/../../res/pillar.png");
+	mTextures.load(textureID::light, absolute_path + "/../../res/light.png");
+	mTextures.load(textureID::wallTexture, absolute_path + "/../../res/walls_texture.png");
+
+	
+	mImages.load(textureID::floor, absolute_path + "/../../res/colorstone.png");
+	mImages.load(textureID::prigojinTexture, absolute_path + "/../../res/prigojin.png");
+	mImages.load(textureID::barrelTexture, absolute_path + "/../../res/barrel.png");
+	mImages.load(textureID::pillar, absolute_path + "/../../res/pillar.png");
+	mImages.load(textureID::light, absolute_path + "/../../res/light.png");
+	mImages.load(textureID::wallTexture, absolute_path + "/../../res/greystone.png");;
+
+	/*		
+		Init WallHeaderInfo
+	*/
+
+	wallSpriteInfo.m_id = textureID::wallTexture;
+	wallSpriteInfo.texture_width = mTextures.get(textureID::wallTexture).getSize().x;
+	wallSpriteInfo.texture_height = mTextures.get(textureID::wallTexture).getSize().y;
+	wallSpriteInfo.offset = 64;
+	wallSpriteInfo.sprite_count = 8;
+
 }
 
 
@@ -40,12 +66,13 @@ void Engine::run() {
 
 		}
 
-		m_player->control(mMap, things, deltaTime);
+		m_player->control(mMap[mapID::default_map], things, deltaTime);
 
-		/*for (auto& enemy : enemies)
-			enemy->update(mMap, m_player->getPos(), deltaTime);*/
 		
 
+		for (auto& enemy : enemies) {
+			AI::simpleAI(enemy, m_player->getPos(), deltaTime);
+		}
 		render(m_player->getCamera());
 
 		m_window.display();
@@ -55,24 +82,24 @@ void Engine::run() {
 
 
 
-void Engine::loadMap(const std::string& path) {
+void Engine::loadMap(mapID map_id,const std::string& path) {
 
 	Map map;
 	map.load(path);
-	mMap = std::move(map);
+	mMap[map_id] = std::move(map);
 }
 
 
-void Engine::loadMap(Map& map) {
+void Engine::loadMap(mapID map_id,Map& map) {
 
-	mMap = std::move(map);
+	mMap[map_id] = std::move(map);
 }
 
 
 
 void Engine::loadTexture() {
 
-	mTextures.load(textureID::wallbrick, std::string("../res/redbrick.png"));
+	mTextures.load(textureID::wallTexture, std::string("../res/redbrick.png"));
 	mTextures.load(textureID::floor, std::string("../res/colorstone.png"));
 	mTextures.load(textureID::barrelTexture, "../res/barrel.png");
 	mTextures.load(textureID::prigojinTexture, "../res/prigojin.png");
@@ -86,12 +113,19 @@ void Engine::loadTexture(textureID id, const std::string& path) {
 }
 
 void Engine::loadImage() {
-	mImages.load(textureID::wallbrick, std::string("../res/redbrick.png"));
+	mImages.load(textureID::wallTexture, std::string("../res/redbrick.png"));
 	mImages.load(textureID::floor, std::string("../res/colorstone.png"));
 	mImages.load(textureID::barrelTexture, "../res/barrel.png");
 	mImages.load(textureID::prigojinTexture, "../res/prigojin.png");
 }
 
+
+
+void Engine::loadImage(textureID id, const std::string& path) {
+
+	mImages.load(id, path);
+
+}
 
 void Engine::loadSprite() {
 }

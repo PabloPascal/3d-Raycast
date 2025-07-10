@@ -2,7 +2,6 @@
 #include "Thing.h"
 
 
-
 class Enemy :public Thing 
 {
 	float m_speed = 0.5;
@@ -25,9 +24,9 @@ public:
 	virtual void setTexture(textureID texture_id);
 	virtual void setAIactivate(bool turn);
 
-	virtual textureID getTextureID() override;
+	virtual textureID getTextureID() const override;
 	virtual float getSpeed();
-	virtual sf::Vector2f getPosition() override;
+	virtual sf::Vector2f getPosition() const override;
 
 	virtual bool isAnimate() override;
 	virtual void setAnimate(bool isAnimate);

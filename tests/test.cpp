@@ -1,6 +1,6 @@
 #include "../src/utils/PathFinder.h"
 #include "../src/World/map.h"
-#include "3dEngine.h"
+#include "Engine.h"
 
 
 #include <iostream>
@@ -44,26 +44,15 @@ static void testEngine(char* argv0) {
 #endif
 
 	
-	Engine* engine = new Engine(w, h);
 
     int found = (std::string(argv0).find_last_of("/\\"));
     std::string path = std::string(argv0).substr(0, found);
     std::cout << std::endl << path + "\\..\\..\\res\\redbrick.png" << std::endl;
 
+    Engine* engine = new Engine(w, h, path);
 
 
-    //engine->loadTexture();
-    engine->loadTexture(textureID::wallbrick, path + "/../../res/redbrick.png");
-    engine->loadTexture(textureID::floor, path + "/../../res/colorstone.png");
-    engine->loadTexture(textureID::prigojinTexture, path + "/../../res/prigojin.png");
-    engine->loadTexture(textureID::barrelTexture, path + "/../../res/barrel.png");
-    engine->loadTexture(textureID::pillar, path + "/../../res/pillar.png");
-    engine->loadTexture(textureID::light, path + "/../../res/light.png");
-    engine->loadTexture(textureID::wallGrayBrick, path + "/../../res/greystone.png");
-    //engine->loadSprite();
-    //engine->loadMap(world);
-    engine->loadImage();
-    engine->loadMap(path + "/../../maps/map1.txt");
+    engine->loadMap(mapID::default_map ,path + "/../../maps/map1.txt");
     //engine->loadThing();
 
     engine->loadEnemy({ 3,4 },0.8, textureID::prigojinTexture, false, true, true);

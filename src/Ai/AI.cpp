@@ -1,17 +1,14 @@
 #include "AI.h"
 
-PathFinder* AI::pathFinder = nullptr;
 
+void AI::simpleAI(std::shared_ptr<Enemy>& enemy, sf::Vector2f playerPos, float dt){
 
-
-void AI::simpleAI(sf::Vector2f& enemyPosition, float enemySpeed, sf::Vector2f playerPos, float dt){
-
-	sf::Vector2f direction = playerPos - enemyPosition;
+	sf::Vector2f direction = playerPos - enemy->getPosition();
 	
 	float dist = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	direction /= dist;
 
-	enemyPosition = (enemyPosition + enemySpeed * dt * direction);
+	enemy->setPosition(enemy->getPosition() + enemy->getSpeed() * dt * direction);
 
 }
 

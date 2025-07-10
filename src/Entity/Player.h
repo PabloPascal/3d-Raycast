@@ -1,6 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Physics.h"
+#include "defines.h"
+
+
 
 struct Camera {
 	[[maybe_unused]] float m_angle = 0;//angle with OX

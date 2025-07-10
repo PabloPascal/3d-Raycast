@@ -8,7 +8,7 @@ Object::Object(sf::Vector2f position, textureID texture_id, bool isCollision, bo
 	m_textureID = texture_id;
 }
 
-sf::Vector2f Object::getPosition() {
+sf::Vector2f Object::getPosition() const {
 
 	return m_position;
 
@@ -21,7 +21,7 @@ void Object::setPosition(const sf::Vector2f& pos) {
 
 }
 
-textureID Object::getTextureID(){
+textureID Object::getTextureID() const{
 	return m_textureID;
 }
 

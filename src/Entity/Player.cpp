@@ -1,5 +1,7 @@
 #include "Player.h"
+#include <SFML/Window/Keyboard.hpp>
 #include <iostream>
+
 
 Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
 

@@ -19,19 +19,22 @@ class Engine : public Renderer
 
 
 public:
-	Engine(size_t screen_width, size_t screen_hight);
+	Engine(const size_t screen_width, const size_t screen_height, const std::string& absolute_path);
 
 	void run();
 
 	
-	void loadMap(const std::string& path);
-	void loadMap(Map& map);
-	void loadTexture(textureID id,const std::string& path);
+	void loadMap(mapID,const std::string& path);
+	void loadTexture(textureID id, const std::string& path);
+	void loadImage(textureID id, const std::string& path);
+
+	void loadMap(mapID ,Map& map);
+
 	void loadTexture();
-	void loadImage(const std::string& path);
 	void loadImage();
 	void loadSprite();
 	void loadThing();
+
 	void loadEnemy(sf::Vector2f startPos, float speed, textureID tid,bool isCollsion, bool isAnimate, bool AI);
 	void loadStaticObject(sf::Vector2f startPos, textureID tid, bool isCollsion, bool isAnimate);
 

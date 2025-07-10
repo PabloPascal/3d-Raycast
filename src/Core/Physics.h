@@ -1,6 +1,11 @@
 #pragma once
+#include <SFML/System/Vector2.hpp>
+#include "map.h"
 #include "ResourceHolder.h"
-
+#include "defines.h"
+#include "Thing.h"
+#include "Enemy.h"
+#include "StaticObject.h"
 
 
 class PhysicsEngine {
