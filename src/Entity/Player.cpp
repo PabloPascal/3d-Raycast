@@ -1,5 +1,7 @@
 #include "Player.h"
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
+
 #include <iostream>
 
 
@@ -15,6 +17,9 @@ Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
 
 	isJumping = false;
 	isFalling = false;
+
+	TimeMove = 0;
+
 }
 
 
@@ -32,7 +37,10 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 	float rot = rot_speed * dt;
 	float speed = 5;
 
+	isMove = false;
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+
 		float prev_dirX = camera.dir.x;
 		camera.dir.x = prev_dirX * cos(rot) - camera.dir.y * sin(rot);
 		camera.dir.y = prev_dirX * sin(rot) + camera.dir.y * cos(rot);
@@ -42,6 +50,7 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 		camera.plane.y = prev_planeX * sin(rot) + camera.plane.y * cos(rot);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+
 		float prev_dirX = camera.dir.x;
 		camera.dir.x = prev_dirX * cos(-rot) - camera.dir.y * sin(-rot);
 		camera.dir.y = prev_dirX * sin(-rot) + camera.dir.y * cos(-rot);
@@ -52,6 +61,10 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+
+		isMove = true;
+		TimeMove+=0.05;
+
 		if (camera.dir.x > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt + playerSize, camera.m_position.y }, things)) {
 			camera.m_position.x += speed * camera.dir.x * dt;
 		}
@@ -69,6 +82,10 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+
+		isMove = true;
+		TimeMove += 0.05;
 
 		if (PhysicsEngine::checkCollision(map, { camera.m_position.x - speed * camera.dir.x * dt , camera.m_position.y }, things)) {
 			camera.m_position.x -= speed * camera.dir.x * dt;
@@ -148,4 +165,27 @@ bool Player::getIsJumping() {
 
 bool Player::getIsFalling() {
 	return isFalling;
+}
+
+
+
+void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite, float dt) {
+
+	if (TimeMove > 1000) {
+		TimeMove = (int)TimeMove % 1000;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		weapon->shoot();
+	}
+
+	float amplitude = 0.3;
+
+	if(isMove)
+		sprite.setPosition(sprite.getPosition().x,sprite.getPosition().y - amplitude * sin(TimeMove));
+	
+	
+
+	render_target.draw(sprite);
+
 }

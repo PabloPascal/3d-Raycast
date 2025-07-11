@@ -35,8 +35,6 @@ Renderer::Renderer(size_t width, size_t height) : m_ScreenWidth(width), m_Screen
 
 void Renderer::render(const Camera& camera) {
 	
-	m_window.clear();
-
 
 	if (numThings != things.size()) {
 
@@ -109,7 +107,7 @@ void Renderer::render(const Camera& camera) {
 	/*
 	*   SPRITE RENDERING
 	*/
-	renderSprite(camera);
+	renderEntity(camera);
 
 
 #if FLOOR_TEX == 0 
@@ -344,7 +342,7 @@ void Renderer::spriteSort() {
 }
 
 
-void Renderer::renderSprite(const Camera& camera) {
+void Renderer::renderEntity(const Camera& camera) {
 	
 	
 	for (int i = 0; i < numThings; i++) {
@@ -473,5 +471,11 @@ void Renderer::renderRowFloor(const Camera& camera,const size_t y)
 	}//if
 
 
+
+}
+
+
+
+void Renderer::drawSprite(textureID sprite_id){
 
 }

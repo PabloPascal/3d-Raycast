@@ -1,8 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Physics.h"
+#include "Weapon.h"
 #include "defines.h"
 
+#include <SFML/Window/Window.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 
 struct Camera {
@@ -23,8 +27,12 @@ class Player {
 	float playerSize;
 	float jumpHeight;
 
+
+	bool isMove = false;
 	bool isJumping;
 	bool isFalling;
+
+	float TimeMove;
 
 	float gravity = 10000;
 
@@ -40,6 +48,7 @@ public:
 
 	void control(const Map& map, const std::vector<ThingPtr>& things, float dt);
 
+	void hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite,float dt);
 
 	sf::Vector2f& getPos();
 

@@ -7,7 +7,9 @@ enum class textureID {
 	prigojinTexture,
 	barrelTexture,
 	pillar,
-	light
+	light,
+	weapon,
+	aim
 };
 
 

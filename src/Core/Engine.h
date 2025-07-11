@@ -16,7 +16,10 @@ class Engine : public Renderer
 {
 
 	std::unique_ptr<Player> m_player;
+	sf::Sprite weaponSprite;
+	sf::Sprite aim;
 
+	Weapon* weapon;
 
 public:
 	Engine(const size_t screen_width, const size_t screen_height, const std::string& absolute_path);

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
+set(CMAKE_CXX_STANDARD 17)
+
 project(Raycast3D)
 
 set(Raycast3D ${PROJECT_NAME})
@@ -9,7 +11,6 @@ src/main.cpp
 
 src/Core/Engine.cpp
 src/Core/Engine.h
-
 src/Core/Physics.h
 src/Core/Physics.cpp 
 
@@ -36,9 +37,12 @@ src/Ai/AI.h
 
 src/utils/MathLib.cpp
 src/utils/MathLib.h
-
 src/utils/PathFinder.h
 src/utils/PathFinder.cpp
+
+src/Weapons/Weapon.h
+src/Weapons/Weapon.cpp
+
 )
 
 
@@ -50,6 +54,7 @@ src/Renderer
 src/Resources 
 src/utils
 src/World 
+src/Weapons
 )
 
 set(SFML_DIR "external/SFML-2.6.1/lib/cmake/SFML")

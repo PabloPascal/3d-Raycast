@@ -15,7 +15,8 @@ class Renderer
 protected:
 	ResourceHolder<textureID, sf::Texture> mTextures;
 	ResourceHolder<textureID, sf::Image> mImages;
-	
+
+
 	std::unordered_map<mapID ,Map> mMap;
 	std::vector<EnemyPtr> enemies;
 	std::vector<ObjectPtr> objects;
@@ -53,7 +54,7 @@ private:
 	
 	void renderRowFloor(const Camera& camera, const size_t y);
 
-	void renderSprite(const Camera& camera);
+	void renderEntity(const Camera& camera);
 	
 	void renderPerSprite(const Camera& camera, ThingPtr& thing);
 
@@ -64,6 +65,9 @@ private:
 	sf::Color shading(float dist);
 
 	void renderWall(int x, float distToWall, float delta_side, const Camera& camera, int wall_id);
+
+	void drawSprite(textureID sprite_id);
+
 
 private:
 
