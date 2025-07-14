@@ -33,11 +33,40 @@ static void test1() {
 
 
 static void testEngine(char* argv0) {
+
 #if NDEBUG
     int w = 900;
     int h = 600;
-    /*int w = 1920;
-    int h = 1080;*/
+   
+    std::cout << "choose resolution: " << std::endl;
+    std::cout << "1: 1920x1080" << std::endl;
+    std::cout << "2: 1080x720" << std::endl;
+    std::cout << "3: 900x600" << std::endl;
+
+    unsigned int choose;
+
+    std::cin >> choose;
+
+    switch (choose)
+    {
+    case 1:
+        w = 1920;
+        h = 1080;
+        break;
+    case 2:
+        w = 1080;
+        h = 720;
+        break;
+    case 3:
+        w = 900;
+        h = 600;
+        break;
+    default:
+        break;
+    }
+
+    
+
 #else
     int w = 900;
     int h = 600;
@@ -55,7 +84,7 @@ static void testEngine(char* argv0) {
     engine->loadMap(mapID::default_map ,path + "/../../maps/map1.txt");
     //engine->loadThing();
 
-    engine->loadEnemy({ 3,4 },0.8, textureID::prigojinTexture, false, true, true);
+    //engine->loadEnemy({ 5,2 },0.8, textureID::prigojinTexture, true, true, true);
     /*engine->loadEnemy({ 10,6 },0.5, textureID::prigojinTexture, 0, 1, 0, 0);
     engine->loadEnemy({ 10,30 },0.7, textureID::prigojinTexture, 0, 1);
     engine->loadEnemy({ 3,22 },0.6, textureID::prigojinTexture, 0, 1);*/

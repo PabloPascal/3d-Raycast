@@ -19,7 +19,6 @@ enum class mapID {
 };
 
 
-
 class Thing;
 class Enemy;
 class Object;
@@ -27,8 +26,6 @@ class Object;
 using EnemyPtr = std::shared_ptr<Enemy>;
 using ObjectPtr = std::shared_ptr<Object>;
 using ThingPtr = std::shared_ptr<Thing>;
-
-
 
 
 
@@ -42,3 +39,4 @@ struct wallSprite{
 	size_t offset;
 
 };
+

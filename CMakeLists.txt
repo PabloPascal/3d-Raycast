@@ -31,6 +31,8 @@ src/utils/defines.h
 
 src/Renderer/Renderer.h
 src/Renderer/Renderer.cpp
+src/Renderer/Minimap.h
+
 
 src/Ai/AI.cpp 
 src/Ai/AI.h
@@ -42,6 +44,9 @@ src/utils/PathFinder.cpp
 
 src/Weapons/Weapon.h
 src/Weapons/Weapon.cpp
+
+src/InputSystem/keyboardInput.cpp
+src/InputSystem/keyboardInput.h
 
 )
 
@@ -55,6 +60,7 @@ src/Resources
 src/utils
 src/World 
 src/Weapons
+src/InputSystem
 )
 
 set(SFML_DIR "external/SFML-2.6.1/lib/cmake/SFML")

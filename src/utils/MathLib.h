@@ -12,7 +12,7 @@ namespace myMATH {
 	
 	
 	float scalarProd(const sf::Vector2f& v1, const sf::Vector2f& v2);
-
+	float VectorLen(const sf::Vector2f& v);
 
 	class Matrix2x2 {
 

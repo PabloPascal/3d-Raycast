@@ -1,13 +1,13 @@
 #pragma once
 #include "Thing.h"
-
+#include "map.h"
 
 class Enemy :public Thing 
 {
 	float m_speed = 0.5;
 	sf::Vector2f m_position;
 	textureID m_textureID;
-
+	float enemy_size;
 
 	bool m_AIactivate = false;
 	bool m_IsCollision = false;
@@ -17,7 +17,7 @@ public:
 	Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision = false, 
 		bool isAnimate = false, bool AIactivate = false);
 
-	virtual void update(const sf::Vector2f& PlayerPos, float dt);
+	virtual void update(const sf::Vector2f& PlayerPos, const Map& map, float dt);
 
 
 	virtual void setPosition(const sf::Vector2f& pos) override;

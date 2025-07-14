@@ -3,10 +3,12 @@
 #include "Physics.h"
 #include "Weapon.h"
 #include "defines.h"
+#include "keyboardInput.h"
 
 #include <SFML/Window/Window.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 
 struct Camera {
@@ -24,9 +26,9 @@ struct Camera {
 class Player {
 
 	
-	float playerSize;
-	float jumpHeight;
-
+	float m_playerSize;
+	float m_jumpHeight;
+	float m_speed;
 
 	bool isMove = false;
 	bool isJumping;
@@ -40,15 +42,20 @@ class Player {
 
 public:
 
-	Player(float fov, float start_angle, sf::Vector2f start_pos);
+	Player(float speed, sf::Vector2f start_pos);
 
 	Camera& getCamera();
 
 	const Camera getCamera() const;
 
-	void control(const Map& map, const std::vector<ThingPtr>& things, float dt);
+	void update(const Map& map, const std::vector<ThingPtr>& things, sf::RenderWindow& target, float dt);
+
+	void jump(float dt);
 
 	void hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite,float dt);
+
+
+	void MouseInput(sf::RenderWindow& ,float dt);
 
 	sf::Vector2f& getPos();
 

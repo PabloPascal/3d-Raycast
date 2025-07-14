@@ -5,15 +5,14 @@
 #include <iostream>
 
 
-Player::Player(float fov, float start_angle, sf::Vector2f start_pos) {
+Player::Player(float speed, sf::Vector2f start_pos) {
 
-	camera.m_fov = fov;
-	camera.m_angle = start_angle;
 	camera.m_position = start_pos;
 	camera.pitch = 0;
 	camera.posZ = 0;
-	
-	playerSize = 0.15;
+	m_speed = speed;
+
+	m_playerSize = 0.15;
 
 	isJumping = false;
 	isFalling = false;
@@ -31,16 +30,21 @@ const Camera Player::getCamera() const {
 	return camera;
 }
 
-void Player::control(const Map& map, const std::vector<ThingPtr>& things, float dt) {
+
+void Player::MouseInput(sf::RenderWindow& window,float dt) {
+
+	float deltaX = (float)window.getSize().x/2 - sf::Mouse::getPosition(window).x;
+	float deltaY = (float)window.getSize().y/2 - sf::Mouse::getPosition(window).y;
+	
+
 
 	float rot_speed = 3;
-	float rot = rot_speed * dt;
+	float vertical_speed = 30;
+	float rot = rot_speed * dt * abs(deltaX) / 50;
+	float vertical_rot = vertical_speed * dt * abs(deltaY);
 	float speed = 5;
-
-	isMove = false;
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-
+	
+	if (deltaX > 0) {
 		float prev_dirX = camera.dir.x;
 		camera.dir.x = prev_dirX * cos(rot) - camera.dir.y * sin(rot);
 		camera.dir.y = prev_dirX * sin(rot) + camera.dir.y * cos(rot);
@@ -49,8 +53,8 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 		camera.plane.x = prev_planeX * cos(rot) - camera.plane.y * sin(rot);
 		camera.plane.y = prev_planeX * sin(rot) + camera.plane.y * cos(rot);
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 
+	if (deltaX < 0) {
 		float prev_dirX = camera.dir.x;
 		camera.dir.x = prev_dirX * cos(-rot) - camera.dir.y * sin(-rot);
 		camera.dir.y = prev_dirX * sin(-rot) + camera.dir.y * cos(-rot);
@@ -59,85 +63,72 @@ void Player::control(const Map& map, const std::vector<ThingPtr>& things, float 
 		camera.plane.x = prev_planeX * cos(-rot) - camera.plane.y * sin(-rot);
 		camera.plane.y = prev_planeX * sin(-rot) + camera.plane.y * cos(-rot);
 	}
+	
+	if (deltaY > 0) {
+		camera.pitch += vertical_rot;
+	}
+	if (deltaY < 0) {
+		camera.pitch -= vertical_rot;
+	}
+
+
+	sf::Mouse::setPosition(sf::Vector2i(window.getSize()) / 2, window);
+
+}
+
+
+void Player::update(const Map& map, const std::vector<ThingPtr>& things,sf::RenderWindow& window ,float dt) {
+
+
+	float left_right_speed = 4;
+
+	isMove = false;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 
 		isMove = true;
 		TimeMove+=0.05;
 
-		if (camera.dir.x > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt + playerSize, camera.m_position.y }, things)) {
-			camera.m_position.x += speed * camera.dir.x * dt;
-		}
-		if (camera.dir.x < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x + speed * camera.dir.x * dt - playerSize, camera.m_position.y }, things)) {
-			camera.m_position.x += speed * camera.dir.x * dt;
-		}
-		
-		if (camera.dir.y > 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt + playerSize }, things)) {
-			camera.m_position.y += speed * camera.dir.y * dt;
-		}
-
-		if (camera.dir.y < 0 && PhysicsEngine::checkCollision(map, { camera.m_position.x, camera.m_position.y + speed * camera.dir.y * dt - playerSize }, things)) {
-			camera.m_position.y += speed * camera.dir.y * dt;
-		}
+		PhysicsEngine::PlayerCollisionReact(camera.dir, camera.m_position, map, m_speed, m_playerSize, things, window, dt);
 
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 
+		isMove = true;
+		TimeMove += 0.05;
+
+		PhysicsEngine::PlayerCollisionReact(camera.dir, camera.m_position, map, -m_speed, -m_playerSize, things, window, dt);
+
+	}
+
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 
 		isMove = true;
 		TimeMove += 0.05;
 
-		if (PhysicsEngine::checkCollision(map, { camera.m_position.x - speed * camera.dir.x * dt , camera.m_position.y }, things)) {
-			camera.m_position.x -= speed * camera.dir.x * dt;
-		}
+		PhysicsEngine::PlayerCollisionReact(-camera.plane, camera.m_position, map, -left_right_speed, -m_playerSize, things, window, dt);
 
-		if (PhysicsEngine::checkCollision(map, { camera.m_position.x , camera.m_position.y - speed * camera.dir.y * dt }, things)) {
-			camera.m_position.y -= speed * camera.dir.y * dt;
-		}
+
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+
+		isMove = true;
+		TimeMove += 0.05;
+
+		PhysicsEngine::PlayerCollisionReact(-camera.plane, camera.m_position, map, left_right_speed, m_playerSize, things, window, dt);
 
 
 	}
 
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		camera.pitch += 850*dt;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		camera.pitch -= 850 * dt;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isJumping && !isFalling) {
-		gravity = 1000;
-		isJumping = true;
-	}
+	MouseInput(window,dt);
 
 
-#define MAX_HEIGHT 250
-	
-	if (isJumping) {
-		gravity -= 10;
-		camera.posZ += gravity * dt;
-	}
-
-	if (camera.posZ > MAX_HEIGHT || gravity < 10) {
-		isFalling = true;
-		isJumping = false;
-		
-	}
-	/*std::cout <<"posZ = " << camera.posZ << std::endl;
-	std::cout << "isFall = " << isFalling << std::endl;*/
-	//std::cout << "gravity = " << gravity << std::endl;
+	jump(dt);
 
 
-	if (isFalling) {
-		gravity += 20;
-		camera.posZ -= gravity * dt;
-	}
 
-	if (camera.posZ <= 0) {
-		isFalling = false;
-	}
 
 }
 
@@ -149,13 +140,13 @@ sf::Vector2f& Player::getPos() {
 
 
 float Player::getPlayerSize() {
-	return playerSize;
+	return m_playerSize;
 }
 
 
 
 const float Player::getJumpHeight() {
-	return jumpHeight;
+	return m_jumpHeight;
 }
 
 
@@ -179,7 +170,7 @@ void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& s
 		weapon->shoot();
 	}
 
-	float amplitude = 0.3;
+	float amplitude = 0.5;
 
 	if(isMove)
 		sprite.setPosition(sprite.getPosition().x,sprite.getPosition().y - amplitude * sin(TimeMove));
@@ -187,5 +178,43 @@ void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& s
 	
 
 	render_target.draw(sprite);
+
+}
+
+
+
+void Player::jump(float dt) {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isJumping && !isFalling) {
+		gravity = 1000;
+		isJumping = true;
+	}
+
+#define MAX_HEIGHT 250
+
+	if (isJumping) {
+		gravity -= 10;
+		camera.posZ += gravity * dt;
+	}
+
+	if (camera.posZ > MAX_HEIGHT || gravity < 10) {
+		isFalling = true;
+		isJumping = false;
+
+	}
+	/*std::cout <<"posZ = " << camera.posZ << std::endl;
+	std::cout << "isFall = " << isFalling << std::endl;*/
+	//std::cout << "gravity = " << gravity << std::endl;
+
+
+	if (isFalling) {
+		gravity += 20;
+		camera.posZ -= gravity * dt;
+	}
+
+	if (camera.posZ <= 0) {
+		isFalling = false;
+	}
+
 
 }

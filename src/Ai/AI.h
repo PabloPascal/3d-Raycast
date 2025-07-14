@@ -10,7 +10,7 @@ public:
 	
 public:
 	AI() = default;
-	static void simpleAI(std::shared_ptr<Enemy>& enemy, sf::Vector2f playerPos, float dt);
+	static sf::Vector2f simpleAI(const sf::Vector2f& enemyPos,const sf::Vector2f& playerPos, float dt);
 
 	static void pathFindAlgorithm(sf::Vector2f& EnemyPosition, float enemy_speed, sf::Vector2f playerPos, float dt);
 

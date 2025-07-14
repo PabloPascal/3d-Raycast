@@ -34,6 +34,9 @@ protected:
 		int wall_id;
 	};
 
+	size_t m_ScreenWidth;
+	size_t m_ScreenHeight;
+
 	float m_depth = 15;
 
 public:
@@ -72,9 +75,6 @@ private:
 private:
 
 	sf::Color roofColor;
-
-	size_t m_ScreenWidth;
-	size_t m_ScreenHeight;
 
 	std::vector<float> zBuffer;
 	std::vector<int> spriteOrder;

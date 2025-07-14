@@ -2,13 +2,13 @@
 
 #include <iostream>
 #include <string>
-
+#include <chrono>
 
 
 Engine::Engine(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
-	m_player = std::make_unique<Player>(3.1415 / 3, 0, sf::Vector2f{1,2});
+	m_player = std::make_unique<Player>( 5,sf::Vector2f{1,2});
 
 	/*
 	*	LOAD TEXUTRS
@@ -41,7 +41,7 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 
 	weaponSprite.setTexture(mTextures.get(textureID::weapon));
 	weaponSprite.setOrigin(sf::Vector2f(mTextures.get(textureID::weapon).getSize()));
-	weaponSprite.scale({ 2,2 });
+	weaponSprite.scale({ 2 * (float)screen_width / 900.f, 2 * (float)screen_height / 600});
 	weaponSprite.setPosition(screen_width, screen_height + 20);
 	
 	aim.setTexture(mTextures.get(textureID::aim));
@@ -62,51 +62,67 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 
 	weapon = new Weapon(textureID::weapon);
 
+	m_window.setMouseCursorVisible(false);
+
 }
 
 
 
 void Engine::run() {
 
-	sf::Time timeSinceLastUpdate;
+	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	sf::Clock clock;
 
+	
 	float deltaTime;
 	while (m_window.isOpen()) {
 
-		timeSinceLastUpdate = clock.restart();
 
-		deltaTime = timeSinceLastUpdate.asSeconds();
 
-		m_window.setTitle(std::to_string(1 / deltaTime) + " FPS");
+		timeSinceLastUpdate += clock.restart();
+		while (timeSinceLastUpdate > TimePerFrame)
+		{
+			timeSinceLastUpdate -= TimePerFrame;
 
-		sf::Event event;
-		while (m_window.pollEvent(event)) {
 
-			if (event.type == sf::Event::Closed) m_window.close();
-			if (event.type == sf::Event::KeyPressed) {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-					m_window.close();
+
+			timeSinceLastUpdate = clock.restart();
+
+			deltaTime = TimePerFrame.asSeconds();
+
+
+			//m_window.setTitle(std::to_string(1 / timeSinceLastUpdate.asSeconds()) + " FPS");
+
+			sf::Event event;
+			while (m_window.pollEvent(event)) {
+
+				if (event.type == sf::Event::Closed) m_window.close();
+				if (event.type == sf::Event::KeyPressed) {
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+						m_window.close();
+				}
+
 			}
 
+			m_player->update(mMap[mapID::default_map], things, m_window, deltaTime);
+
+
+
+			for (auto& enemy : enemies) {
+				enemy->update(m_player->getPos(),mMap[mapID::default_map], deltaTime);
+			}
+
+			m_window.clear();
+
+			render(m_player->getCamera());
+			m_player->hand(weapon, m_window, weaponSprite, deltaTime);
+			m_window.draw(aim);
+
+
+			m_window.display();
+
 		}
-
-		m_player->control(mMap[mapID::default_map], things, deltaTime);
-
-		
-
-		for (auto& enemy : enemies) {
-			AI::simpleAI(enemy, m_player->getPos(), deltaTime);
-		}
-
-		m_window.clear();
-
-		render(m_player->getCamera());
-		m_player->hand(weapon, m_window, weaponSprite, deltaTime);
-		m_window.draw(aim);
-
-		m_window.display();
 
 	}
 }
