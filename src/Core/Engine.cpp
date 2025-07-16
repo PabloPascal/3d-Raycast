@@ -9,30 +9,30 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>( 5,sf::Vector2f{1,2});
-
+	
 	/*
 	*	LOAD TEXUTRS
 	*/
 
-	mTextures.load(textureID::floor, absolute_path + "/../../res/colorstone.png");
-	mTextures.load(textureID::prigojinTexture, absolute_path + "/../../res/prigojin.png");
-	mTextures.load(textureID::barrelTexture, absolute_path + "/../../res/barrel.png");
-	mTextures.load(textureID::pillar, absolute_path + "/../../res/pillar.png");
-	mTextures.load(textureID::light, absolute_path + "/../../res/light.png");
-	mTextures.load(textureID::wallTexture, absolute_path + "/../../res/walls_texture.png");
-	mTextures.load(textureID::weapon, absolute_path + "/../../res/w0_b.png");
-	mTextures.load(textureID::aim, absolute_path + "/../../res/aim.png");
+	mTextures.load(textureID::floor, "res/colorstone.png");
+	mTextures.load(textureID::prigojinTexture, "res/prigojin.png");
+	mTextures.load(textureID::barrelTexture, "res/barrel.png");
+	mTextures.load(textureID::pillar, "res/pillar.png");
+	mTextures.load(textureID::light, "res/light.png");
+	mTextures.load(textureID::wallTexture, "res/walls_texture.png");
+	mTextures.load(textureID::weapon, "res/w0_b.png");
+	mTextures.load(textureID::aim, "res/aim.png");
 	
 	/*
 	*   LOAD IMAGES
 	*/
 
-	mImages.load(textureID::floor, absolute_path + "/../../res/colorstone.png");
-	mImages.load(textureID::prigojinTexture, absolute_path + "/../../res/prigojin.png");
-	mImages.load(textureID::barrelTexture, absolute_path + "/../../res/barrel.png");
-	mImages.load(textureID::pillar, absolute_path + "/../../res/pillar.png");
-	mImages.load(textureID::light, absolute_path + "/../../res/light.png");
-	mImages.load(textureID::wallTexture, absolute_path + "/../../res/greystone.png");;
+	mImages.load(textureID::floor, "res/colorstone.png");
+	mImages.load(textureID::prigojinTexture, "res/prigojin.png");
+	mImages.load(textureID::barrelTexture, "res/barrel.png");
+	mImages.load(textureID::pillar, "res/pillar.png");
+	mImages.load(textureID::light, "res/light.png");
+	mImages.load(textureID::wallTexture, "res/greystone.png");;
 
 
 	/*
@@ -42,7 +42,7 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 	weaponSprite.setTexture(mTextures.get(textureID::weapon));
 	weaponSprite.setOrigin(sf::Vector2f(mTextures.get(textureID::weapon).getSize()));
 	weaponSprite.scale({ 2 * (float)screen_width / 900.f, 2 * (float)screen_height / 600});
-	weaponSprite.setPosition(screen_width, screen_height + 20);
+	weaponSprite.setPosition(sf::Vector2f(screen_width, screen_height + 20));
 	
 	aim.setTexture(mTextures.get(textureID::aim));
 	aim.setTextureRect(sf::IntRect({0,0}, {16,16}));

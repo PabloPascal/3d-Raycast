@@ -3,7 +3,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <iostream>
-
+#include <cmath>
 
 Player::Player(float speed, sf::Vector2f start_pos) {
 
@@ -46,22 +46,22 @@ void Player::MouseInput(sf::RenderWindow& window,float dt) {
 	
 	if (deltaX > 0) {
 		float prev_dirX = camera.dir.x;
-		camera.dir.x = prev_dirX * cos(rot) - camera.dir.y * sin(rot);
-		camera.dir.y = prev_dirX * sin(rot) + camera.dir.y * cos(rot);
+		camera.dir.x = prev_dirX * std::cos(rot) - camera.dir.y * std::sin(rot);
+		camera.dir.y = prev_dirX * std::sin(rot) + camera.dir.y * std::cos(rot);
 
 		float prev_planeX = camera.plane.x;
-		camera.plane.x = prev_planeX * cos(rot) - camera.plane.y * sin(rot);
-		camera.plane.y = prev_planeX * sin(rot) + camera.plane.y * cos(rot);
+		camera.plane.x = prev_planeX * std::cos(rot) - camera.plane.y * std::sin(rot);
+		camera.plane.y = prev_planeX * std::sin(rot) + camera.plane.y * std::cos(rot);
 	}
 
 	if (deltaX < 0) {
 		float prev_dirX = camera.dir.x;
-		camera.dir.x = prev_dirX * cos(-rot) - camera.dir.y * sin(-rot);
-		camera.dir.y = prev_dirX * sin(-rot) + camera.dir.y * cos(-rot);
+		camera.dir.x = prev_dirX * std::cos(-rot) - camera.dir.y * std::sin(-rot);
+		camera.dir.y = prev_dirX * std::sin(-rot) + camera.dir.y * std::cos(-rot);
 
 		float prev_planeX = camera.plane.x;
-		camera.plane.x = prev_planeX * cos(-rot) - camera.plane.y * sin(-rot);
-		camera.plane.y = prev_planeX * sin(-rot) + camera.plane.y * cos(-rot);
+		camera.plane.x = prev_planeX * std::cos(-rot) - camera.plane.y * std::sin(-rot);
+		camera.plane.y = prev_planeX * std::sin(-rot) + camera.plane.y * std::cos(-rot);
 	}
 	
 	if (deltaY > 0) {
@@ -92,7 +92,7 @@ void Player::update(const Map& map, const std::vector<ThingPtr>& things,sf::Rend
 		PhysicsEngine::PlayerCollisionReact(camera.dir, camera.m_position, map, m_speed, m_playerSize, things, window, dt);
 
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 
 		isMove = true;
 		TimeMove += 0.05;
@@ -101,7 +101,7 @@ void Player::update(const Map& map, const std::vector<ThingPtr>& things,sf::Rend
 
 	}
 
-
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 
 		isMove = true;

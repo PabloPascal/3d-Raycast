@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "AI.h"
 #include "Physics.h"
-
+#include <cmath>
 
 Enemy::Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision,
 	bool isAnimate, bool AIactivate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate), m_AIactivate(AIactivate)

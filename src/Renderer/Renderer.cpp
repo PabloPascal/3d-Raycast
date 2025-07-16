@@ -11,7 +11,7 @@
 #if NDEBUG
 #define FLOOR_TEX 1
 #else 
-#define FLOOR_TEX 0
+#define FLOOR_TEX 1
 #endif
 
 

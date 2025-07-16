@@ -1,4 +1,6 @@
 #include "AI.h"
+#include <cmath>
+
 
 
 sf::Vector2f AI::simpleAI(const sf::Vector2f& enemyPos,const sf::Vector2f& playerPos, float dt){

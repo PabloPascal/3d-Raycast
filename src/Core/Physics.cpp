@@ -1,5 +1,6 @@
 #include "Physics.h"
 #include <iostream>
+#include <cmath>
 
 /*
 		FALSE MEANS COLLISION! 
