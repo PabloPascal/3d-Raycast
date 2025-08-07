@@ -69,8 +69,6 @@ private:
 
 	void renderWall(int x, float distToWall, float delta_side, const Camera& camera, int wall_id);
 
-	void drawSprite(textureID sprite_id);
-
 
 private:
 
@@ -87,6 +85,10 @@ private:
 	sf::VertexArray m_spriteColumnsVertexArray;
 
 	uint8_t* m_pfloorPixels;
+
+
+	sf::VertexArray debugCollum;
+
 
 
 };

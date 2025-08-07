@@ -10,7 +10,7 @@ Enemy::Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCo
 	m_position = position;
 	m_textureID = texture_id;
 	m_speed = speed;
-	enemy_size = 0.1;
+	enemy_size = 0.6;
 
 }
 
@@ -23,27 +23,25 @@ void Enemy::update(const sf::Vector2f& playerPos, const Map& map, float dt) {
 
 		sf::Vector2f dir = AI::simpleAI(m_position, playerPos, dt);
 
+		sf::Vector2f move = dir * m_speed * dt;
+		sf::Vector2f newPos = m_position + move;
 
-		sf::Vector2f newPos = m_position + dir * m_speed * dt;
+		float xOffset = move.x > 0 ? enemy_size / 2 : -enemy_size / 2;
+		float yOffset = move.y > 0 ? enemy_size / 2 : -enemy_size / 2;
 
-
+		//std::cout << "m_pos = {" << m_position.x << ", " << m_position.y << "}" << std::endl;
 		if (m_IsCollision) {
-			sf::Vector2f delta;
-			if (!PhysicsEngine::checkEnemyMapCollision(map, m_position + dir * m_speed * dt, delta, 0)) {
-				
-				sf::Vector2f CenterBlock = { std::floor(m_position.x + delta.x) + 0.5f, std::floor(m_position.y + delta.x) + 0.5f};
-				sf::Vector2f normal = -PhysicsEngine::findNormal(m_position + delta, CenterBlock);
 
-				std::cout << "normal: (" << normal.x << ", " << normal.y << ")\n";
-				sf::Vector2f perp_normal = { abs(normal.y), abs(normal.x) };
-
-				m_position += m_speed * normal * dt;
-
+			if (PhysicsEngine::checkEnemyMapCollision(map, {newPos.x + xOffset, m_position.y}, enemy_size, false)) 
+			{
+				m_position.x = newPos.x;
 			}
-			else {
-				m_position = newPos;
+			if(PhysicsEngine::checkEnemyMapCollision(map, {m_position.x, newPos.y + yOffset}, enemy_size, true)) {
+				m_position.y = newPos.y;
 			}
 
+		}else{
+			m_position = newPos;
 		}
 
 

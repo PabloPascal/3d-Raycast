@@ -14,25 +14,26 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 	*	LOAD TEXUTRS
 	*/
 
-	mTextures.load(textureID::floor, "res/colorstone.png");
-	mTextures.load(textureID::prigojinTexture, "res/prigojin.png");
-	mTextures.load(textureID::barrelTexture, "res/barrel.png");
-	mTextures.load(textureID::pillar, "res/pillar.png");
-	mTextures.load(textureID::light, "res/light.png");
-	mTextures.load(textureID::wallTexture, "res/walls_texture.png");
-	mTextures.load(textureID::weapon, "res/w0_b.png");
-	mTextures.load(textureID::aim, "res/aim.png");
-	
+	mTextures.load(textureID::floor, absolute_path + "/res/colorstone.png");
+	mTextures.load(textureID::prigojinTexture, absolute_path + "/res/prigojin.png");
+	mTextures.load(textureID::barrelTexture, absolute_path + "/res/barrel.png");
+	mTextures.load(textureID::pillar, absolute_path + "/res/pillar.png");
+	mTextures.load(textureID::light, absolute_path + "/res/light.png");
+	mTextures.load(textureID::wallTexture, absolute_path + "/res/walls_texture.png");
+	mTextures.load(textureID::weapon, absolute_path + "/res/w0_b.png");
+	mTextures.load(textureID::aim, absolute_path + "/res/aim.png");
+	mTextures.load(textureID::monster, absolute_path + "/res/monster.png");
+
 	/*
 	*   LOAD IMAGES
 	*/
 
-	mImages.load(textureID::floor, "res/colorstone.png");
-	mImages.load(textureID::prigojinTexture, "res/prigojin.png");
-	mImages.load(textureID::barrelTexture, "res/barrel.png");
-	mImages.load(textureID::pillar, "res/pillar.png");
-	mImages.load(textureID::light, "res/light.png");
-	mImages.load(textureID::wallTexture, "res/greystone.png");;
+	mImages.load(textureID::floor, absolute_path + "/res/colorstone.png");
+	mImages.load(textureID::prigojinTexture, absolute_path + "/res/prigojin.png");
+	mImages.load(textureID::barrelTexture, absolute_path + "/res/barrel.png");
+	mImages.load(textureID::pillar,  absolute_path + "/res/pillar.png");
+	mImages.load(textureID::light, absolute_path + "/res/light.png");
+	mImages.load(textureID::wallTexture, absolute_path + "/res/greystone.png");;
 
 
 	/*

@@ -9,7 +9,7 @@
 
 int main(int argc, char* argv[]) {
 
-	test1();
+	//test1();
 	testEngine(argv[0]);
 
 	return 0;

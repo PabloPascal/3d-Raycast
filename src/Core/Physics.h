@@ -17,7 +17,8 @@ public:
 
 	static bool checkPlayerMapCollision(const Map& map,const sf::Vector2f& newPlayerPos);
 
-	static bool checkEnemyMapCollision(const Map& map, const sf::Vector2f& newEnemyPos, sf::Vector2f& dir, float enemySize);
+	static bool checkEnemyMapCollision(const Map& map, const sf::Vector2f& newEnemyPos,
+		 float enemySize, bool isAxis);
 
 	static sf::Vector2f findNormal(const sf::Vector2f& EntityPos,const sf::Vector2f& blockPos);
 

@@ -9,7 +9,8 @@ enum class textureID {
 	pillar,
 	light,
 	weapon,
-	aim
+	aim,
+	monster
 };
 
 

@@ -98,3 +98,17 @@ void Map::operator=(Map&& other) noexcept
 	world_height = other.world_height;
 
 }
+
+
+int Map::getMapCell(float x, float y) const
+{
+	int pos_x = static_cast<int>(x);
+	int pos_y = static_cast<int>(y);
+	if(m_world[pos_y][pos_x] > 0) {
+		return 1;
+	}
+
+	return 0;
+
+
+}

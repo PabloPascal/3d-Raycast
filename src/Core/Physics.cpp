@@ -28,41 +28,40 @@ bool PhysicsEngine::checkPlayerMapCollision(const Map& map, const sf::Vector2f& 
 
 
 
-bool PhysicsEngine::checkEnemyMapCollision(const Map& map, const sf::Vector2f& newEnemyPos, sf::Vector2f& dir, float enemySize) {
+bool PhysicsEngine::checkEnemyMapCollision(const Map& map, const sf::Vector2f& newEnemyPos, 
+	float enemySize, bool isAxis) {
+	int cell;
 
-	if (map.m_world[std::floor(newEnemyPos.x + enemySize)][std::floor(newEnemyPos.y)] > 0) {
-		
-		std::cout << "1 map[x][y] = " << map.m_world[std::floor(newEnemyPos.x + enemySize)][std::floor(newEnemyPos.y + enemySize)] << std::endl;
-		
-		dir = { enemySize, enemySize };
-		return COLLISION;
+	sf::Vector2f size = {enemySize/2.f, enemySize/2.f};
+	sf::Vector2f start = newEnemyPos - size;
+	sf::Vector2f end = newEnemyPos + size;
 
-	}
-	if (map.m_world[std::floor(newEnemyPos.x - enemySize)][std::floor(newEnemyPos.y)] > 0) {
-		
-		std::cout << "2 map[x][y] = " << map.m_world[std::floor(newEnemyPos.x - enemySize)][std::floor(newEnemyPos.y - enemySize)] << std::endl;
+	
+	if(isAxis){
+		for(int y = start.y; y < end.y; y++){
+			
+			cell = map.getMapCell(newEnemyPos.x, y);
 
-		dir = { -enemySize, -enemySize };
-		return COLLISION;
-
-	}
-	if (map.m_world[std::floor(newEnemyPos.x)][std::floor(newEnemyPos.y - enemySize)] > 0) {
-
-		std::cout << "3 map[x][y] = " << map.m_world[std::floor(newEnemyPos.x + enemySize)][std::floor(newEnemyPos.y - enemySize)] << std::endl;
-
-		dir = { enemySize, -enemySize };
-		return COLLISION;
+			if(cell) {
+				//std::cout << "y: " << y << std::endl;
+				return COLLISION;
+			}
+		}
 
 	}
-	if (map.m_world[std::floor(newEnemyPos.x)][std::floor(newEnemyPos.y + enemySize)] > 0) {
+	else{ 
 
-		std::cout << "4 map[x][y] = " << map.m_world[std::floor(newEnemyPos.x - enemySize)][std::floor(newEnemyPos.y + enemySize)] << std::endl;
+		for(int x = start.x; x < end.x; x++){
 
-		dir = { -enemySize, enemySize };
-		return COLLISION;
+			cell = map.getMapCell(x, newEnemyPos.y);
+
+			if(cell){ 
+				//std::cout << "x: " << x << std::endl;
+				return COLLISION;
+			}
+		}
 
 	}
-
 	return NOT_COLLISION;
 
 }
@@ -85,7 +84,7 @@ sf::Vector2f PhysicsEngine::findNormal(const sf::Vector2f& EntityPos, const sf::
 
 	}
 
-
+	return {0,0};
 }
 
 

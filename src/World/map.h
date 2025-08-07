@@ -22,6 +22,7 @@ public:
 	void operator=(const Map& other);
 	void operator=(Map&& other) noexcept;
 
+	int getMapCell(float x, float y) const;
 
 private:
 	void init(int world_width, int world_height);

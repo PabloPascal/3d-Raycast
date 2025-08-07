@@ -8,17 +8,9 @@ set(Raycast3D ${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 
-#include(FetchContent)
-#FetchContent_Declare(SFML
-#    GIT_REPOSITORY https://github.com/SFML/SFML.git
-#    GIT_TAG 3.0.1
-#    GIT_SHALLOW ON
-#    EXCLUDE_FROM_ALL
-#    SYSTEM)
-#FetchContent_MakeAvailable(SFML)
 
+find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
 
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
 add_executable(${PROJECT_NAME} 
 src/main.cpp
@@ -78,15 +70,6 @@ src/InputSystem
 )
 
 
-#target_link_libraries(${PROJECT_NAME} sfml-graphics)
-
-
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-
-#target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-#target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics)
-
 
 target_link_libraries(${PROJECT_NAME}
     sfml-graphics
@@ -94,5 +77,11 @@ target_link_libraries(${PROJECT_NAME}
     sfml-system
 )
 
-#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_DIR}/cmake_modules")
-#find_package(SFML 2.5 REQUIRED graphics network audio window system)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
+
+
+
+
+

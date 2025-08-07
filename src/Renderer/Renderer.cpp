@@ -28,6 +28,8 @@ Renderer::Renderer(size_t width, size_t height) : m_ScreenWidth(width), m_Screen
 	//floor_buffer.setPrimitiveType(sf::Points);
 	m_spriteColumnsVertexArray.setPrimitiveType(sf::Lines);
 
+	debugCollum.setPrimitiveType(sf::Lines);
+
 	roofColor = sf::Color(0, 0, 20);
 
 }
@@ -136,8 +138,8 @@ Renderer::Ray Renderer::FastRayCast(const Camera& camera, int x, mapID map_id) {
 
 	sf::Vector2f rayDir = camera.dir - camera.plane * cameraX;
 	sf::Vector2f sideDist;
-	sf::Vector2f deltaDist = { sqrt(1.0f + (rayDir.y * rayDir.y) / (rayDir.x * rayDir.x)),
-				sqrt(1.0f + (rayDir.x * rayDir.x) / (rayDir.y * rayDir.y)) };
+	sf::Vector2f deltaDist = { std::sqrt(1.0f + (rayDir.y * rayDir.y) / (rayDir.x * rayDir.x)),
+				std::sqrt(1.0f + (rayDir.x * rayDir.x) / (rayDir.y * rayDir.y)) };
 	sf::Vector2i mapPos(camera.m_position);
 	sf::Vector2f step;
 
@@ -363,7 +365,6 @@ void Renderer::renderEntity(const Camera& camera) {
 
 void Renderer::renderPerSprite(const Camera& camera, ThingPtr& thing) {
 
-
 	sf::Vector2u textureSize = mTextures.get(thing->getTextureID()).getSize();
 
 	sf::Vector2f spritePos = thing->getPosition() - camera.m_position;
@@ -400,29 +401,35 @@ void Renderer::renderPerSprite(const Camera& camera, ThingPtr& thing) {
 	int drawStartX = -spriteHeight / 2 + ScreenX;
 	int drawEndX = spriteHeight / 2 + ScreenX;
 
-	int startX = std::max((int)(drawStartX + textureSize.x / 2), (int)textureSize.x / 2);
-	int endX = std::min((int)(drawEndX + textureSize.x / 2), (int)(m_ScreenWidth  - 1) );
+	int startX = std::max((int)(drawStartX), 0);
+	int endX = std::min((int)(drawEndX), (int)(m_ScreenWidth  - 1) );
 	
-	
+
 	for (int x = startX; x < endX; x++) {
-		int t = x - textureSize.x / 2 + 1;
+		//int t = x - textureSize.x / 2 + 1;
 		
-		if (transform.y < 0 && std::abs(transform.y) < zBuffer[t] && x > 0 && x < m_window.getSize().x) {
+		if (transform.y < 0 && std::abs(transform.y) < zBuffer[x] && x > 0 && x < m_window.getSize().x) {
 
-			float texCoordX = (t - (-spriteHeight / 2 + ScreenX)) * textureSize.y / spriteHeight;
+			float texCoordX = (x - (-spriteHeight / 2 + ScreenX)) * textureSize.y / spriteHeight;
 
-			m_spriteColumnsVertexArray.append(sf::Vertex(sf::Vector2f(t, drawStartY), sf::Vector2f(texCoordX, 0)));
-			m_spriteColumnsVertexArray.append(sf::Vertex(sf::Vector2f(t, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
-
+			if(x == startX || x == endX - 1){
+				debugCollum.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Color::Green));
+				debugCollum.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Color::Green));
+			}
+			else{
+				m_spriteColumnsVertexArray.append(sf::Vertex(sf::Vector2f(x, drawStartY), sf::Vector2f(texCoordX, 0)));
+				m_spriteColumnsVertexArray.append(sf::Vertex(sf::Vector2f(x, drawEndY), sf::Vector2f(texCoordX, textureSize.y)));
+			}
 		}
 	}
 
 
 
 	m_window.draw(m_spriteColumnsVertexArray, &mTextures.get(thing->getTextureID()));
-	
-	m_spriteColumnsVertexArray.clear();
+	m_window.draw(debugCollum);
 
+	m_spriteColumnsVertexArray.clear();
+	debugCollum.clear();
 }
 
 
@@ -472,11 +479,5 @@ void Renderer::renderRowFloor(const Camera& camera,const size_t y)
 	}//if
 
 
-
-}
-
-
-
-void Renderer::drawSprite(textureID sprite_id){
 
 }
