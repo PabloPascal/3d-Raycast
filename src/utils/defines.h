@@ -10,7 +10,9 @@ enum class textureID {
 	light,
 	weapon,
 	aim,
-	monster
+	monster_run1,
+	monster_run2,
+	monster_run3
 };
 
 
@@ -20,13 +22,15 @@ enum class mapID {
 };
 
 
-class Thing;
+class Demon;
+class Player;
+class RenderebleThing;
 class Enemy;
-class Object;
+class StaticObject;
 
 using EnemyPtr = std::shared_ptr<Enemy>;
-using ObjectPtr = std::shared_ptr<Object>;
-using ThingPtr = std::shared_ptr<Thing>;
+using ObjectPtr = std::shared_ptr<StaticObject>;
+using ThingPtr = std::shared_ptr<RenderebleThing>;
 
 
 

@@ -1,36 +1,26 @@
 #pragma once
 #include "Thing.h"
 #include "map.h"
+#include <map>
+#include "Player.h"
+#include <SFML/Graphics.hpp>
 
-class Enemy :public Thing 
+
+class Enemy
 {
-	float m_speed = 0.5;
-	sf::Vector2f m_position;
-	textureID m_textureID;
-	float enemy_size;
-
-	bool m_AIactivate = false;
-	bool m_IsCollision = false;
-	bool m_IsAnimate = false;
 public:
-	Enemy() = default;
-	Enemy(sf::Vector2f position, textureID texture_id, float speed, bool isCollision = false, 
-		bool isAnimate = false, bool AIactivate = false);
 
-	virtual void update(const sf::Vector2f& PlayerPos, const Map& map, float dt);
+	virtual void update(const Player& player, const Map& map, float dt) = 0;
 
+	virtual void attack() = 0;
 
-	virtual void setPosition(const sf::Vector2f& pos) override;
-	virtual void setTexture(textureID texture_id);
-	virtual void setAIactivate(bool turn);
+	virtual void setTexture(textureID texture_id) = 0;
+	virtual void setAIactivate(bool turn) = 0;
 
-	virtual textureID getTextureID() const override;
-	virtual float getSpeed();
-	virtual sf::Vector2f getPosition() const override;
+	virtual float getSpeed() = 0;
 
-	virtual bool isAnimate() override;
-	virtual void setAnimate(bool isAnimate);
+	virtual void setAnimate(bool isAnimate) = 0;
+	virtual void animation() = 0;
+	virtual void add_animations(textureID tex_id) = 0;
 
-	virtual bool getCollisionIndicate() override;
-	virtual void setCollision(bool collision);
 };

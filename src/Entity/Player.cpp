@@ -128,8 +128,6 @@ void Player::update(const Map& map, const std::vector<ThingPtr>& things,sf::Rend
 	jump(dt);
 
 
-
-
 }
 
 
@@ -160,7 +158,7 @@ bool Player::getIsFalling() {
 
 
 
-void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite, float dt) {
+void Player::hand(std::unique_ptr<Weapon>& weapon, sf::RenderTarget& render_target, sf::Sprite& sprite, float dt) {
 
 	if (TimeMove > 1000) {
 		TimeMove = (int)TimeMove % 1000;

@@ -1,6 +1,6 @@
 #include "../src/utils/PathFinder.h"
 #include "../src/World/map.h"
-#include "Engine.h"
+#include "Game.h"
 
 
 #include <iostream>
@@ -111,25 +111,12 @@ static void testEngine(char* argv0) {
     
     std::cout << std::endl << "path: " << path << std::endl;
 
-    Engine* engine = new Engine(w, h, path);
+    Game* game = new Game(w, h, path);
 
-
-    engine->loadMap(mapID::default_map ,path + "/maps/map1.txt");
-    //engine->loadThing();
-
-    //engine->loadEnemy({ 5,2 },0.8, textureID::prigojinTexture, true, true, true);
-    engine->loadEnemy({3,3}, 2.5, textureID::monster, true, true, true);
-    /*engine->loadEnemy({ 10,6 },0.5, textureID::prigojinTexture, 0, 1, 0, 0);
-    engine->loadEnemy({ 10,30 },0.7, textureID::prigojinTexture, 0, 1);
-    engine->loadEnemy({ 3,22 },0.6, textureID::prigojinTexture, 0, 1);*/
-    engine->loadStaticObject({ 2,2 }, textureID::barrelTexture, 0, 0);
-    engine->loadStaticObject({ 10,2 }, textureID::pillar, 0, 0);
-    engine->loadStaticObject({ 14,2 }, textureID::light, 0, 0);
-
-    engine->run();
+    game->run();
     
 
-	delete engine;
+	delete game;
 
 
 }

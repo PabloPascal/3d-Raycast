@@ -2,7 +2,7 @@
 #include "Thing.h"
 
 
-class Object : public Thing
+class StaticObject : public RenderebleThing
 {
 	sf::Vector2f m_position;
 	textureID m_textureID;
@@ -11,18 +11,18 @@ class Object : public Thing
 	bool m_IsAnimate = false;
 
 public:
-	Object() = default;
-	Object(sf::Vector2f position, textureID texture_id, bool isCollision = false, bool isAnimate = false);
+	StaticObject() = default;
+	StaticObject(sf::Vector2f position, textureID texture_id, bool isCollision = false, bool isAnimate = false);
 
 	sf::Vector2f getPosition() const override;
 	void setPosition(const sf::Vector2f& pos) override;
 	textureID getTextureID() const override;
-	void setTexture(textureID texture_id);
+	void setTexture(textureID texture_id) override;
 
 	bool isAnimate() override;
 	void setAnimate(bool isAnimate);
 
 	bool getCollisionIndicate() override;
-	void setCollision(bool collision);
+	void setCollision(bool collision) override;
 
 };

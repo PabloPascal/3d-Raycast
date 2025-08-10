@@ -52,7 +52,7 @@ public:
 
 	void jump(float dt);
 
-	void hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite,float dt);
+	void hand(std::unique_ptr<Weapon>& weapon, sf::RenderTarget& render_target, sf::Sprite& sprite,float dt);
 
 
 	void MouseInput(sf::RenderWindow& ,float dt);

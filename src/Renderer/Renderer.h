@@ -18,9 +18,8 @@ protected:
 
 
 	std::unordered_map<mapID ,Map> mMap;
-	std::vector<EnemyPtr> enemies;
-	std::vector<ObjectPtr> objects;
-	std::vector<ThingPtr> things;
+	
+	std::vector<ThingPtr> renderable_things;
 
 	wallSprite wallSpriteInfo;
 

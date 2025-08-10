@@ -8,6 +8,7 @@ sf::Vector2f AI::simpleAI(const sf::Vector2f& enemyPos,const sf::Vector2f& playe
 	sf::Vector2f direction = playerPos - enemyPos;
 	
 	float dist = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+	//std::cout << "dist = " << dist << std::endl;
 	direction /= dist;
 
 	return direction;

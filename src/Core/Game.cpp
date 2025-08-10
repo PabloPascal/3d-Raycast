@@ -1,11 +1,11 @@
-#include "Engine.h"
+#include "Game.h"
 
 #include <iostream>
 #include <string>
 #include <chrono>
+#include "Demon.h"
 
-
-Engine::Engine(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
+Game::Game(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>( 5,sf::Vector2f{1,2});
@@ -22,8 +22,9 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 	mTextures.load(textureID::wallTexture, absolute_path + "/res/walls_texture.png");
 	mTextures.load(textureID::weapon, absolute_path + "/res/w0_b.png");
 	mTextures.load(textureID::aim, absolute_path + "/res/aim.png");
-	mTextures.load(textureID::monster, absolute_path + "/res/monster.png");
-
+	mTextures.load(textureID::monster_run1, absolute_path + "/res/monster_run1_0.png");
+	mTextures.load(textureID::monster_run2, absolute_path + "/res/monster_run2_0.png");
+	mTextures.load(textureID::monster_run3, absolute_path + "/res/monster_run3_0.png");
 	/*
 	*   LOAD IMAGES
 	*/
@@ -61,15 +62,43 @@ Engine::Engine(const size_t screen_width,const size_t screen_height,const std::s
 	wallSpriteInfo.offset = 64;
 	wallSpriteInfo.sprite_count = 8;
 
-	weapon = new Weapon(textureID::weapon);
+	weapon = std::make_unique<Weapon>(textureID::weapon);
 
 	m_window.setMouseCursorVisible(false);
+
+	/*
+	* LOADD MAP
+	*/
+	Map map;
+	map.load(absolute_path + "/maps/map2.txt");
+	mMap.insert(std::make_pair(mapID::default_map, std::move(map)));
+
+
+	/*
+	* 	LOAD ENEMY
+	*/
+	std::shared_ptr<Demon> demon = std::make_shared<Demon>( Demon({3,3}, textureID::monster_run1, 2, true, true, true)  );
+	demon->add_animations(textureID::monster_run1);
+	demon->add_animations(textureID::monster_run2);
+	demon->add_animations(textureID::monster_run3);
+
+
+	renderable_things.push_back(demon);
+	
+	
+	enemies.push_back(demon);
+	/*
+		sf::Vector2f position, textureID texture_id, 
+        float speed, bool isCollision = false, 
+		bool isAnimate = false, bool AIactivate = false
+	*/
+	
 
 }
 
 
 
-void Engine::run() {
+void Game::run() {
 
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
@@ -106,12 +135,12 @@ void Engine::run() {
 
 			}
 
-			m_player->update(mMap[mapID::default_map], things, m_window, deltaTime);
+			m_player->update(mMap[mapID::default_map], renderable_things, m_window, deltaTime);
 
 
 
 			for (auto& enemy : enemies) {
-				enemy->update(m_player->getPos(),mMap[mapID::default_map], deltaTime);
+				enemy->update(*m_player.get(), mMap[mapID::default_map], deltaTime);
 			}
 
 			m_window.clear();
@@ -129,82 +158,3 @@ void Engine::run() {
 }
 
 
-
-void Engine::loadMap(mapID map_id,const std::string& path) {
-
-	Map map;
-	map.load(path);
-	mMap[map_id] = std::move(map);
-}
-
-
-void Engine::loadMap(mapID map_id,Map& map) {
-
-	mMap[map_id] = std::move(map);
-}
-
-
-
-void Engine::loadTexture() {
-
-	mTextures.load(textureID::wallTexture, std::string("../res/redbrick.png"));
-	mTextures.load(textureID::floor, std::string("../res/colorstone.png"));
-	mTextures.load(textureID::barrelTexture, "../res/barrel.png");
-	mTextures.load(textureID::prigojinTexture, "../res/prigojin.png");
-
-}
-
-void Engine::loadTexture(textureID id, const std::string& path) {
-
-	mTextures.load(id, path);
-
-}
-
-void Engine::loadImage() {
-	mImages.load(textureID::wallTexture, std::string("../res/redbrick.png"));
-	mImages.load(textureID::floor, std::string("../res/colorstone.png"));
-	mImages.load(textureID::barrelTexture, "../res/barrel.png");
-	mImages.load(textureID::prigojinTexture, "../res/prigojin.png");
-}
-
-
-
-void Engine::loadImage(textureID id, const std::string& path) {
-
-	mImages.load(id, path);
-
-}
-
-void Engine::loadSprite() {
-}
-
-
-void Engine::loadThing() {
-	
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{2,3},textureID::prigojinTexture, 0.5));
-	numThings++;
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{6,4}, textureID::prigojinTexture, 0.6));
-	numThings++;
-	enemies.push_back(std::make_shared<Enemy>(sf::Vector2f{10,5}, textureID::prigojinTexture, 0.8, 0, 1));
-	numThings++;
-	
-	objects.push_back(std::make_shared<Object>(sf::Vector2f{ 8,2 }, textureID::barrelTexture, true));
-	numThings++;
-
-
-}
-
-
-
-void Engine::loadEnemy(sf::Vector2f startPos,float speed, textureID tid, bool isCollsion, bool isAnimate, bool AI) {
-
-	enemies.push_back(std::make_shared<Enemy>(startPos, tid, speed, isCollsion, isAnimate, AI));
-	numThings++;
-}
-
-
-void Engine::loadStaticObject(sf::Vector2f startPos, textureID tid, bool isCollsion, bool isAnimate) {
-
-	objects.push_back(std::make_shared<Object>(startPos, tid, isCollsion, isAnimate));
-	numThings++;
-}

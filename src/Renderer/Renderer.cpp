@@ -38,15 +38,13 @@ Renderer::Renderer(size_t width, size_t height) : m_ScreenWidth(width), m_Screen
 void Renderer::render(const Camera& camera) {
 	
 
-	if (numThings != things.size()) {
+	if (numThings != renderable_things.size() ) {
 
-		things.reserve(numThings);
-		std::copy(enemies.begin(), enemies.end(), std::back_inserter(things));
-		std::copy(objects.begin(), objects.end(), std::back_inserter(things));
-
+		numThings = renderable_things.size();
 		spriteOrder.resize(numThings);
 		spriteDist.resize(numThings);
 	}
+
 
 
 	Ray ray;
@@ -349,13 +347,13 @@ void Renderer::renderEntity(const Camera& camera) {
 	
 	for (int i = 0; i < numThings; i++) {
 		spriteOrder[i] = i;
-		spriteDist[i] = std::pow(camera.m_position.x - things[i]->getPosition().x, 2) +
-			std::pow(camera.m_position.y - things[i]->getPosition().y, 2);
+		spriteDist[i] = std::pow(camera.m_position.x - renderable_things[i]->getPosition().x, 2) +
+			std::pow(camera.m_position.y - renderable_things[i]->getPosition().y, 2);
 	}
 
 	spriteSort();
 	for(int i : spriteOrder)
-		renderPerSprite(camera, things[i]);
+		renderPerSprite(camera, renderable_things[i]);
 
 
 }

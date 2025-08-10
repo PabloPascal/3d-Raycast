@@ -7,6 +7,8 @@ project(Raycast3D)
 set(Raycast3D ${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
+set(CMAKE_BUILD_TYPE Debug)
+
 
 
 find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
@@ -15,8 +17,8 @@ find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
 add_executable(${PROJECT_NAME} 
 src/main.cpp
 
-src/Core/Engine.cpp
-src/Core/Engine.h
+src/Core/Game.cpp
+src/Core/Game.h
 src/Core/Physics.h
 src/Core/Physics.cpp 
 
@@ -28,6 +30,8 @@ src/Entity/Enemy.h
 src/Entity/Enemy.cpp
 src/Entity/Player.cpp
 src/Entity/Player.h
+src/Entity/Demon.h 
+src/Entity/Demon.cpp
 
 src/World/map.cpp
 src/World/map.h
