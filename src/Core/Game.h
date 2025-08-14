@@ -8,7 +8,7 @@
 #include "map.h"
 #include "Renderer.h"
 #include "AI.h" 
-
+#include "shotgun.hpp"
 
 
 

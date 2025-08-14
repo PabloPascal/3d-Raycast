@@ -27,42 +27,16 @@ void Demon::update(const Player& player, const Map& map, float dt) {
 	time += timer.getElapsedTime().asSeconds();
 
 	if (m_AIactivate) {
-		// std::cout << "player_pos.x = " << player.getCamera().m_position.x << std::endl; 
-		// std::cout << "enemy_pos.x = " << m_position.x  << std::endl;
-		sf::Vector2f dir = AI::simpleAI(m_position, player.getCamera().m_position, dt);
 
-		// std::cout << "dir = " << dir.y << std::endl;
+		AI::simpleEnemyAI(this, player, map, dt);
 
-
-		sf::Vector2f move = dir * m_speed * dt;
-		sf::Vector2f newPos = m_position + move;
-
-		float xOffset = move.x > 0 ? enemy_size / 2 : -enemy_size / 2;
-		float yOffset = move.y > 0 ? enemy_size / 2 : -enemy_size / 2;
-
-		//std::cout << "m_pos = {" << m_position.x << ", " << m_position.y << "}" << std::endl;
-		if (m_IsCollision) {
-
-			if (PhysicsEngine::checkEnemyMapCollision(map, {newPos.x + xOffset, m_position.y}, enemy_size, false)) 
-			{
-				m_position.x = newPos.x;
-			}
-			if(PhysicsEngine::checkEnemyMapCollision(map, {m_position.x, newPos.y + yOffset}, enemy_size, true)) {
-				m_position.y = newPos.y;
-			}
-
-		}else{
-			m_position = newPos;
-		}
-
-		if(m_IsAnimate){
-
-			animation();
-
-		}
 
 	}
+	if(m_IsAnimate){
 
+		animation();
+
+	}
 
 
 }
@@ -159,8 +133,17 @@ void Demon::setAIactivate(bool turn) {
 
 
 
-    void Demon::attack(){
+void Demon::attack(){
 
-        std::cout << "smth";
+    std::cout << "smth";
 
-    }
+}
+
+
+
+float Demon::getEnemySize() {
+
+	return enemy_size;
+
+}
+

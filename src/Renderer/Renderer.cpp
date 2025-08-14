@@ -11,7 +11,7 @@
 #if NDEBUG
 #define FLOOR_TEX 1
 #else 
-#define FLOOR_TEX 1
+#define FLOOR_TEX 0
 #endif
 
 
@@ -27,10 +27,11 @@ Renderer::Renderer(size_t width, size_t height) : m_ScreenWidth(width), m_Screen
 	m_floorVertexArray.setPrimitiveType(sf::Lines);
 	//floor_buffer.setPrimitiveType(sf::Points);
 	m_spriteColumnsVertexArray.setPrimitiveType(sf::Lines);
+	zBuffer.resize(m_ScreenWidth);
 
 	debugCollum.setPrimitiveType(sf::Lines);
 
-	roofColor = sf::Color(0, 0, 20);
+	roofColor = sf::Color(100, 194, 255);
 
 }
 
@@ -58,8 +59,6 @@ void Renderer::render(const Camera& camera) {
 	m_wallVertexArray.resize(2 * m_ScreenWidth);
 	m_roofVertexArray.resize(2 * m_ScreenWidth);
 	
-	zBuffer.resize(m_window.getSize().x);
-
 
 #if FLOOR_TEX == 0
 	m_floorVertexArray.resize(2 * m_ScreenWidth);

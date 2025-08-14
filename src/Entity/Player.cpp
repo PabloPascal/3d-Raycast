@@ -74,6 +74,7 @@ void Player::MouseInput(sf::RenderWindow& window,float dt) {
 
 	sf::Mouse::setPosition(sf::Vector2i(window.getSize()) / 2, window);
 
+
 }
 
 
@@ -158,7 +159,7 @@ bool Player::getIsFalling() {
 
 
 
-void Player::hand(std::unique_ptr<Weapon>& weapon, sf::RenderTarget& render_target, sf::Sprite& sprite, float dt) {
+void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& hand_sprite, float dt) {
 
 	if (TimeMove > 1000) {
 		TimeMove = (int)TimeMove % 1000;
@@ -171,11 +172,12 @@ void Player::hand(std::unique_ptr<Weapon>& weapon, sf::RenderTarget& render_targ
 	float amplitude = 0.5;
 
 	if(isMove)
-		sprite.setPosition(sprite.getPosition().x,sprite.getPosition().y - amplitude * sin(TimeMove));
+		hand_sprite.setPosition(hand_sprite.getPosition().x, 
+		hand_sprite.getPosition().y - amplitude * sin(TimeMove));
 	
 	
 
-	render_target.draw(sprite);
+	render_target.draw(hand_sprite);
 
 }
 

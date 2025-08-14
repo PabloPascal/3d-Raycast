@@ -7,7 +7,7 @@ project(Raycast3D)
 set(Raycast3D ${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 
 
@@ -27,7 +27,6 @@ src/Entity/StaticObject.h
 src/Entity/StaticObject.cpp
 src/Entity/Thing.h
 src/Entity/Enemy.h
-src/Entity/Enemy.cpp
 src/Entity/Player.cpp
 src/Entity/Player.h
 src/Entity/Demon.h 
@@ -53,7 +52,9 @@ src/utils/PathFinder.h
 src/utils/PathFinder.cpp
 
 src/Weapons/Weapon.h
-src/Weapons/Weapon.cpp
+
+src/Weapons/shotgun.cpp 
+src/Weapons/shotgun.hpp 
 
 src/InputSystem/keyboardInput.cpp
 src/InputSystem/keyboardInput.h

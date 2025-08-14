@@ -5,6 +5,7 @@
 #include <chrono>
 #include "Demon.h"
 
+
 Game::Game(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
 {
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
@@ -20,8 +21,15 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	mTextures.load(textureID::pillar, absolute_path + "/res/pillar.png");
 	mTextures.load(textureID::light, absolute_path + "/res/light.png");
 	mTextures.load(textureID::wallTexture, absolute_path + "/res/walls_texture.png");
-	mTextures.load(textureID::weapon, absolute_path + "/res/w0_b.png");
+
+	mTextures.load(textureID::weapon, absolute_path + "/res/weapon.png");
+	mTextures.load(textureID::weapon_fire1, absolute_path + "/res/weapon_fire1.png");
+	mTextures.load(textureID::weapon_fire2, absolute_path + "/res/weapon_fire2.png");
+	mTextures.load(textureID::weapon_fire3, absolute_path + "/res/weapon_fire3.png");
+
 	mTextures.load(textureID::aim, absolute_path + "/res/aim.png");
+
+	
 	mTextures.load(textureID::monster_run1, absolute_path + "/res/monster_run1_0.png");
 	mTextures.load(textureID::monster_run2, absolute_path + "/res/monster_run2_0.png");
 	mTextures.load(textureID::monster_run3, absolute_path + "/res/monster_run3_0.png");
@@ -43,9 +51,10 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 
 	weaponSprite.setTexture(mTextures.get(textureID::weapon));
 	weaponSprite.setOrigin(sf::Vector2f(mTextures.get(textureID::weapon).getSize()));
-	weaponSprite.scale({ 2 * (float)screen_width / 900.f, 2 * (float)screen_height / 600});
-	weaponSprite.setPosition(sf::Vector2f(screen_width, screen_height + 20));
+	weaponSprite.scale({ 2 * (float)screen_width / 500.f, 2 * (float)screen_height / 500});
+	weaponSprite.setPosition(sf::Vector2f(screen_width / 2.f + 250, screen_height + 20));
 	
+
 	aim.setTexture(mTextures.get(textureID::aim));
 	aim.setTextureRect(sf::IntRect({0,0}, {16,16}));
 	aim.setOrigin(mTextures.get(textureID::aim).getSize().x/2, mTextures.get(textureID::aim).getSize().y / 2);
@@ -62,7 +71,12 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	wallSpriteInfo.offset = 64;
 	wallSpriteInfo.sprite_count = 8;
 
-	weapon = std::make_unique<Weapon>(textureID::weapon);
+	weapon = std::make_unique<Shotgun>(textureID::weapon);
+	weapon->load_animation(textureID::weapon);
+	weapon->load_animation(textureID::weapon_fire1);
+	weapon->load_animation(textureID::weapon_fire2);
+	weapon->load_animation(textureID::weapon_fire3);
+	
 
 	m_window.setMouseCursorVisible(false);
 
@@ -70,29 +84,33 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	* LOADD MAP
 	*/
 	Map map;
-	map.load(absolute_path + "/maps/map2.txt");
+	map.load(absolute_path + "/maps/map3.txt");
 	mMap.insert(std::make_pair(mapID::default_map, std::move(map)));
 
 
 	/*
 	* 	LOAD ENEMY
 	*/
-	std::shared_ptr<Demon> demon = std::make_shared<Demon>( Demon({3,3}, textureID::monster_run1, 2, true, true, true)  );
-	demon->add_animations(textureID::monster_run1);
-	demon->add_animations(textureID::monster_run2);
-	demon->add_animations(textureID::monster_run3);
+	std::shared_ptr<Demon> demon1 = std::make_shared<Demon>( Demon({3,3}, textureID::monster_run1, 2, true, true, true)  );
+
+	demon1->add_animations(textureID::monster_run1);
+	demon1->add_animations(textureID::monster_run2);
+	demon1->add_animations(textureID::monster_run3);
+
+	renderable_things.push_back(demon1);
+	enemies.push_back(demon1);
 
 
-	renderable_things.push_back(demon);
-	
-	
-	enemies.push_back(demon);
 	/*
-		sf::Vector2f position, textureID texture_id, 
-        float speed, bool isCollision = false, 
-		bool isAnimate = false, bool AIactivate = false
+	*	LOAD STATIC SPRITE 
 	*/
-	
+
+	renderable_things.push_back(std::move(std::make_shared<StaticObject>(StaticObject({5,5}, textureID::barrelTexture, false, false) ) ));
+	renderable_things.push_back(std::move(std::make_shared<StaticObject>(StaticObject({10,15}, textureID::pillar, false, false) ) ));
+	renderable_things.push_back(std::move(std::make_shared<StaticObject>(StaticObject({20,5}, textureID::pillar, false, false) ) ));
+	renderable_things.push_back(std::move(std::make_shared<StaticObject>(StaticObject({10,20}, textureID::light, false, false) ) ));
+
+
 
 }
 
@@ -146,9 +164,12 @@ void Game::run() {
 			m_window.clear();
 
 			render(m_player->getCamera());
-			m_player->hand(weapon, m_window, weaponSprite, deltaTime);
+			m_player->hand(weapon.get(), m_window, weaponSprite, deltaTime);
 			m_window.draw(aim);
+			
+			weapon->update(deltaTime);
 
+			weaponSprite.setTexture(mTextures.get(weapon->getTextureId()));
 
 			m_window.display();
 

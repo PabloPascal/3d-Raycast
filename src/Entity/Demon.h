@@ -51,4 +51,6 @@ public:
 
 	bool getCollisionIndicate() override;
 	void setCollision(bool collision) override;
+
+	float getEnemySize() override;
 };

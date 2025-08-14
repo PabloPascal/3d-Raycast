@@ -17,6 +17,7 @@ public:
 	virtual void setTexture(textureID texture_id) = 0;
 	virtual void setAIactivate(bool turn) = 0;
 
+	virtual float getEnemySize() = 0;
 	virtual float getSpeed() = 0;
 
 	virtual void setAnimate(bool isAnimate) = 0;

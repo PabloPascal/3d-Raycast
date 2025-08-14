@@ -12,7 +12,10 @@ enum class textureID {
 	aim,
 	monster_run1,
 	monster_run2,
-	monster_run3
+	monster_run3,
+	weapon_fire1,
+	weapon_fire2,
+	weapon_fire3
 };
 
 

@@ -90,8 +90,8 @@ static void testEngine(char* argv0) {
     switch (choose)
     {
     case 1:
-        w = 1800;
-        h = 900;
+        w = 1920;
+        h = 1080;
         break;
     case 2:
         w = 1080;
