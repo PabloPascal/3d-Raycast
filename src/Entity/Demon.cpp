@@ -7,24 +7,18 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 	bool isAnimate, bool AIactivate) : m_IsCollision(isCollision), m_IsAnimate(isAnimate), m_AIactivate(AIactivate)
 {
 
-	m_current_animation_key = 0;
-	m_animation_count = 0;
-
-
 	m_position = start_position;
 	m_textureID = texture_id;
 	m_speed = speed;
 	enemy_size = 0.6;
 
-
-	time = 0;
+	animate = std::make_unique<Animation>(m_textureID, 200/m_speed);
 }
 
 
 
 void Demon::update(const Player& player, const Map& map, float dt) {
 	
-	time += timer.getElapsedTime().asSeconds();
 
 	if (m_AIactivate) {
 
@@ -34,8 +28,8 @@ void Demon::update(const Player& player, const Map& map, float dt) {
 	}
 	if(m_IsAnimate){
 
-		animation();
-
+		animate->update();
+		m_textureID = animate->getCurrentAnimation();
 	}
 
 
@@ -45,35 +39,14 @@ void Demon::update(const Player& player, const Map& map, float dt) {
 
 void Demon::animation(){
 
-	if(time > 0.5){
-		if(m_current_animation_key < m_animation_count){
-
-			m_textureID = m_animation_state[m_current_animation_key];
-			m_current_animation_key++;
-
-			}
-		else{
-			m_current_animation_key = 0;
-			m_textureID = m_animation_state[m_current_animation_key];
-		}
-
-		time = 0;
-		timer.restart();
-
-	}
-	
-
 }
 
 
 
 
-void Demon::add_animations(textureID tex_id){
+void Demon::set_animations(textureID tex_id){
 
-	//std::cout << "tex_id = " << (int)tex_id << ", m_animation_count: "<< m_animation_count << std::endl;
-
-	m_animation_state.emplace(m_animation_count, tex_id);
-	m_animation_count++;
+	animate->set_animation(tex_id);
 
 }
 

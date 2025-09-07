@@ -19,6 +19,9 @@ enum class textureID {
 };
 
 
+enum class soundID{
+	shotgun_fire_sound,
+};
 
 enum class mapID {
 	default_map

@@ -2,57 +2,48 @@
 #include <iostream>
 
 
-Shotgun::Shotgun(textureID texture){
+Shotgun::Shotgun(textureID texture, soundID sound){
 
     m_texture = texture;
+    m_sound = sound;
     shooting = false;
 
+    animate = std::make_unique<Animation>(m_texture, 200);
 }
 
 
 void Shotgun::shoot(){
     shooting = true;
-
 }
 
 
-void Shotgun::animate(){
+void Shotgun::animating(){
 
-    time += timer.getElapsedTime().asSeconds();
-
-    if(time > 1){
-
-        if(animation_key < animation_count){
-
-            m_texture = animations[animation_key];
-            animation_key++;
-
-        }
-        else{
-            animation_key = 0;
-            m_texture = animations[animation_key];
-            shooting = false;
-        }
-
-        time = 0;
-        timer.restart();
-    }
+    
 
 }
 
 
 void Shotgun::load_animation(textureID animation_id){
 
-    animations.insert(std::make_pair(animation_count, animation_id));
-    animation_count++;
+    animate->set_animation(animation_id);
 
 }
 
 
 void Shotgun::update(float dt){
 
+    //std::cout << "isPlay: " << isPlay << std::endl;
+
+    isPlay = false;
+
     if(shooting == true){
-        animate();
+        animate->update([&]
+            {
+                shooting = false;
+            });
+        m_texture = animate->getCurrentAnimation();
+        
     }
     
 

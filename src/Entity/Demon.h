@@ -5,6 +5,7 @@
 #include "map.h"
 #include <map>
 #include <SFML/Graphics.hpp>
+#include "animationSystem.hpp"
 
 
 class Demon : public RenderebleThing, public Enemy
@@ -18,12 +19,8 @@ class Demon : public RenderebleThing, public Enemy
 	bool m_IsCollision = false;
 	bool m_IsAnimate = false;
 
-	int m_current_animation_key;
-	int m_animation_count;
-	std::map<int, textureID> m_animation_state; 
+	std::unique_ptr<Animation> animate = nullptr;
 
-	sf::Clock timer;
-	float time;
 
 public:
 	Demon() = default;
@@ -47,7 +44,7 @@ public:
 	void setAnimate(bool isAnimate) override;
 
 	void animation() override;
-	void add_animations(textureID tex_id) override;
+	void set_animations(textureID tex_id) override;
 
 	bool getCollisionIndicate() override;
 	void setCollision(bool collision) override;

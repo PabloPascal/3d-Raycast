@@ -10,6 +10,7 @@
 #include "AI.h" 
 #include "shotgun.hpp"
 
+#include "soundSystem.hpp"
 
 
 class Game : public Renderer
@@ -24,6 +25,8 @@ class Game : public Renderer
 	sf::Sprite aim;
 
 	std::unique_ptr<Weapon> weapon;
+
+	SoundManager sounds_;
 
 public:
 	Game(const size_t screen_width, const size_t screen_height, 

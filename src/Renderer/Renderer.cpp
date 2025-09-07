@@ -33,6 +33,8 @@ Renderer::Renderer(size_t width, size_t height) : m_ScreenWidth(width), m_Screen
 
 	roofColor = sf::Color(100, 194, 255);
 
+
+
 }
 
 

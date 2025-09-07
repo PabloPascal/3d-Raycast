@@ -8,6 +8,7 @@
 
 Game::Game(const size_t screen_width,const size_t screen_height,const std::string& absolute_path) : Renderer(screen_width, screen_height)
 {
+
 	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
 	m_player = std::make_unique<Player>( 5,sf::Vector2f{1,2});
 	
@@ -71,7 +72,7 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	wallSpriteInfo.offset = 64;
 	wallSpriteInfo.sprite_count = 8;
 
-	weapon = std::make_unique<Shotgun>(textureID::weapon);
+	weapon = std::make_unique<Shotgun>(textureID::weapon, soundID::shotgun_fire_sound);
 	weapon->load_animation(textureID::weapon);
 	weapon->load_animation(textureID::weapon_fire1);
 	weapon->load_animation(textureID::weapon_fire2);
@@ -93,9 +94,9 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	*/
 	std::shared_ptr<Demon> demon1 = std::make_shared<Demon>( Demon({3,3}, textureID::monster_run1, 2, true, true, true)  );
 
-	demon1->add_animations(textureID::monster_run1);
-	demon1->add_animations(textureID::monster_run2);
-	demon1->add_animations(textureID::monster_run3);
+	demon1->set_animations(textureID::monster_run1);
+	demon1->set_animations(textureID::monster_run2);
+	demon1->set_animations(textureID::monster_run3);
 
 	renderable_things.push_back(demon1);
 	enemies.push_back(demon1);
@@ -111,6 +112,11 @@ Game::Game(const size_t screen_width,const size_t screen_height,const std::strin
 	renderable_things.push_back(std::move(std::make_shared<StaticObject>(StaticObject({10,20}, textureID::light, false, false) ) ));
 
 
+	/*
+		====================SOUND============================
+	*/
+
+	sounds_.loadSound(soundID::shotgun_fire_sound, absolute_path + "/res/Shotgun_fire.wav");
 
 }
 
@@ -122,8 +128,11 @@ void Game::run() {
 	sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 	sf::Clock clock;
 
-	
+	sf::Clock timer;
+
 	float deltaTime;
+
+
 	while (m_window.isOpen()) {
 
 
@@ -155,7 +164,11 @@ void Game::run() {
 
 			m_player->update(mMap[mapID::default_map], renderable_things, m_window, deltaTime);
 
-
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && timer.getElapsedTime().asMilliseconds() > 3000){
+				sounds_.play(soundID::shotgun_fire_sound);
+				timer.restart();
+				std::cout << "MOUSE::LEFT\n";
+			}
 
 			for (auto& enemy : enemies) {
 				enemy->update(*m_player.get(), mMap[mapID::default_map], deltaTime);
@@ -166,7 +179,8 @@ void Game::run() {
 			render(m_player->getCamera());
 			m_player->hand(weapon.get(), m_window, weaponSprite, deltaTime);
 			m_window.draw(aim);
-			
+		
+
 			weapon->update(deltaTime);
 
 			weaponSprite.setTexture(mTextures.get(weapon->getTextureId()));

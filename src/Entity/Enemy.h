@@ -22,6 +22,6 @@ public:
 
 	virtual void setAnimate(bool isAnimate) = 0;
 	virtual void animation() = 0;
-	virtual void add_animations(textureID tex_id) = 0;
+	virtual void set_animations(textureID tex_id) = 0;
 
 };
