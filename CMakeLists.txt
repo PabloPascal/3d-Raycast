@@ -56,8 +56,15 @@ src/Weapons/Weapon.h
 src/Weapons/shotgun.cpp 
 src/Weapons/shotgun.hpp 
 
-src/InputSystem/keyboardInput.cpp
-src/InputSystem/keyboardInput.h
+src/Systems/keyboardInput.cpp
+src/Systems/keyboardInput.h
+
+
+src/Systems/animationSystem.cpp
+src/Systems/animationSystem.hpp
+
+src/Systems/soundSystem.cpp
+src/Systems/soundSystem.hpp
 
 )
 
@@ -71,7 +78,7 @@ src/Resources
 src/utils
 src/World 
 src/Weapons
-src/InputSystem
+src/Systems
 )
 
 
@@ -80,6 +87,7 @@ target_link_libraries(${PROJECT_NAME}
     sfml-graphics
     sfml-window
     sfml-system
+    sfml-audio
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
