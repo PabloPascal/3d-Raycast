@@ -166,8 +166,6 @@ void Game::run() {
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && timer.getElapsedTime().asMilliseconds() > 3000){
 				sounds_.play(soundID::shotgun_fire_sound);
-				timer.restart();
-				std::cout << "MOUSE::LEFT\n";
 			}
 
 			for (auto& enemy : enemies) {
