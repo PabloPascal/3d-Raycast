@@ -6,7 +6,7 @@ void SoundManager::loadSound(soundID id, std::string path_to_sound){
 
 
     sounds.insert(std::make_pair(id, new 
-         SoundHandler(path_to_sound)
+        SoundHandler(path_to_sound)
         ));
 
 }
@@ -14,13 +14,6 @@ void SoundManager::loadSound(soundID id, std::string path_to_sound){
 
 
 void SoundManager::play(soundID id){
-
-    // if(timer.getElapsedTime().asMilliseconds() < 3000){
-    //     sounds[id].play();
-    //     std::cout << sounds[id].getStatus();
-    //     timer.restart();
-    // }
-
 
 
     if(sounds.find(id) == sounds.end()){

@@ -28,7 +28,7 @@ void AI::pathFindAlgorithm(sf::Vector2f& enemyPos, float enemy_speed,sf::Vector2
 
 
 void AI::simpleEnemyAI(Enemy* enemy,const Player& player,const Map& map, float dt){
-	RenderebleThing* ptr = dynamic_cast<RenderebleThing*>(enemy);
+	RenderableThing* ptr = dynamic_cast<RenderableThing*>(enemy);
 
 	sf::Vector2f direction = player.getCamera().m_position - ptr->getPosition();
 	

@@ -30,6 +30,7 @@ void Demon::update(const Player& player, const Map& map, float dt) {
 
 		animate->update();
 		m_textureID = animate->getCurrentAnimation();
+		
 	}
 
 
@@ -108,7 +109,6 @@ void Demon::setAIactivate(bool turn) {
 
 void Demon::attack(){
 
-    std::cout << "smth";
 
 }
 

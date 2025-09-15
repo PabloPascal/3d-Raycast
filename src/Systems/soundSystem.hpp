@@ -1,53 +1,51 @@
 #ifndef SOUND_MANAGER
 #define SOUND_MANAGER
-#include <iostream>
+
 #include "defines.h"
+
+
 #include <SFML/Audio.hpp>
 #include <map>
 #include <string>
 #include <SFML/System/Clock.hpp>
-
-
-class SoundManager;
-
-class SoundHandler{
-
-	friend class SoundManager;
-	std::string m_path_to_file;
-    sf::SoundBuffer m_buffer;
-	sf::Sound m_sound;
-
-public:
-
-
-
-	SoundHandler(){}
-
-	SoundHandler(std::string pathToFile){
-
-		m_path_to_file = pathToFile;
-
-		if(m_buffer.loadFromFile(pathToFile)){
-			m_sound.setBuffer(m_buffer);
-		}
-		else{
-			throw std::string("cannot open this file!\n");
-		}
-
-	}
-
-
-};
+#include <iostream>
 
 
 
 class SoundManager{
 
 
-    std::map<soundID, std::unique_ptr<SoundHandler>> sounds;
-    sf::Clock timer;
-    bool isPlaySound = false;
 
+
+	class SoundHandler{
+
+		friend class SoundManager;
+		std::string m_path_to_file;
+		sf::SoundBuffer m_buffer;
+		sf::Sound m_sound;
+
+	public:
+
+
+		SoundHandler(){}
+
+		SoundHandler(std::string pathToFile){
+
+			m_path_to_file = pathToFile;
+
+			if(m_buffer.loadFromFile(pathToFile)){
+				m_sound.setBuffer(m_buffer);
+			}
+			else{
+				throw std::string("cannot open this file!\n");
+			}
+
+		}
+	};
+
+
+
+	std::map<soundID, std::unique_ptr<SoundHandler>> sounds;
 
 public:
     

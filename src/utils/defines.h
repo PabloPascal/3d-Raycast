@@ -1,5 +1,15 @@
-#pragma once
+
+
+#ifndef DEFINES
+#define DEFINES 
+
 #include <memory>
+
+
+/*
+				TEXTURE ID DEFINES
+*/
+
 
 enum class textureID {
 	wallTexture,
@@ -19,26 +29,60 @@ enum class textureID {
 };
 
 
-enum class soundID{
-	shotgun_fire_sound,
-};
+/*
+
+					MAP DEFINES 
+
+*/
+
 
 enum class mapID {
 	default_map
 };
 
+/*
+
+			ENTITY DEFINES 
+
+*/
+
+
 
 class Demon;
 class Player;
-class RenderebleThing;
+class RenderableThing;
 class Enemy;
 class StaticObject;
 
+
+enum class EnemyType{
+	Demon,
+	Eye,
+};
+
+enum class StaticObjectType{
+	pillar, 
+
+};
+
+
+
+/*
+
+			PTR DEFINES 
+
+*/
+
 using EnemyPtr = std::shared_ptr<Enemy>;
 using ObjectPtr = std::shared_ptr<StaticObject>;
-using ThingPtr = std::shared_ptr<RenderebleThing>;
+using ThingPtr = std::shared_ptr<RenderableThing>;
 
 
+/*
+
+		WALL SPRITE 
+
+*/
 
 struct wallSprite{
 
@@ -51,3 +95,27 @@ struct wallSprite{
 
 };
 
+
+struct Ray {
+		float dist;
+		float delta_side;
+		int wall_id;
+	};
+
+
+
+/*
+
+				SOUNDS DEFINES 
+
+*/
+
+
+
+enum class soundID{
+	shotgun_fire_sound,
+};
+
+
+
+#endif 

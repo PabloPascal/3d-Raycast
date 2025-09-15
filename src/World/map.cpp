@@ -50,7 +50,7 @@ void Map::load(std::string path) {
 	std::ifstream map_file(path);
 
 	if (!map_file.is_open()) {
-		std::cerr << "can't open the file" << std::endl; 
+		std::cerr << "can't open the file: map " << std::endl; 
 		return;
 	}
 	map_file >> world_width;

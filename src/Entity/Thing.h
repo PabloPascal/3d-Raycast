@@ -5,7 +5,7 @@
 
 enum class textureID;
 
-class RenderebleThing 
+class RenderableThing 
 {	
 
 	sf::Vector2f m_position;

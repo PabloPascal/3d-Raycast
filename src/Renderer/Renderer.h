@@ -1,52 +1,27 @@
-#pragma once
-#include "ResourceHolder.h"
+
+#ifndef RENDERER 
+#define RENDERER 
+
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "MathLib.h"
-#include <thread>
-#include <future>
-#include "defines.h"
+
 
 #define NUM_THREADS 8
 
 
 class Renderer
 {
-protected:
-	ResourceHolder<textureID, sf::Texture> mTextures;
-	ResourceHolder<textureID, sf::Image> mImages;
-
-
-	std::unordered_map<mapID ,Map> mMap;
-	
-	std::vector<ThingPtr> renderable_things;
-
-	wallSprite wallSpriteInfo;
-
-	sf::RenderWindow m_window;
-
-	size_t numThings;
-
-	struct Ray {
-		float dist;
-		float delta_side;
-		int wall_id;
-	};
-
-	size_t m_ScreenWidth;
-	size_t m_ScreenHeight;
-
-	float m_depth = 15;
 
 public:
 
-	Renderer(size_t width, size_t height);
+	Renderer(sf::RenderWindow& window);
 
 	Renderer(const Renderer&) = delete;
 
 	Renderer& operator=(const Renderer&) = delete;
 
-	void render(const Camera& camera);
+	void render(const Camera& camera, const wallSprite&);
 	
 private:
 
@@ -66,16 +41,17 @@ private:
 
 	sf::Color shading(float dist);
 
-	void renderWall(int x, float distToWall, float delta_side, const Camera& camera, int wall_id);
+	void renderWall(int x, float distToWall, float delta_side,
+			 const Camera& camera, int wall_id, const wallSprite&);
 
 
 private:
 
 	sf::Color roofColor;
 
-	std::vector<float> zBuffer;
-	std::vector<int> spriteOrder;
-	std::vector<float> spriteDist;
+	std::vector<float> 	zBuffer;
+	std::vector<int> 	spriteOrder;
+	std::vector<float> 	spriteDist;
 
 
 	sf::VertexArray m_roofVertexArray;
@@ -89,5 +65,18 @@ private:
 	sf::VertexArray debugCollum;
 
 
+	sf::RenderWindow* m_window = nullptr;
+
+	size_t numThings;
+
+	size_t m_ScreenWidth;
+	size_t m_ScreenHeight;
+
+	float m_depth;
+
 
 };
+
+
+
+#endif

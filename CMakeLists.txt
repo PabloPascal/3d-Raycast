@@ -36,6 +36,8 @@ src/World/map.cpp
 src/World/map.h
 
 src/Resources/ResourceHolder.h
+src/Resources/ResourceHolder.cpp 
+
 src/utils/defines.h
 
 src/Renderer/Renderer.h
@@ -66,6 +68,8 @@ src/Systems/animationSystem.hpp
 src/Systems/soundSystem.cpp
 src/Systems/soundSystem.hpp
 
+src/Entity/EntityManager.hpp
+src/Entity/EntityManager.cpp
 )
 
 

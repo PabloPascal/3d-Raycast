@@ -1,7 +1,3 @@
-#include <SFML/Audio.hpp>
-#include <cmath>
-#include <iostream>
-#include <string>
 #include "../tests/test.cpp"
 
 

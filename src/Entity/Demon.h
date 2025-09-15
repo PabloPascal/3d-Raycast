@@ -8,7 +8,7 @@
 #include "animationSystem.hpp"
 
 
-class Demon : public RenderebleThing, public Enemy
+class Demon : public RenderableThing, public Enemy
 {
 	float m_speed = 0.5;
 	sf::Vector2f m_position;

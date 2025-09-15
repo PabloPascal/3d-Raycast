@@ -9,24 +9,24 @@
 #include "Renderer.h"
 #include "AI.h" 
 #include "shotgun.hpp"
+#include "EntityManager.hpp"
 
-#include "soundSystem.hpp"
-
-
-class Game : public Renderer
+class Game
 {
 
+	Renderer* 				m_renderer = nullptr;
+
+	sf::RenderWindow 		m_window;
+
 	std::unique_ptr<Player> m_player;
-
-	std::vector<EnemyPtr> enemies;
-	std::vector<ObjectPtr> static_objects;
-
-	sf::Sprite weaponSprite;
-	sf::Sprite aim;
-
 	std::unique_ptr<Weapon> weapon;
 
-	SoundManager sounds_;
+	sf::Sprite 				weaponSprite;
+	sf::Sprite 				aim;
+	wallSprite 				wallSpriteInfo;
+
+	ResourceManager* 		m_resources;
+	EntityManager* 			m_EntityManager;
 
 public:
 	Game(const size_t screen_width, const size_t screen_height, 
@@ -34,6 +34,9 @@ public:
 
 	void run();
 
+	~Game(){
+		delete m_renderer;
+	}
 
 };
 

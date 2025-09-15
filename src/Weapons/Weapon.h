@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef WEAPON_H
+#define WEAPON_H
+
 #include "defines.h"
 
 
@@ -12,7 +14,9 @@ public:
     virtual void load_animation(textureID animation_id) = 0;
 	virtual soundID getSoundID() = 0;
 	virtual bool getShootIndicate() = 0;
+	virtual void setCooldownTime(float time_as_millisec) = 0;
 };
 
 
 
+#endif
