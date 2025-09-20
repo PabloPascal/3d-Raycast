@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ENEMY_H
+#define ENEMY_H
+
 #include "Thing.h"
 #include "map.h"
 #include <map>
@@ -25,3 +27,7 @@ public:
 	virtual void set_animations(textureID tex_id) = 0;
 
 };
+
+
+
+#endif 

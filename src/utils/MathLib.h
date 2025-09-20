@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MATHLIB_H
+#define MATHLIB_H
+
 #include <vector>
 #include <SFML/Graphics.hpp>
 
@@ -49,3 +51,6 @@ namespace myMATH {
 
 
 }
+
+
+#endif

@@ -43,7 +43,8 @@ src/utils/defines.h
 src/Renderer/Renderer.h
 src/Renderer/Renderer.cpp
 src/Renderer/Minimap.h
-
+src/Renderer/raycast.h
+src/Renderer/raycast.cpp
 
 src/Ai/AI.cpp 
 src/Ai/AI.h

@@ -1,13 +1,12 @@
-#pragma once 
+#ifndef RAYCAST_H
+#define RAYCAST_H
+
+#include "Player.h"
 
 
-// struct Ray {
-// 	float dist;
-// 	float delta_side;
-// 	int wall_id;
-// };
+
+Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width);
 
 
-// Ray FastRayCast(const Camera& camera, int x, mapID map_id);
 
-
+#endif

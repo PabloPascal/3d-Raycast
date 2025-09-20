@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PHYSICS_H
+#define PHYSICS_H
+
+
 #include <SFML/System/Vector2.hpp>
 #include "map.h"
 #include "ResourceHolder.h"
@@ -28,3 +31,4 @@ public:
 
 };
 
+#endif

@@ -25,8 +25,6 @@ public:
 	
 private:
 
-	Ray FastRayCast(const Camera& camera, int x, mapID);
-
 	void renderFloor(const Camera& camera, const size_t y_start,const size_t y_end);
 	
 	void renderRowFloor(const Camera& camera, const size_t y);

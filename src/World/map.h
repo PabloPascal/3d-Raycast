@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MAP_H
+#define MAP_H
+
 #include <vector>
 #include <string>
 
@@ -27,3 +29,7 @@ public:
 private:
 	void init(int world_width, int world_height);
 };
+
+
+
+#endif

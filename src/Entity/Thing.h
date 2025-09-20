@@ -1,4 +1,6 @@
-#pragma once
+#ifndef THING_H
+#define THING_H
+
 #include <SFML/System/Vector2.hpp>
 
 #include "defines.h"
@@ -20,3 +22,7 @@ public:
 	virtual bool getCollisionIndicate() = 0;
 	virtual void setCollision(bool collision) = 0;
 };
+
+
+
+#endif 

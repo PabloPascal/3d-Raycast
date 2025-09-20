@@ -1,4 +1,6 @@
-#pragma once
+#ifndef STATIC_OBJECT_H
+#define STATIC_OBJECT_H
+
 #include "Thing.h"
 
 
@@ -26,3 +28,6 @@ public:
 	void setCollision(bool collision) override;
 
 };
+
+
+#endif

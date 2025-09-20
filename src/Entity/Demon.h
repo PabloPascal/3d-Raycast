@@ -1,5 +1,8 @@
 
-#pragma once
+#ifndef DEMON_H
+#define DEMON_H
+
+
 #include "Thing.h"
 #include <Enemy.h>
 #include "map.h"
@@ -51,3 +54,6 @@ public:
 
 	float getEnemySize() override;
 };
+
+
+#endif

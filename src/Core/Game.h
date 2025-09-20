@@ -1,5 +1,5 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GAME_H
+#define GAME_H
 
 #include <unordered_map>
 #include <vector>
