@@ -24,6 +24,7 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 	m_speed = speed;
 	enemy_size = 0.6;
 	couldown_attack = 900;
+	roar_time = 3000;
 
 	run_animate = std::make_unique<Animation>(m_textureID, 200/m_speed, true);
 	death_animate = std::make_unique<Animation>(500);
@@ -34,8 +35,10 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 
 void Demon::update(Player& player, const Map& map, float dt) {
 	
-	if(d_health <= 0 && m_death_now){
+	if(d_health <= 0 && m_death_now && !dying){
+		ResourceManager::getInstance()->play(soundID::monster_sound_death);
 		m_isAlive = false;
+		dying = true;
 	}
 
 
@@ -59,13 +62,16 @@ void Demon::update(Player& player, const Map& map, float dt) {
 			m_textureID = attack_animate->getCurrentAnimation();
 		}
 
+		if(roar_timer.getElapsedTime().asMilliseconds() > roar_time){
+			ResourceManager::getInstance()->play(soundID::monster_sound);
+			roar_timer.restart();
+		}
 	}
 	else{
 
 		if(m_death_now){
 			death_animate->update([this]{m_death_now = false;});
 			m_textureID = death_animate->getCurrentAnimation();
-			
 		}else{
 			finalyDead = true;
 		}
@@ -158,7 +164,7 @@ void Demon::attack(Player& player){
 		m_running = false;
 
 		player.setHealth(player.getHealth() - 5);
-		
+		ResourceManager::getInstance()->play(soundID::monster_sound_attack);
 
 		std::cout << "Health: " << player.getHealth() << std::endl;
 		timer.restart();

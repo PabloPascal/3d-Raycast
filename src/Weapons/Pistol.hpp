@@ -18,6 +18,7 @@ class Pistol : public Weapon
     float       m_TimeCooldown;
     bool        m_isShooting;
     float       m_delay_time_animation;
+    int         m_bullets;
 
     int         count_hits = 0;
 
@@ -26,7 +27,7 @@ class Pistol : public Weapon
 
 public:
 
-    Pistol(textureID texture_id, soundID sound_id);
+    Pistol(textureID texture_id, soundID sound_id, int bullets = 20);
 
     void update(float dt) override;
 

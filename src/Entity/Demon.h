@@ -19,6 +19,7 @@ class Demon : public Enemy
 	float 	m_speed;
 	float 	enemy_size;
 	float 	couldown_attack;
+	float 	roar_time;
 
 	int 	d_health;
 
@@ -34,12 +35,14 @@ class Demon : public Enemy
 	bool m_running;
 	bool m_attacking;
 	bool finalyDead		= false;
+	bool dying 			= false;
 
 	std::unique_ptr<Animation> run_animate = nullptr;
 	std::unique_ptr<Animation> attack_animate = nullptr;
 	std::unique_ptr<Animation> death_animate = nullptr;
 
 	sf::Clock timer;
+	sf::Clock roar_timer;
 
 public:
 

@@ -149,7 +149,11 @@ struct wallSprite{
 
 enum class soundID{
 	shotgun_fire_sound,
-	pistol_frie_sound
+	pistol_frie_sound,
+	monster_sound_attack,
+	monster_sound_death,
+	monster_sound,
+	no_bullet_sound
 };
 
 

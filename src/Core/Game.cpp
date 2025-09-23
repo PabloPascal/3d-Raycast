@@ -144,6 +144,18 @@ Game::Game(const size_t screen_width,const size_t screen_height,
 	m_resources->loadMap(mapID::default_map, absolute_path + "/res/maps/map2.txt");
 	
 
+	
+	/*
+										LOAD SOUNDS
+	*/
+
+	std::cout << "load sounds" << std::endl;
+	m_resources->loadSound(soundID::shotgun_fire_sound, absolute_path + "/res/sounds/Shotgun_fire.wav");
+	m_resources->loadSound(soundID::pistol_frie_sound, absolute_path +  "/res/sounds/pistol-shot.wav");
+	m_resources->loadSound(soundID::monster_sound, absolute_path +  "/res/sounds/monster_alert.wav");
+	m_resources->loadSound(soundID::monster_sound_attack, absolute_path +  "/res/sounds/monster_attack.wav");
+	m_resources->loadSound(soundID::monster_sound_death, absolute_path +  "/res/sounds/monster_death.wav");
+	m_resources->loadSound(soundID::no_bullet_sound, absolute_path +  "/res/sounds/no_bullet_sound.wav");
 
 	/*
 									 	LOAD GAME OBJECT
@@ -152,13 +164,6 @@ Game::Game(const size_t screen_width,const size_t screen_height,
 	std::cout << "load all objects on world" << std::endl;
 	m_EntityManager->loadAllGameObjects();
 
-	/*
-										LOAD SOUNDS
-	*/
-
-	std::cout << "load sounds" << std::endl;
-	m_resources->loadSound(soundID::shotgun_fire_sound, absolute_path + "/res/sounds/Shotgun_fire.wav");
-	m_resources->loadSound(soundID::pistol_frie_sound, absolute_path +  "/res/sounds/pistol-shot.wav");
 
 
 }
