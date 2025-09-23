@@ -1,6 +1,6 @@
 #include "AI.h"
 #include <cmath>
-
+#include "MathLib.h"
 
 
 sf::Vector2f AI::simpleAI(const sf::Vector2f& enemyPos,const sf::Vector2f& playerPos, float dt){
@@ -27,37 +27,40 @@ void AI::pathFindAlgorithm(sf::Vector2f& enemyPos, float enemy_speed,sf::Vector2
 }
 
 
-void AI::simpleEnemyAI(Enemy* enemy,const Player& player,const Map& map, float dt){
-	RenderableThing* ptr = dynamic_cast<RenderableThing*>(enemy);
+void AI::simpleEnemyAI(Enemy* enemy,Player& player,const Map& map, float dt){
 
-	sf::Vector2f direction = player.getCamera().m_position - ptr->getPosition();
+	sf::Vector2f direction = player.getCamera()->m_position - enemy->getPosition();
 	
 	float dist = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	//std::cout << "dist = " << dist << std::endl;
 	direction /= dist;
 
 	sf::Vector2f move = direction * enemy->getSpeed() * dt;
-	sf::Vector2f newPos = ptr->getPosition() + move;
+	sf::Vector2f newPos = enemy->getPosition() + move;
 
-	float enemy_size = enemy->getEnemySize();
+	float enemy_size = enemy->getSize();
 	float xOffset = move.x > 0 ? enemy_size / 2 : -enemy_size / 2;
 	float yOffset = move.y > 0 ? enemy_size / 2 : -enemy_size / 2;
 
-	if (ptr->getCollisionIndicate()) {
+	if (enemy->getCollisionIndicate()) {
 
-		if (PhysicsEngine::checkEnemyMapCollision(map, {newPos.x + xOffset, ptr->getPosition().y}, enemy_size, false)) 
+		if (PhysicsEngine::checkEnemyMapCollision(map, {newPos.x + xOffset, enemy->getPosition().y}, enemy_size, false)) 
 		{
-			ptr->setPosition({newPos.x, ptr->getPosition().y});
+			enemy->setPosition({newPos.x, enemy->getPosition().y});
 
 		}
-		if(PhysicsEngine::checkEnemyMapCollision(map, {ptr->getPosition().x, newPos.y + yOffset}, enemy_size, true)) {
+		if(PhysicsEngine::checkEnemyMapCollision(map, {enemy->getPosition().x, newPos.y + yOffset}, enemy_size, true)) {
 			
-			ptr->setPosition({ ptr->getPosition().x, newPos.y});
+			enemy->setPosition({ enemy->getPosition().x, newPos.y});
 
 		}
 
 	}else{
-		ptr->setPosition(newPos);
+		enemy->setPosition(newPos);
+	}
+
+	if(myMATH::VectorLen(enemy->getPosition() - player.getCamera()->m_position) < 1){
+		enemy->attack(player);
 	}
 
 

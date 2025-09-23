@@ -9,6 +9,7 @@ public:
 
 	virtual void update(float dt) = 0;
 	virtual void shoot() = 0;
+	virtual void shoot(Camera* camera) = 0;
 	virtual void animating() = 0;
 	virtual textureID getTextureId() const = 0;
     virtual void load_animation(textureID animation_id) = 0;

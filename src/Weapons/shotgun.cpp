@@ -4,12 +4,13 @@
 
 Shotgun::Shotgun(textureID texture, soundID sound){
 
-    m_texture = texture;
-    m_sound = sound;
-    m_shooting = false;
+    m_texture_id = texture;
+    m_sound_id = sound;
+    m_isShooting = false;
     m_TimeCooldown = 0;
+    m_delay_time_animation = 200;
     timer.restart();
-    animate = std::make_unique<Animation>(m_texture, 200);
+    animate = std::make_unique<Animation>(m_texture_id, 200, true);
 }
 
 
@@ -18,8 +19,8 @@ void Shotgun::shoot() {
     
     if(timer.getElapsedTime().asMilliseconds() >= m_TimeCooldown ){
         
-        m_shooting = true;
-        ResourceManager::getInstance()->play(m_sound);
+        m_isShooting = true;
+        ResourceManager::getInstance()->play(m_sound_id);
         timer.restart();
 
     }
@@ -29,11 +30,7 @@ void Shotgun::shoot() {
 }
 
 
-void Shotgun::animating(){
-
-    
-
-}
+void Shotgun::animating(){}
 
 
 void Shotgun::load_animation(textureID animation_id){
@@ -47,12 +44,12 @@ void Shotgun::update(float dt){
 
 
 
-    if(m_shooting == true){
+    if(m_isShooting == true){
         animate->update([&]
             {
-                m_shooting = false;
+                m_isShooting = false;
             });
-        m_texture = animate->getCurrentAnimation();
+        m_texture_id = animate->getCurrentAnimation();
         
         
 

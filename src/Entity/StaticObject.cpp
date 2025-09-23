@@ -6,6 +6,7 @@ StaticObject::StaticObject(sf::Vector2f position, textureID texture_id, bool isC
 {
 	m_position = position;
 	m_textureID = texture_id;
+	m_size = 0.5;
 }
 
 sf::Vector2f StaticObject::getPosition() const {

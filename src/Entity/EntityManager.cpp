@@ -25,9 +25,21 @@ void EntityManager::loadAllGameObjects()
 
     std::shared_ptr<Demon> demon1 = std::make_shared<Demon>( Demon({2,3}, textureID::monster_run1, 2, true, true, true)  );
 
-	demon1->set_animations(textureID::monster_run1);
-	demon1->set_animations(textureID::monster_run2);
-	demon1->set_animations(textureID::monster_run3);
+	demon1->set_animations(TypeState::run, textureID::monster_run1);
+	demon1->set_animations(TypeState::run, textureID::monster_run2);
+	demon1->set_animations(TypeState::run, textureID::monster_run3);
+
+    demon1->set_animations(TypeState::attack, textureID::monser_attack1);
+    demon1->set_animations(TypeState::attack, textureID::monser_attack2);
+    demon1->set_animations(TypeState::attack, textureID::monser_attack3);
+
+    demon1->set_animations(TypeState::death, textureID::monster_death1);
+    demon1->set_animations(TypeState::death, textureID::monster_death2);
+    demon1->set_animations(TypeState::death, textureID::monster_death3);
+    demon1->set_animations(TypeState::death, textureID::monster_death4);
+    demon1->set_animations(TypeState::death, textureID::monster_death5);
+    demon1->set_animations(TypeState::death, textureID::monster_death6);
+
 
 
     renderable_things.push_back(demon1);
@@ -41,7 +53,7 @@ void EntityManager::loadAllGameObjects()
 
     renderable_things.push_back(std::move(
         std::make_shared<StaticObject>(StaticObject({2,8}, textureID::pillar, false, false) ) 
-    ));
+    ));    
 
     renderable_things.push_back(std::move(
         std::make_shared<StaticObject>(StaticObject({8,2}, textureID::light, false, false) ) )
@@ -98,6 +110,6 @@ std::vector<EnemyPtr>& 	EntityManager::getVectorEnemies(){
     return enemies;
 }
 
-std::vector<ObjectPtr> EntityManager::getVectorStaticsObj(){
+std::vector<ObjectPtr>& EntityManager::getVectorStaticsObj(){
     return static_objects;
 }

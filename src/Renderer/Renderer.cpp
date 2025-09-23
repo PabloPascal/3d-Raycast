@@ -92,7 +92,7 @@ void Renderer::render(const Camera& camera, const wallSprite& wallSpriteInfo) {
 
 	for (int x = 0; x < m_ScreenWidth; x++) {
 
-		Ray ray = FastRayCast(camera, x, mapID::default_map, m_ScreenWidth);
+		Ray ray = FastRayCast(camera, x, mapID::default_map, m_ScreenWidth, false);
 		float distToWall = ray.dist;
 		float delta_side = ray.delta_side;
 

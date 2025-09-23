@@ -66,6 +66,7 @@ sf::Texture& ResourceManager::getTexture(const textureID texture_id)
 	{
 		if(mTextures.find(texture_id) == mTextures.end()){
 			std::cout << "cannot find texture: id = " << static_cast<int>(texture_id) << std::endl;
+			throw "no this texture id\n";
 		}
 		return *mTextures[texture_id];
 	}
@@ -73,8 +74,9 @@ sf::Texture& ResourceManager::getTexture(const textureID texture_id)
 
 sf::Image& ResourceManager::getImage(const textureID image_id)
 	{
-		if(mTextures.find(image_id) == mTextures.end()){
+		if(mImages.find(image_id) == mImages.end()){
 			std::cout << "cannot find image: id = " << static_cast<int>(image_id) << std::endl;
+			throw "no this image id\n";
 		}
 		return *mImages[image_id];
 	}
@@ -83,6 +85,7 @@ const sf::Texture& ResourceManager::getTexture(const textureID texture_id) const
 	{
 		if(mTextures.find(texture_id) == mTextures.end()){
 			std::cout << "cannot find texture: id = " << static_cast<int>(texture_id) << std::endl;
+			throw "no this texture id\n";
 		}
 		return *mTextures.find(texture_id)->second;
 	}
@@ -90,8 +93,9 @@ const sf::Texture& ResourceManager::getTexture(const textureID texture_id) const
 
 const sf::Image& ResourceManager::getImage(const textureID image_id) const
 	{
-		if(mTextures.find(image_id) == mTextures.end()){
+		if(mImages.find(image_id) == mImages.end()){
 			std::cout << "cannot find image: id = " << static_cast<int>(image_id) << std::endl;
+			throw "no this image id\n";
 		}
 		return *mImages.find(image_id)->second;
 	}
@@ -102,6 +106,7 @@ const Map& ResourceManager::getMap(const mapID map_id) const{
 
     if(mMaps.find(map_id) == mMaps.end() ){
         std::cout << "cannot find map: id = " << static_cast<int>(map_id) << std::endl;
+		throw "no this map id\n";
     }
     return *mMaps.find(map_id)->second;
 

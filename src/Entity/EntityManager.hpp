@@ -34,7 +34,7 @@ public:
 
     std::vector<ThingPtr>& getVectorRenderables(); //return renderable_things
     std::vector<EnemyPtr>& 	getVectorEnemies();
-    std::vector<ObjectPtr> 	getVectorStaticsObj();
+    std::vector<ObjectPtr>& getVectorStaticsObj();
 
 
     ThingPtr& getRenderableThing(const size_t index);

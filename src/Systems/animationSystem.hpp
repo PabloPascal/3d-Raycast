@@ -16,9 +16,14 @@ class Animation{
     std::vector<textureID> animations;
     float delay_time;
     sf::Clock timer;
+
+    bool repeatable;
+
+
 public:
-    Animation() : current_key(0), delay_time(0){}
-    Animation(textureID default_animation, float delay_time);
+    Animation() : current_key(0), delay_time(0), repeatable(false){}
+    Animation(textureID default_animation, float delay_time, bool repeat = false);
+    Animation(float delay_time, bool repeat = false) : current_key(0), delay_time(delay_time), repeatable(repeat){}
 
     void set_animation(textureID texId);
     void remove_animation(textureID target_id);

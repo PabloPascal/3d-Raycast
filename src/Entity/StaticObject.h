@@ -8,6 +8,7 @@ class StaticObject : public RenderableThing
 {
 	sf::Vector2f m_position;
 	textureID m_textureID;
+	float m_size;
 
 	bool m_IsCollision = false;
 	bool m_IsAnimate = false;
@@ -26,7 +27,7 @@ public:
 
 	bool getCollisionIndicate() override;
 	void setCollision(bool collision) override;
-
+	float getSize() override {return m_size;}
 };
 
 

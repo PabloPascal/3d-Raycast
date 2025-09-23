@@ -1,26 +1,28 @@
 #include "animationSystem.hpp"
 #include <iostream>
 
-Animation::Animation(textureID default_animation, float _delay_time /*millisec*/) : 
-curr_anim_id(default_animation), current_key(0), delay_time(_delay_time)
+Animation::Animation(textureID default_animation, float _delay_time /*millisec*/, bool repeat) : 
+curr_anim_id(default_animation), current_key(0), delay_time(_delay_time), repeatable(repeat)
 {
 
     animations.push_back(default_animation);
 
 }
 
-void Animation::update(std::function<void()> func){
+
+void Animation::update(std::function<void()> action){
 
     if(timer.getElapsedTime().asMilliseconds() > delay_time){
         
-
         if(current_key < animations.size()-1){
             current_key++;
             
         }
         else{
-            current_key = 0;
-            func();
+            if(repeatable){
+                current_key = 0;
+            }
+            action();
         }
 
 		timer.restart();

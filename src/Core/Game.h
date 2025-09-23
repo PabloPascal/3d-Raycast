@@ -20,10 +20,12 @@ class Game
 
 	std::unique_ptr<Player> m_player;
 	std::unique_ptr<Weapon> weapon;
+	Camera*					g_camera;
 
 	sf::Sprite 				weaponSprite;
 	sf::Sprite 				aim;
 	wallSprite 				wallSpriteInfo;
+
 
 	ResourceManager* 		m_resources;
 	EntityManager* 			m_EntityManager;
@@ -35,8 +37,14 @@ public:
 	void run();
 
 	~Game(){
+		std::cout << "Destructor..." << std::endl;
 		delete m_renderer;
+		delete g_camera;
 	}
+
+private:
+
+	void observe();
 
 };
 

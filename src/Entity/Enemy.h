@@ -8,24 +8,31 @@
 #include <SFML/Graphics.hpp>
 
 
-class Enemy
+
+
+enum class TypeState{
+	run,
+	death,
+	attack
+};
+
+
+
+class Enemy : public RenderableThing
 {
 public:
 
-	virtual void update(const Player& player, const Map& map, float dt) = 0;
-
-	virtual void attack() = 0;
-
+	virtual void update(Player& player, const Map& map, float dt) = 0;
+	virtual void attack(Player& player) = 0;
 	virtual void setTexture(textureID texture_id) = 0;
 	virtual void setAIactivate(bool turn) = 0;
-
-	virtual float getEnemySize() = 0;
 	virtual float getSpeed() = 0;
-
 	virtual void setAnimate(bool isAnimate) = 0;
 	virtual void animation() = 0;
-	virtual void set_animations(textureID tex_id) = 0;
-
+	virtual void set_animations(TypeState, textureID tex_id) = 0;
+	virtual void setHealth(int health) = 0;
+	virtual int getHealth() = 0;
+	virtual bool isAlive() = 0;
 };
 
 

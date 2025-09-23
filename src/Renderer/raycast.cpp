@@ -2,18 +2,22 @@
 #include "defines.h"
 #include "map.h"
 #include "ResourceHolder.h"
+#include "EntityManager.hpp"
+#include "MathLib.h"
+
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
 
 
 
-Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width) {
+Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width, bool checkThings) {
 
-    ResourceManager* inst_ptr = ResourceManager::getInstance();
+    ResourceManager* 	inst_ptr = ResourceManager::getInstance();
+	EntityManager* 		entity_ptr = EntityManager::getInstance();
 
 	float cameraX = 2 * (float)x / (float)(screen_width)-1; //-1 <= cameraX <= 1
 	float perpendicualar_dist = 0;
-
+	float epsilon = 0.5;
 
 	auto world = inst_ptr->getMap(map_id).m_world;
 
@@ -25,6 +29,9 @@ Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width) 
 				std::sqrt(1.0f + (rayDir.x * rayDir.x) / (rayDir.y * rayDir.y)) };
 	sf::Vector2i mapPos(camera.m_position);
 	sf::Vector2f step;
+
+
+	Enemy* hitEnemy = nullptr;
 
 
 	if (rayDir.x < 0.0f) {
@@ -59,8 +66,24 @@ Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width) 
 			perpendicualar_dist = (mapPos.y - camera.m_position.y + (1 - step.y) / 2) / rayDir.y;
 		}
 
+		if(checkThings){
 
+			for(auto& thing : entity_ptr->getVectorEnemies()){
+			
+				float size = thing->getSize();
+
+				if(mapPos == sf::Vector2i(thing->getPosition())){
+					hitEnemy = thing.get();
+					checkThings = false;
+				}
+
+			}
+
+
+
+		}
 	}
+
 
 	int id = world[mapPos.x][mapPos.y];
 
@@ -75,8 +98,8 @@ Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width) 
 
 
 	if (isHorizontal)
-		return { perpendicualar_dist, wall_x, id};
+		return { perpendicualar_dist, wall_x, id, hitEnemy};
 	else
-		return { perpendicualar_dist, wall_x, id};
+		return { perpendicualar_dist, wall_x, id, hitEnemy};
 
 }

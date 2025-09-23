@@ -4,6 +4,26 @@
 #define DEFINES 
 
 #include <memory>
+#include <SFML/System/Vector2.hpp>
+
+
+/*
+				CAMERA
+*/
+
+struct Camera {
+	[[maybe_unused]] float m_angle = 0;//angle with OX
+	[[maybe_unused]] float m_fov = 0; //unused
+
+	sf::Vector2f dir   = 	{ 1, 0 };
+	sf::Vector2f plane = 	{ 0, 0.66 };
+	sf::Vector2f m_position;
+
+	float posZ = 0;
+	float pitch = 0;
+
+
+};
 
 
 /*
@@ -13,19 +33,41 @@
 
 enum class textureID {
 	wallTexture,
+	
 	floor,
 	prigojinTexture,
+	
 	barrelTexture,
 	pillar,
 	light,
-	weapon,
+
 	aim,
+
 	monster_run1,
 	monster_run2,
 	monster_run3,
+	
+	monster_death1,
+	monster_death2,
+	monster_death3,
+	monster_death4,
+	monster_death5,
+	monster_death6,
+
+	monser_attack1,
+	monser_attack2,
+	monser_attack3,
+
+
+	weapon,
 	weapon_fire1,
 	weapon_fire2,
-	weapon_fire3
+	weapon_fire3,
+
+	pistol_0,
+	pistol_1,
+	pistol_2,
+	pistol_3
 };
 
 
@@ -96,13 +138,6 @@ struct wallSprite{
 };
 
 
-struct Ray {
-		float dist;
-		float delta_side;
-		int wall_id;
-	};
-
-
 
 /*
 
@@ -114,6 +149,7 @@ struct Ray {
 
 enum class soundID{
 	shotgun_fire_sound,
+	pistol_frie_sound
 };
 
 

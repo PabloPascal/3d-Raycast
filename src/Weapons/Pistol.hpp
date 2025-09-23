@@ -1,34 +1,38 @@
-#ifndef SHOTGUN_HPP
-#define SHOTGUN_HPP
+#ifndef PISTOL_HPP
+#define PISTOL_HPP
+
 
 #include "Weapon.h"
-#include <map>
-#include <SFML/System/Clock.hpp>
 #include "animationSystem.hpp"
-#include "soundSystem.hpp"
+#include "ResourceHolder.h"
+#include "defines.h"
 
 
-class Shotgun: public Weapon
+
+class Pistol : public Weapon
 {
+
+    float       m_damage;
     textureID   m_texture_id;
     soundID     m_sound_id;
-    bool        m_isShooting;
     float       m_TimeCooldown;
+    bool        m_isShooting;
     float       m_delay_time_animation;
+
+    int         count_hits = 0;
 
     std::unique_ptr<Animation> animate = nullptr;
     sf::Clock timer;
 
 public:
 
-    Shotgun(textureID texture_id, soundID sound_id);
-
+    Pistol(textureID texture_id, soundID sound_id);
 
     void update(float dt) override;
 
-    void shoot() override; 
-    void shoot(Camera*) override {}
-    void animating() override;
+    void shoot() override;
+    void shoot(Camera* camera) override;
+    void animating() override {}
     void load_animation(textureID animation_id);
     inline textureID getTextureId() const override {return m_texture_id; }
     inline soundID getSoundID() override {return m_sound_id;}
@@ -39,4 +43,6 @@ public:
 
 
 
-#endif //SHOTGUN_HPP
+
+
+#endif // PISTOL_HPP

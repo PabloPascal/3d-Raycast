@@ -5,7 +5,6 @@
 
 #include "defines.h"
 
-enum class textureID;
 
 class RenderableThing 
 {	
@@ -15,6 +14,7 @@ class RenderableThing
 public:
 
 	virtual sf::Vector2f getPosition() const = 0;
+	virtual float getSize() = 0;
 	virtual void setPosition(const sf::Vector2f& pos) = 0;
 	virtual textureID getTextureID() const = 0;
 	virtual void setTexture(textureID texture_id) = 0;

@@ -7,14 +7,14 @@ project(Raycast3D)
 set(Raycast3D ${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
-set(CMAKE_BUILD_TYPE Release)
-
+#set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE "Debug")
 
 
 find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
 
 
-add_executable(${PROJECT_NAME} 
+add_executable( ${PROJECT_NAME} 
 src/main.cpp
 
 src/Core/Game.cpp
@@ -55,9 +55,10 @@ src/utils/PathFinder.h
 src/utils/PathFinder.cpp
 
 src/Weapons/Weapon.h
-
 src/Weapons/shotgun.cpp 
 src/Weapons/shotgun.hpp 
+src/Weapons/Pistol.cpp
+src/Weapons/Pistol.hpp
 
 src/Systems/keyboardInput.cpp
 src/Systems/keyboardInput.h
@@ -71,6 +72,9 @@ src/Systems/soundSystem.hpp
 
 src/Entity/EntityManager.hpp
 src/Entity/EntityManager.cpp
+
+
+tests/test.cpp
 )
 
 

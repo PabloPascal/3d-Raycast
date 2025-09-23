@@ -5,11 +5,10 @@
 #include <iostream>
 #include <cmath>
 
-Player::Player(float speed, sf::Vector2f start_pos) {
+Player::Player(float speed, Camera* camera) : m_health(20), isAlive(true)
+ {
 
-	camera.m_position = start_pos;
-	camera.pitch = 0;
-	camera.posZ = 0;
+	m_camera = camera;
 	m_speed = speed;
 
 	m_playerSize = 0.15;
@@ -22,12 +21,12 @@ Player::Player(float speed, sf::Vector2f start_pos) {
 }
 
 
-Camera& Player::getCamera() {
-	return camera;
+Camera* Player::getCamera() {
+	return m_camera;
 }
 
-const Camera Player::getCamera() const {
-	return camera;
+const Camera* Player::getCamera() const {
+	return m_camera;
 }
 
 
@@ -45,30 +44,30 @@ void Player::MouseInput(sf::RenderWindow& window,float dt) {
 	float speed = 5;
 	
 	if (deltaX > 0) {
-		float prev_dirX = camera.dir.x;
-		camera.dir.x = prev_dirX * std::cos(rot) - camera.dir.y * std::sin(rot);
-		camera.dir.y = prev_dirX * std::sin(rot) + camera.dir.y * std::cos(rot);
+		float prev_dirX = m_camera->dir.x;
+		m_camera->dir.x = prev_dirX * std::cos(rot) - m_camera->dir.y * std::sin(rot);
+		m_camera->dir.y = prev_dirX * std::sin(rot) + m_camera->dir.y * std::cos(rot);
 
-		float prev_planeX = camera.plane.x;
-		camera.plane.x = prev_planeX * std::cos(rot) - camera.plane.y * std::sin(rot);
-		camera.plane.y = prev_planeX * std::sin(rot) + camera.plane.y * std::cos(rot);
+		float prev_planeX = m_camera->plane.x;
+		m_camera->plane.x = prev_planeX * std::cos(rot) - m_camera->plane.y * std::sin(rot);
+		m_camera->plane.y = prev_planeX * std::sin(rot) + m_camera->plane.y * std::cos(rot);
 	}
 
 	if (deltaX < 0) {
-		float prev_dirX = camera.dir.x;
-		camera.dir.x = prev_dirX * std::cos(-rot) - camera.dir.y * std::sin(-rot);
-		camera.dir.y = prev_dirX * std::sin(-rot) + camera.dir.y * std::cos(-rot);
+		float prev_dirX = m_camera->dir.x;
+		m_camera->dir.x = prev_dirX * std::cos(-rot) - m_camera->dir.y * std::sin(-rot);
+		m_camera->dir.y = prev_dirX * std::sin(-rot) + m_camera->dir.y * std::cos(-rot);
 
-		float prev_planeX = camera.plane.x;
-		camera.plane.x = prev_planeX * std::cos(-rot) - camera.plane.y * std::sin(-rot);
-		camera.plane.y = prev_planeX * std::sin(-rot) + camera.plane.y * std::cos(-rot);
+		float prev_planeX = m_camera->plane.x;
+		m_camera->plane.x = prev_planeX * std::cos(-rot) - m_camera->plane.y * std::sin(-rot);
+		m_camera->plane.y = prev_planeX * std::sin(-rot) + m_camera->plane.y * std::cos(-rot);
 	}
 	
 	if (deltaY > 0) {
-		camera.pitch += vertical_rot;
+		m_camera->pitch += vertical_rot;
 	}
 	if (deltaY < 0) {
-		camera.pitch -= vertical_rot;
+		m_camera->pitch -= vertical_rot;
 	}
 
 
@@ -80,60 +79,58 @@ void Player::MouseInput(sf::RenderWindow& window,float dt) {
 
 void Player::update(const Map& map, const std::vector<ThingPtr>& things,sf::RenderWindow& window ,float dt) {
 
+	if(isAlive){
+		float left_right_speed = 4;
 
-	float left_right_speed = 4;
+		isMove = false;
 
-	isMove = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			isMove = true;
+			TimeMove+=0.05;
 
-		isMove = true;
-		TimeMove+=0.05;
+			PhysicsEngine::PlayerCollisionReact(m_camera->dir, m_camera->m_position, map, m_speed, m_playerSize, things, window, dt);
 
-		PhysicsEngine::PlayerCollisionReact(camera.dir, camera.m_position, map, m_speed, m_playerSize, things, window, dt);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 
+			isMove = true;
+			TimeMove += 0.05;
+
+			PhysicsEngine::PlayerCollisionReact(m_camera->dir, m_camera->m_position, map, -m_speed, -m_playerSize, things, window, dt);
+
+		}
+
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+
+			isMove = true;
+			TimeMove += 0.05;
+
+			PhysicsEngine::PlayerCollisionReact(-m_camera->plane, m_camera->m_position, map, -left_right_speed, -m_playerSize, things, window, dt);
+
+
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+
+			isMove = true;
+			TimeMove += 0.05;
+
+			PhysicsEngine::PlayerCollisionReact(-m_camera->plane, m_camera->m_position, map, left_right_speed, m_playerSize, things, window, dt);
+
+
+		}
+
+		MouseInput(window,dt);
+		jump(dt);
+		
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-
-		isMove = true;
-		TimeMove += 0.05;
-
-		PhysicsEngine::PlayerCollisionReact(camera.dir, camera.m_position, map, -m_speed, -m_playerSize, things, window, dt);
-
-	}
-
-	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-
-		isMove = true;
-		TimeMove += 0.05;
-
-		PhysicsEngine::PlayerCollisionReact(-camera.plane, camera.m_position, map, -left_right_speed, -m_playerSize, things, window, dt);
-
-
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-
-		isMove = true;
-		TimeMove += 0.05;
-
-		PhysicsEngine::PlayerCollisionReact(-camera.plane, camera.m_position, map, left_right_speed, m_playerSize, things, window, dt);
-
-
-	}
-
-
-	MouseInput(window,dt);
-
-
-	jump(dt);
-
 
 }
 
 
 sf::Vector2f& Player::getPos() {
-	return camera.m_position;
+	return m_camera->m_position;
 }
 
 
@@ -166,7 +163,7 @@ void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& h
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		weapon->shoot();
+		weapon->shoot(m_camera);
 	}
 
 	float amplitude = 0.5;
@@ -194,10 +191,10 @@ void Player::jump(float dt) {
 
 	if (isJumping) {
 		gravity -= 10;
-		camera.posZ += gravity * dt;
+		m_camera->posZ += gravity * dt;
 	}
 
-	if (camera.posZ > MAX_HEIGHT || gravity < 10) {
+	if (m_camera->posZ > MAX_HEIGHT || gravity < 10) {
 		isFalling = true;
 		isJumping = false;
 
@@ -209,10 +206,10 @@ void Player::jump(float dt) {
 
 	if (isFalling) {
 		gravity += 20;
-		camera.posZ -= gravity * dt;
+		m_camera->posZ -= gravity * dt;
 	}
 
-	if (camera.posZ <= 0) {
+	if (m_camera->posZ <= 0) {
 		isFalling = false;
 	}
 
