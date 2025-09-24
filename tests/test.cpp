@@ -114,7 +114,7 @@ static void testEngine(char* argv0) {
     Game* game;
     std::cout << std::endl << "path: " << path << std::endl;
     try{
-        game = new Game(sf::Vector2u{w,h}, path);
+        game = new Game(sf::Vector2u(w,h), path);
         game->run();
 
     }catch(const char* ex){
