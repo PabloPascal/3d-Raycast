@@ -36,6 +36,7 @@ class Demon : public Enemy
 	bool m_attacking;
 	bool finalyDead		= false;
 	bool dying 			= false;
+	bool get_damage 	= false;
 
 	std::unique_ptr<Animation> run_animate = nullptr;
 	std::unique_ptr<Animation> attack_animate = nullptr;
@@ -43,6 +44,7 @@ class Demon : public Enemy
 
 	sf::Clock timer;
 	sf::Clock roar_timer;
+	sf::Clock damage_couldown_sound_time;
 
 public:
 
@@ -75,7 +77,8 @@ public:
 	inline void setHealth(int health) override {d_health = health;}
 	inline int getHealth() override {return d_health;}
 	inline bool isAlive() override {return !finalyDead;}
-
+	inline void set_damage_indicate(bool is_dmg) override {get_damage = is_dmg;}
+	inline bool is_get_damage() override {return get_damage;}
 };
 
 

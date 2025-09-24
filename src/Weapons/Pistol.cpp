@@ -3,7 +3,7 @@
 #include "raycast.h"
 #include "Demon.h"
 
-Pistol::Pistol(textureID texture_id, soundID sound_id, int bullets) : m_bullets(bullets)
+Pistol::Pistol(textureID texture_id, soundID sound_id,const sf::Vector2u& screen_resolve, int bullets) : m_bullets(bullets)
 {
 
     m_texture_id = texture_id;
@@ -13,6 +13,15 @@ Pistol::Pistol(textureID texture_id, soundID sound_id, int bullets) : m_bullets(
     m_delay_time_animation = 50;
     timer.restart();
     animate = std::make_unique<Animation>(m_texture_id, m_delay_time_animation, true);
+
+
+    pistol_sprite.setTexture(ResourceManager::getInstance()->getTexture(textureID::pistol_0));
+	pistol_sprite.setOrigin(sf::Vector2f(ResourceManager::getInstance()->getTexture(textureID::pistol_0).getSize()));
+	pistol_sprite.scale({ 1.5f * (float)screen_resolve.x / 400.f, 1.5f * (float)screen_resolve.y / 300.f});
+	sf::Vector2u tex_size = ResourceManager::getInstance()->getTexture(textureID::weapon).getSize();
+	pistol_sprite.setPosition(sf::Vector2f(screen_resolve.x, screen_resolve.y));
+
+    damage = 1;
 
 }
 
@@ -38,6 +47,7 @@ void Pistol::shoot(Camera* camera)
             if(hit.hitted_thing != nullptr){
                 count_hits++;
                 hit.hitted_thing->setHealth(hit.hitted_thing->getHealth() - 1);
+                hit.hitted_thing->set_damage_indicate(true);
             }
 
             timer.restart();
@@ -76,4 +86,12 @@ void Pistol::update(float dt){
     }
     
 
+}
+
+
+
+void Pistol::draw(sf::RenderWindow& window) 
+{
+    pistol_sprite.setTexture(ResourceManager::getInstance()->getTexture(m_texture_id));
+    window.draw(pistol_sprite);
 }

@@ -2,7 +2,7 @@
 #define WEAPON_H
 
 #include "defines.h"
-
+#include <SFML/Graphics/RenderWindow.hpp>
 
 class Weapon {
 public:
@@ -16,6 +16,7 @@ public:
 	virtual soundID getSoundID() = 0;
 	virtual bool getShootIndicate() = 0;
 	virtual void setCooldownTime(float time_as_millisec) = 0;
+	virtual void draw(sf::RenderWindow&) = 0; 
 };
 
 

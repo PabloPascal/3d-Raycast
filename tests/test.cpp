@@ -37,10 +37,11 @@ static void testEngine(char* argv0) {
 #if NDEBUG
     int found = (std::string(argv0).find_last_of("/\\"));
     std::string path = std::string(argv0).substr(0, found);
-    path = "./";
-    int w = 900;
-    int h = 600;
+    unsigned int w = 900;
+    unsigned int h = 600;
    
+    std::cout << "path = " << path << std::endl;
+
     std::cout << "choose resolution: " << std::endl;
     std::cout << "1: 1920x1080" << std::endl;
     std::cout << "2: 1080x720" << std::endl;
@@ -73,7 +74,9 @@ static void testEngine(char* argv0) {
 #else
     int found = (std::string(argv0).find_last_of("/\\"));
     std::string path = std::string(argv0).substr(0, found);
-    //path = "./";
+
+    
+    std::cout << "path = " << path << std::endl;
 
     int w = 900;
     int h = 600;
@@ -108,15 +111,17 @@ static void testEngine(char* argv0) {
 
 	
 
-    
+    Game* game;
     std::cout << std::endl << "path: " << path << std::endl;
+    try{
+        game = new Game(sf::Vector2u{w,h}, path);
+        game->run();
 
-    Game* game = new Game(w, h, path);
+    }catch(const char* ex){
+        std::cerr << ex << std::endl;
+    }
 
-    game->run();
-    
-
-	delete game;
+    delete game;
 
 
 }

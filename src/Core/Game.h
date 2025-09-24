@@ -31,7 +31,7 @@ class Game
 	EntityManager* 			m_EntityManager;
 
 public:
-	Game(const size_t screen_width, const size_t screen_height, 
+	Game(const sf::Vector2u screen_resolver, 
 		 const std::string& absolute_path);
 
 	void run();

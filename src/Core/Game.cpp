@@ -9,14 +9,14 @@
 #include <iterator>
 
 
-Game::Game(const size_t screen_width,const size_t screen_height, 
+Game::Game(const sf::Vector2u screen_resolver, 
 		   const std::string& absolute_path)
 {
 
 	m_resources = ResourceManager::getInstance();
 	m_EntityManager = EntityManager::getInstance();
 
-	m_window.create(sf::VideoMode(screen_width, screen_height), "3d");
+	m_window.create(sf::VideoMode(screen_resolver.x, screen_resolver.y), "3d");
 
 	m_renderer = new Renderer(m_window);
 
@@ -100,24 +100,17 @@ Game::Game(const size_t screen_width,const size_t screen_height,
 	/*
 									SET SPRITE
 	*/
-
-	weaponSprite.setTexture(m_resources->getTexture(textureID::weapon));
-	weaponSprite.setOrigin(sf::Vector2f(m_resources->getTexture(textureID::weapon).getSize()));
-	weaponSprite.scale({ 2 * (float)screen_width / 400.f, 2 * (float)screen_height / 300.f});
-	sf::Vector2u tex_size = m_resources->getTexture(textureID::weapon).getSize();
-	//weaponSprite.setPosition(sf::Vector2f(screen_width / 2.f + 2*tex_size.x, screen_height + 20));
-	weaponSprite.setPosition(sf::Vector2f(screen_width, screen_height));
 	
 
 	aim.setTexture(m_resources->getTexture(textureID::aim));
 	aim.setTextureRect(sf::IntRect({0,0}, {16,16}));
 	aim.setOrigin(m_resources->getTexture(textureID::aim).getSize().x/2, m_resources->getTexture(textureID::aim).getSize().y / 2);
-	aim.setPosition(screen_width / 2, screen_height / 2);
+	aim.setPosition(screen_resolver.x / 2, screen_resolver.y / 2);
 	aim.setScale({ 1.9, 1.9 });
 
 
 	std::cout << "load shotgun" << std::endl;
-	auto shotgun = std::make_unique<Shotgun>(textureID::weapon, soundID::shotgun_fire_sound);
+	auto shotgun = std::make_unique<Shotgun>(textureID::weapon, soundID::shotgun_fire_sound, screen_resolver);
 	shotgun->load_animation(textureID::weapon);
 	shotgun->load_animation(textureID::weapon_fire1);
 	shotgun->load_animation(textureID::weapon_fire2);
@@ -125,7 +118,7 @@ Game::Game(const size_t screen_width,const size_t screen_height,
 	shotgun->setCooldownTime(1000);
 
 	std::cout << "load pistol" << std::endl;
-	auto pistol = std::make_unique<Pistol>(textureID::pistol_0, soundID::pistol_frie_sound);
+	auto pistol = std::make_unique<Pistol>(textureID::pistol_0, soundID::pistol_frie_sound,  screen_resolver);
 	pistol->load_animation(textureID::pistol_0);
 	pistol->load_animation(textureID::pistol_1);
 	pistol->load_animation(textureID::pistol_2);
@@ -152,9 +145,12 @@ Game::Game(const size_t screen_width,const size_t screen_height,
 	std::cout << "load sounds" << std::endl;
 	m_resources->loadSound(soundID::shotgun_fire_sound, absolute_path + "/res/sounds/Shotgun_fire.wav");
 	m_resources->loadSound(soundID::pistol_frie_sound, absolute_path +  "/res/sounds/pistol-shot.wav");
+
 	m_resources->loadSound(soundID::monster_sound, absolute_path +  "/res/sounds/monster_alert.wav");
 	m_resources->loadSound(soundID::monster_sound_attack, absolute_path +  "/res/sounds/monster_attack.wav");
 	m_resources->loadSound(soundID::monster_sound_death, absolute_path +  "/res/sounds/monster_death.wav");
+	m_resources->loadSound(soundID::monster_pain, absolute_path +  "/res/sounds/monster_pain.wav");
+
 	m_resources->loadSound(soundID::no_bullet_sound, absolute_path +  "/res/sounds/no_bullet_sound.wav");
 
 	/*
@@ -221,8 +217,7 @@ void Game::run() {
 			
 
 			weapon->update(deltaTime);
-
-			weaponSprite.setTexture(m_resources->getTexture(weapon->getTextureId()));
+			weapon->draw(m_window);
 
 			m_window.display();
 

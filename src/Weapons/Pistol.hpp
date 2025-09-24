@@ -6,7 +6,7 @@
 #include "animationSystem.hpp"
 #include "ResourceHolder.h"
 #include "defines.h"
-
+#include <SFML/Graphics/Sprite.hpp>
 
 
 class Pistol : public Weapon
@@ -21,13 +21,16 @@ class Pistol : public Weapon
     int         m_bullets;
 
     int         count_hits = 0;
+    int         damage;
 
     std::unique_ptr<Animation> animate = nullptr;
     sf::Clock timer;
 
+    sf::Sprite pistol_sprite;
+
 public:
 
-    Pistol(textureID texture_id, soundID sound_id, int bullets = 20);
+    Pistol(textureID texture_id, soundID sound_id, const sf::Vector2u& screen_resolve, int bullets = 30);
 
     void update(float dt) override;
 
@@ -39,6 +42,7 @@ public:
     inline soundID getSoundID() override {return m_sound_id;}
     bool getShootIndicate() override {return m_isShooting;}
     inline void setCooldownTime(float time_as_millisec) override {m_TimeCooldown = time_as_millisec;}
+    void draw(sf::RenderWindow& window) override;
 
 };
 

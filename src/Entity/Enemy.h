@@ -33,6 +33,8 @@ public:
 	virtual void setHealth(int health) = 0;
 	virtual int getHealth() = 0;
 	virtual bool isAlive() = 0;
+	virtual void set_damage_indicate(bool is_dmg) = 0;
+	virtual bool is_get_damage() = 0;
 };
 
 

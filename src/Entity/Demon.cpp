@@ -66,6 +66,15 @@ void Demon::update(Player& player, const Map& map, float dt) {
 			ResourceManager::getInstance()->play(soundID::monster_sound);
 			roar_timer.restart();
 		}
+
+		if(get_damage){
+			if(damage_couldown_sound_time.getElapsedTime().asMilliseconds() >= 800){
+				ResourceManager::getInstance()->play(soundID::monster_pain);
+				damage_couldown_sound_time.restart();
+			}
+			get_damage = false;
+		}
+
 	}
 	else{
 

@@ -153,6 +153,7 @@ enum class soundID{
 	monster_sound_attack,
 	monster_sound_death,
 	monster_sound,
+	monster_pain,
 	no_bullet_sound
 };
 
