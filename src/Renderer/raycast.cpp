@@ -97,9 +97,6 @@ Ray FastRayCast(const Camera& camera, int x, mapID map_id, size_t screen_width, 
 	wall_x -= std::floor(wall_x);
 
 
-	if (isHorizontal)
-		return { perpendicualar_dist, wall_x, id, hitEnemy};
-	else
-		return { perpendicualar_dist, wall_x, id, hitEnemy};
+	return { perpendicualar_dist, wall_x, id, hitEnemy};
 
 }

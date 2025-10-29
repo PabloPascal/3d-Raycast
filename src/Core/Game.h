@@ -10,6 +10,7 @@
 #include "AI.h" 
 #include "shotgun.hpp"
 #include "EntityManager.hpp"
+#include "debug_ui.hpp"
 
 class Game
 {
@@ -19,16 +20,22 @@ class Game
 	sf::RenderWindow 		m_window;
 
 	std::unique_ptr<Player> m_player;
-	std::unique_ptr<Weapon> weapon;
+	Weapon* weapon;
 	Camera*					g_camera;
 
-	sf::Sprite 				weaponSprite;
 	sf::Sprite 				aim;
 	wallSprite 				wallSpriteInfo;
 
 
 	ResourceManager* 		m_resources;
 	EntityManager* 			m_EntityManager;
+
+
+	//weapon slots
+	std::vector<std::unique_ptr<Weapon>> weapon_slots;
+
+	std::unique_ptr<DebugUI> debuger;
+	bool m_debug_on = false;
 
 public:
 	Game(const sf::Vector2u screen_resolver, 

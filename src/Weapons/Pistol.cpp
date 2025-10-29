@@ -21,7 +21,7 @@ Pistol::Pistol(textureID texture_id, soundID sound_id,const sf::Vector2u& screen
 	sf::Vector2u tex_size = ResourceManager::getInstance()->getTexture(textureID::weapon).getSize();
 	pistol_sprite.setPosition(sf::Vector2f(screen_resolve.x, screen_resolve.y));
 
-    damage = 1;
+    damage = 5;
 
 }
 
@@ -51,8 +51,6 @@ void Pistol::shoot(Camera* camera)
             }
 
             timer.restart();
-
-            std::cout << "bullet remain: " << m_bullets << std::endl;
 
         }
 

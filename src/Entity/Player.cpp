@@ -156,7 +156,7 @@ bool Player::getIsFalling() {
 
 
 
-void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& hand_sprite, float dt) {
+void Player::hand(Weapon* weapon, float dt) {
 
 	if (TimeMove > 1000) {
 		TimeMove = (int)TimeMove % 1000;
@@ -168,14 +168,10 @@ void Player::hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& h
 
 	float amplitude = 0.5;
 
-	if(isMove)
-		hand_sprite.setPosition(hand_sprite.getPosition().x, 
-		hand_sprite.getPosition().y - amplitude * sin(TimeMove));
+	// if(isMove)
+	// 	hand_sprite.setPosition(hand_sprite.getPosition().x, 
+	// 	hand_sprite.getPosition().y - amplitude * sin(TimeMove));
 	
-	
-
-	render_target.draw(hand_sprite);
-
 }
 
 

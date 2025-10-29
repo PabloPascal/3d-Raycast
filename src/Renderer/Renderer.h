@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "MathLib.h"
+#include "thread_pool.hpp"
 
 
 #define NUM_THREADS 8
@@ -34,6 +35,7 @@ private:
 	void renderPerSprite(const Camera& camera, ThingPtr& thing);
 
 	void multithreadRenderFloor(const Camera& camera);
+	void threadPoolRenderFloor(const Camera& camera);
 
 	void spriteSort();
 
@@ -44,6 +46,8 @@ private:
 
 
 private:
+
+	ThreadPool* thread_pool;
 
 	sf::Color roofColor;
 

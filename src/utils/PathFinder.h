@@ -1,39 +1,38 @@
-// #pragma once
+#pragma once
 
 
-// #include <iostream>
-// #include <map>
-// #include <vector>
-// #include <optional>
-// #include <deque>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <optional>
 
-// #include "map.h"
-
+#include "map.h"
 
 
-// using Node = std::pair<int, int>;
 
-// class PathFinder {
+using Node = std::pair<int, int>;
 
-// private:
-// 	std::map<Node, std::vector<Node>> graph;
+class PathFinder {
 
-// 	Node dir[8] = { 
-// 		{0,1}, 
-// 		{0,-1}, 
-// 		{1,0}, 
-// 		{-1,0}, 
-// 		{1,1}, 
-// 		{-1,1}, 
-// 		{-1,1}, 
-// 		{1,-1}
-// 	};
+private:
+	std::map<Node, std::vector<Node>> graph;
 
-// public:
+	Node dir[8] = { 
+		{0,1}, 
+		{0,-1}, 
+		{1,0}, 
+		{-1,0}, 
+		{1,1}, 
+		{-1,1}, 
+		{-1,1}, 
+		{1,-1}
+	};
 
-// 	PathFinder(const Map& map);
+public:
+
+	PathFinder(const Map& map);
 	
-// 	std::map<Node, std::optional<Node>> bfs(const Node& start, const Node& end);
+	std::map<Node, std::optional<Node>> bfs(const Node& start, const Node& end);
 
-// 	std::vector<Node> getPath(const Node& start,const Node& end);
-// };
+	std::vector<Node> getPath(const Node& start,const Node& end);
+};

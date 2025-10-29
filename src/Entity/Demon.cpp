@@ -16,7 +16,7 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 	m_attacking(false)
 {
 	std::srand(time(0));
-	d_health = 20 + std::rand() % 5;
+	d_health = 50 + std::rand() % 5;
 
 
 	m_position = start_position;
@@ -29,6 +29,7 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 	run_animate = std::make_unique<Animation>(m_textureID, 200/m_speed, true);
 	death_animate = std::make_unique<Animation>(500);
 	attack_animate = std::make_unique<Animation>(300, true);
+
 }
 
 
@@ -45,8 +46,8 @@ void Demon::update(Player& player, const Map& map, float dt) {
 	if(m_isAlive){
 		if (m_AIactivate) {
 
-			AI::simpleEnemyAI(this, player, map, dt);
-
+			//AI::simpleEnemyAI(this, player, map, dt);
+			AI::pathFindAlgorithm(this, player, map, dt);
 
 		}
 		if(m_IsAnimate){
@@ -68,6 +69,9 @@ void Demon::update(Player& player, const Map& map, float dt) {
 		}
 
 		if(get_damage){
+
+			std::cout << "d_health = " << d_health << std::endl;
+
 			if(damage_couldown_sound_time.getElapsedTime().asMilliseconds() >= 800){
 				ResourceManager::getInstance()->play(soundID::monster_pain);
 				damage_couldown_sound_time.restart();

@@ -50,7 +50,7 @@ void Map::load(std::string path) {
 	std::ifstream map_file(path);
 
 	if (!map_file.is_open()) {
-		std::cerr << "can't open the file: map " << std::endl; 
+		std::cerr << "can't open the map file: " << path << std::endl; 
 		return;
 	}
 	map_file >> world_width;
@@ -58,12 +58,12 @@ void Map::load(std::string path) {
 
 	init(world_width, world_height);
 
-	for (int y = 0; y < world_height; y++) {
-		for (int x = 0; x < world_width; x++) {
-			map_file >> m_world[y][x];
+
+	for (int x = 0; x < world_width; x++) {
+		for (int y = 0; y < world_height; y++ ) {
+			map_file >> m_world[x][y];
 		}
 	}
-
 
 	map_file.close();
 }
@@ -74,9 +74,9 @@ void Map::init(int width, int height) {
 	world_width = width;
 	world_height = height;
 
-	m_world.resize(world_height);
-	for (int i = 0; i < world_height; i++) {
-		m_world[i].resize(world_width);
+	m_world.resize(world_width);
+	for (int i = 0; i < world_width; i++) {
+		m_world[i].resize(world_height);
 	}
 
 }
@@ -104,7 +104,9 @@ int Map::getMapCell(float x, float y) const
 {
 	int pos_x = static_cast<int>(x);
 	int pos_y = static_cast<int>(y);
-	if(m_world[pos_y][pos_x] > 0) {
+	
+	if(m_world[pos_x][pos_y] > 0) {
+		//std::cout << "x: " << pos_x << ", y: " << pos_y << std::endl;
 		return 1;
 	}
 

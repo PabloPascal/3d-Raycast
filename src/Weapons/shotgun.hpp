@@ -21,7 +21,7 @@ class Shotgun: public Weapon
     sf::Clock timer;
 
     int m_bullets;
-    int damage;
+    int max_damage;
     sf::Sprite shotgun_sprite;
 
 public:

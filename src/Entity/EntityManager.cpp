@@ -23,7 +23,7 @@ void EntityManager::loadAllGameObjects()
 
     //LOAD ENEMIES
 
-    std::shared_ptr<Demon> demon1 = std::make_shared<Demon>( Demon({2,3}, textureID::monster_run1, 2, true, true, true)  );
+    std::shared_ptr<Demon> demon1 = std::make_shared<Demon>( Demon({1,1}, textureID::monster_run1, 2, true, true, true)  );
 
 	demon1->set_animations(TypeState::run, textureID::monster_run1);
 	demon1->set_animations(TypeState::run, textureID::monster_run2);
@@ -58,6 +58,7 @@ void EntityManager::loadAllGameObjects()
     renderable_things.push_back(std::move(
         std::make_shared<StaticObject>(StaticObject({8,2}, textureID::light, false, false) ) )
     );
+    
 }
 
 

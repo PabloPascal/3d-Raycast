@@ -26,6 +26,11 @@ public:
 
 	int getMapCell(float x, float y) const;
 
+	int operator()(int x, int y) const
+	{
+		return m_world[x][y];
+	}
+
 private:
 	void init(int world_width, int world_height);
 };

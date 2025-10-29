@@ -40,7 +40,9 @@ bool PhysicsEngine::checkEnemyMapCollision(const Map& map, const sf::Vector2f& n
 	if(isAxis){
 		for(int y = start.y; y < end.y; y++){
 			
-			cell = map.getMapCell(newEnemyPos.x, y);
+			//cell = map.getMapCell(newEnemyPos.x, y);
+			cell = map.getMapCell(y, newEnemyPos.x);
+
 
 			if(cell) {
 				//std::cout << "y: " << y << std::endl;
@@ -53,7 +55,7 @@ bool PhysicsEngine::checkEnemyMapCollision(const Map& map, const sf::Vector2f& n
 
 		for(int x = start.x; x < end.x; x++){
 
-			cell = map.getMapCell(x, newEnemyPos.y);
+			cell = map.getMapCell(newEnemyPos.y, x);
 
 			if(cell){ 
 				//std::cout << "x: " << x << std::endl;

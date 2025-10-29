@@ -9,6 +9,7 @@
 #include <iterator>
 
 
+
 Game::Game(const sf::Vector2u screen_resolver, 
 		   const std::string& absolute_path)
 {
@@ -21,7 +22,7 @@ Game::Game(const sf::Vector2u screen_resolver,
 	m_renderer = new Renderer(m_window);
 
 	g_camera = new Camera;
-	g_camera->m_position = {2,2};
+	g_camera->m_position = {6,8};
 	m_player = std::make_unique<Player>( 5, g_camera);
 	
 
@@ -32,11 +33,11 @@ Game::Game(const sf::Vector2u screen_resolver,
 	std::cout << "load textures: walls" << std::endl;
 
 	//walls and props
-	m_resources->loadTexture(textureID::floor, absolute_path + "/res/textures/walls and props/colorstone.png");
-	m_resources->loadTexture(textureID::barrelTexture, absolute_path + "/res/textures/walls and props/barrel.png");
-	m_resources->loadTexture(textureID::pillar, absolute_path + "/res/textures/walls and props/pillar.png");
-	m_resources->loadTexture(textureID::light, absolute_path + "/res/textures/walls and props/light.png");
-	m_resources->loadTexture(textureID::wallTexture, absolute_path + "/res/textures/walls and props/walls_texture.png");
+	m_resources->loadTexture(textureID::floor, absolute_path + 			"/res/textures/walls and props/colorstone.png");
+	m_resources->loadTexture(textureID::barrelTexture, absolute_path +  "/res/textures/walls and props/barrel.png");
+	m_resources->loadTexture(textureID::pillar, absolute_path + 		"/res/textures/walls and props/pillar.png");
+	m_resources->loadTexture(textureID::light, absolute_path + 			"/res/textures/walls and props/light.png");
+	m_resources->loadTexture(textureID::wallTexture, absolute_path + 	"/res/textures/walls and props/walls_texture.png");
 
 	std::cout << "load textures: weapons" << std::endl;
 	//weapon shorgun
@@ -125,7 +126,12 @@ Game::Game(const sf::Vector2u screen_resolver,
 	pistol->load_animation(textureID::pistol_3);
 	pistol->setCooldownTime(300);
 
-	weapon = std::move(pistol);
+
+	//LOAD WEAPON SLOTS
+	weapon_slots.push_back(std::move(shotgun));
+	weapon_slots.push_back(std::move(pistol));
+
+
 
 	m_window.setMouseCursorVisible(false);
 
@@ -134,8 +140,9 @@ Game::Game(const sf::Vector2u screen_resolver,
 	*/
 
 	std::cout << "load map" << std::endl;
-	m_resources->loadMap(mapID::default_map, absolute_path + "/res/maps/map2.txt");
-	
+	std::string full_path = absolute_path + "/../res/maps/map1.txt";
+	m_resources->loadMap(mapID::default_map, full_path);
+	debuger = std::make_unique<DebugUI>();
 
 	
 	/*
@@ -160,6 +167,8 @@ Game::Game(const sf::Vector2u screen_resolver,
 	std::cout << "load all objects on world" << std::endl;
 	m_EntityManager->loadAllGameObjects();
 
+
+	weapon = weapon_slots[0].get();
 
 
 }
@@ -189,15 +198,36 @@ void Game::run() {
 			deltaTime = TimePerFrame.asSeconds();
 
 
-			m_window.setTitle(std::to_string(1 / timeSinceLastUpdate.asSeconds()) + " FPS");
+			m_window.setTitle(std::to_string(1 / deltaTime) + " FPS");
 
 			sf::Event event;
 			while (m_window.pollEvent(event)) {
 
 				if (event.type == sf::Event::Closed) m_window.close();
 				if (event.type == sf::Event::KeyPressed) {
+
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 						m_window.close();
+					
+					if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)){
+						weapon = weapon_slots[0].get();
+					}
+					if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
+						weapon = weapon_slots[1].get();
+					}
+
+					
+					if(sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+					{
+						std::cout << "debug\n";
+						m_debug_on = true;
+					}
+					if(sf::Keyboard::isKeyPressed(sf::Keyboard::N))
+					{
+						m_debug_on = false;
+					}
+
+
 				}
 
 			}
@@ -211,13 +241,20 @@ void Game::run() {
 
 			m_window.clear();
 
-			m_renderer -> render(*g_camera, wallSpriteInfo);
-			m_player   -> hand(weapon.get(), m_window, weaponSprite, deltaTime);
-			m_window.	  draw(aim);
-			
+			if(!m_debug_on){
+				m_renderer -> render(*g_camera, wallSpriteInfo);
+				m_player   -> hand(weapon, deltaTime);
+				m_window.	  draw(aim);
+			}
+			if(m_debug_on)
+			{
+				debuger->visual_path_find_algorithm(m_player->getPos(), 
+						m_EntityManager->getEnemy(0)->getPosition(), m_window);
+			}
 
 			weapon->update(deltaTime);
-			weapon->draw(m_window);
+			if(!m_debug_on)
+				weapon->draw(m_window);
 
 			m_window.display();
 

@@ -8,7 +8,6 @@
 #include "ResourceHolder.h"
 #include "raycast.h"
 
-
 #include <cmath>
 #include <algorithm>
 #include <iostream>
@@ -43,7 +42,8 @@ Renderer::Renderer(sf::RenderWindow& window) :
 
 	roofColor = sf::Color(100, 194, 255);
 
-
+	//thread_pool = std::make_unique<ThreadPool>(NUM_THREADS);
+	thread_pool = new ThreadPool(NUM_THREADS);
 }
 
 
@@ -79,6 +79,7 @@ void Renderer::render(const Camera& camera, const wallSprite& wallSpriteInfo) {
 	
 	//renderFloor(camera, 0, m_window.getSize().y);
 	multithreadRenderFloor(camera);
+	//threadPoolRenderFloor(camera);
 
 	sf::Texture texture;
 	sf::Image image;
@@ -370,7 +371,7 @@ void Renderer::renderPerSprite(const Camera& camera, ThingPtr& thing) {
 }
 
 
-void Renderer::renderRowFloor(const Camera& camera,const size_t y)
+void Renderer::renderRowFloor(const Camera& camera, const size_t y)
 {
 	float textureFloor_w = ResourceManager::getInstance()->getTexture(textureID::floor).getSize().x;
 	float textureFloor_h = ResourceManager::getInstance()->getTexture(textureID::floor).getSize().y;
@@ -414,6 +415,29 @@ void Renderer::renderRowFloor(const Camera& camera,const size_t y)
 
 		}//for x
 	}//if
+
+
+
+}
+
+
+void Renderer::threadPoolRenderFloor(const Camera& camera)
+{
+
+	auto rowLoop = [&](size_t start, size_t end) {
+		for (size_t i = start; i < end; i++) renderRowFloor(camera, i);
+	};
+
+	size_t numRowsPerTask = std::ceil((m_ScreenHeight) / NUM_THREADS);
+	for (size_t i = 0; i < NUM_THREADS; i++) {
+		
+		size_t start = i * numRowsPerTask;
+		size_t end = i == NUM_THREADS - 1 ? m_ScreenHeight : start + numRowsPerTask;
+
+		thread_pool->add_task([&]{ rowLoop(start, end); });
+
+	}
+
 
 
 

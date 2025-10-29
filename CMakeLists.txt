@@ -8,7 +8,7 @@ set(Raycast3D ${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 set(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Debug")
 
 
 find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
@@ -49,6 +49,7 @@ src/Renderer/raycast.cpp
 src/Ai/AI.cpp 
 src/Ai/AI.h
 
+src/utils/thread_pool.hpp
 src/utils/MathLib.cpp
 src/utils/MathLib.h
 src/utils/PathFinder.h
@@ -73,6 +74,7 @@ src/Systems/soundSystem.hpp
 src/Entity/EntityManager.hpp
 src/Entity/EntityManager.cpp
 
+src/UI/debug_ui.hpp
 
 tests/test.cpp
 )
@@ -88,6 +90,7 @@ src/utils
 src/World 
 src/Weapons
 src/Systems
+src/UI
 )
 
 

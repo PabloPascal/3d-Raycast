@@ -2,6 +2,7 @@
 #include <iostream>
 #include "ResourceHolder.h"
 #include "raycast.h"
+#include <cmath>
 
 
 Shotgun::Shotgun(textureID texture, soundID sound, const sf::Vector2u& screen_resolve, int bullets) : m_bullets(bullets)
@@ -23,7 +24,7 @@ Shotgun::Shotgun(textureID texture, soundID sound, const sf::Vector2u& screen_re
     shotgun_sprite.setScale(screen_resolve.x / 200.f, screen_resolve.y / 200.f);
     shotgun_sprite.setPosition(screen_resolve.x/2, screen_resolve.y);
 
-    damage = 2;
+    max_damage = 15;
 
 }
 
@@ -47,6 +48,10 @@ void Shotgun::shoot(Camera* camera) {
 
             for(int hit = 0; hit < 3; hit++){
                 if(hits[hit].hitted_thing != nullptr){
+                    
+                    float clamp_dist =  std::min(hits[hit].dist, 15.f);
+                    float damage = (max_damage - clamp_dist) + 0.5;
+                    
                     hits[hit].hitted_thing->setHealth(hits[hit].hitted_thing->getHealth() - damage);
                     hits[hit].hitted_thing->set_damage_indicate(true);
                 }

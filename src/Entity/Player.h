@@ -43,7 +43,7 @@ public:
 
 	void jump(float dt);
 
-	void hand(Weapon* weapon, sf::RenderTarget& render_target, sf::Sprite& sprite,float dt);
+	void hand(Weapon* weapon,float dt);
 
 	inline void setHealth(int health) {m_health = health;}
 	inline int getHealth() 	{return m_health;}
