@@ -23,6 +23,8 @@ public:
 	static bool checkEnemyMapCollision(const Map& map, const sf::Vector2f& newEnemyPos,
 		 float enemySize, bool isAxis);
 
+	static void EnemyCollisionResolver(Enemy* enemy, const Map& map, sf::Vector2f dir);
+
 	static sf::Vector2f findNormal(const sf::Vector2f& EntityPos,const sf::Vector2f& blockPos);
 
 	static void PlayerCollisionReact(const sf::Vector2f& direction, sf::Vector2f& position, const Map& map, float playerSpeed, float playerSize,

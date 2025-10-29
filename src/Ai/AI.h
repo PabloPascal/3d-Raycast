@@ -20,8 +20,6 @@ public:
 		pf = new PathFinder(map);
 	}
 
-	static sf::Vector2f simpleAI(const sf::Vector2f& enemyPos,const sf::Vector2f& playerPos, float dt);
-
 	static void simpleEnemyAI(Enemy* enemy,Player& player,const Map& map, float dt);
 
 	static void pathFindAlgorithm(Enemy* enemy, Player& player, const Map& map, float dt);

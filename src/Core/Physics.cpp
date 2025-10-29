@@ -111,3 +111,43 @@ void PhysicsEngine::PlayerCollisionReact(const sf::Vector2f& direction, sf::Vect
 
 
 }
+
+
+
+void PhysicsEngine::EnemyCollisionResolver(Enemy* enemy, const Map& map, sf::Vector2f delta)
+{
+
+		float speed = enemy->getSpeed();
+
+	if(myMATH::scalarProd(delta, sf::Vector2f(0,1)) > 0){
+
+        if(map( (enemy->getPosition() + delta).y + 0.5, enemy->getPosition().x) == 0)
+            {
+                enemy->setPosition({enemy->getPosition().x,  (enemy->getPosition() + delta).y});
+            }
+
+        }
+    if(myMATH::scalarProd(delta, sf::Vector2f(0,1)) < 0){
+
+            if(map( (enemy->getPosition() + delta).y  - 0.5, enemy->getPosition().x ) == 0)
+            {
+                enemy->setPosition({enemy->getPosition().x,  (enemy->getPosition() + delta).y});
+            }
+
+        }
+
+    if(myMATH::scalarProd(delta, sf::Vector2f(1,0)) > 0){
+
+        if(map( enemy->getPosition().y , (enemy->getPosition() + delta).x + 0.5) == 0)
+            {
+                enemy->setPosition({(enemy->getPosition() + delta).x, enemy->getPosition().y});
+        	}
+    }
+        if(myMATH::scalarProd(delta, sf::Vector2f(1,0)) < 0){
+            if(map( enemy->getPosition().y, (enemy->getPosition() + delta).x  - 0.5) == 0)
+            {
+                enemy->setPosition({(enemy->getPosition() + delta).x, enemy->getPosition().y});
+            }
+        }
+        
+}

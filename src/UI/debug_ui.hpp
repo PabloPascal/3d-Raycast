@@ -22,16 +22,19 @@ private:
 
 public:
 
-    DebugUI()
+    DebugUI(int screen_w, int screen_h)
     {
-        player.setRadius(20);
-        player.setOrigin(20, 20);
+        player.setRadius(10);
+        player.setOrigin(10, 10);
         player.setFillColor(sf::Color::Magenta);
-        enemy.setRadius(20);
-        enemy.setOrigin(20,20);
+        enemy.setRadius(10);
+        enemy.setOrigin(10,10);
         enemy.setFillColor(sf::Color::Red);
 
-        CELL_SIZE = 40;
+        float max_screen_w = 1920;
+        float max_screen_h = 1080;
+
+        CELL_SIZE = 40 / max_screen_w * screen_w;
         
         MAZE_WIDTH = ResourceManager::getInstance()->getMap(mapID::default_map).world_width;
         MAZE_HEIGHT = ResourceManager::getInstance()->getMap(mapID::default_map).world_height;
