@@ -17,7 +17,7 @@ Demon::Demon(sf::Vector2f start_position, textureID texture_id, float speed, boo
 {
 	std::srand(time(0));
 	d_health = 50 + std::rand() % 5;
-
+	m_height = 10;
 
 	m_position = start_position;
 	m_textureID = texture_id;

@@ -2,6 +2,7 @@
 #include "Pistol.hpp"
 #include "raycast.h"
 #include "Demon.h"
+#include <cmath>
 
 Pistol::Pistol(textureID texture_id, soundID sound_id,const sf::Vector2u& screen_resolve, int bullets) : m_bullets(bullets)
 {
@@ -47,7 +48,13 @@ void Pistol::shoot(Camera* camera)
             if(hit.hitted_thing != nullptr){
                 count_hits++;
                 hit.hitted_thing->setHealth(hit.hitted_thing->getHealth() - 1);
-                hit.hitted_thing->set_damage_indicate(true);
+                
+                //std::cout << "height hit: " << hit.dist / std::cos(myMATH::PI * camera->pitch / 500.f) << std::endl;
+                if(hit.dist / std::cos(myMATH::PI * camera->pitch / 500.f) < hit.hitted_thing->get_height())
+                {
+                    //std::cout << "pitch = " << camera->pitch << std::endl;
+                    hit.hitted_thing->set_damage_indicate(true);
+                }
             }
 
             timer.restart();

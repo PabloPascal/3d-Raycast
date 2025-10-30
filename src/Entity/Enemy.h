@@ -35,6 +35,7 @@ public:
 	virtual bool isAlive() = 0;
 	virtual void set_damage_indicate(bool is_dmg) = 0;
 	virtual bool is_get_damage() = 0;
+	virtual float get_height() = 0;
 };
 
 

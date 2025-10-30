@@ -47,13 +47,16 @@ void Shotgun::shoot(Camera* camera) {
 
 
             for(int hit = 0; hit < 3; hit++){
+                
                 if(hits[hit].hitted_thing != nullptr){
                     
-                    float clamp_dist =  std::min(hits[hit].dist, 15.f);
-                    float damage = (max_damage - clamp_dist) + 0.5;
+                    if(hits[hit].dist / std::cos(myMATH::PI * camera->pitch / 500.f) < hits[hit].hitted_thing->get_height()){
+                        float clamp_dist =  std::min(hits[hit].dist, 15.f);
+                        float damage = (max_damage - clamp_dist) + 0.5;
                     
-                    hits[hit].hitted_thing->setHealth(hits[hit].hitted_thing->getHealth() - damage);
-                    hits[hit].hitted_thing->set_damage_indicate(true);
+                        hits[hit].hitted_thing->setHealth(hits[hit].hitted_thing->getHealth() - damage);
+                        hits[hit].hitted_thing->set_damage_indicate(true);
+                    }
                 }
             }
 

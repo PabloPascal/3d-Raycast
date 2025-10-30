@@ -17,6 +17,8 @@
 class Demon : public Enemy
 {
 	float 	m_speed;
+	float   m_height;
+
 	float 	enemy_size;
 	float 	couldown_attack;
 	float 	roar_time;
@@ -79,6 +81,7 @@ public:
 	inline bool isAlive() override {return !finalyDead;}
 	inline void set_damage_indicate(bool is_dmg) override {get_damage = is_dmg;}
 	inline bool is_get_damage() override {return get_damage;}
+	inline float get_height() override {return m_height;};
 };
 
 

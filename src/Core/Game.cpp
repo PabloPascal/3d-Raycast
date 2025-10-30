@@ -140,7 +140,7 @@ Game::Game(const sf::Vector2u screen_resolver,
 	*/
 
 	std::cout << "load map" << std::endl;
-	std::string full_path = absolute_path + "/../res/maps/map2.txt";
+	std::string full_path = absolute_path + "/../res/maps/map1.txt";
 	m_resources->loadMap(mapID::default_map, full_path);
 	debuger = std::make_unique<DebugUI>(m_window.getSize().x, m_window.getSize().y);
 

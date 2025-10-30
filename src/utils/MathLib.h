@@ -6,7 +6,7 @@
 
 namespace myMATH {
 
-	const float PI = 3.1415;
+	const float PI = 3.1415926535;
 
 
 	template <typename T>
