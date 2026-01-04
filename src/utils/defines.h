@@ -92,7 +92,7 @@ enum class mapID {
 
 class Demon;
 class Player;
-class RenderableThing;
+class IRenderable;
 class Enemy;
 class StaticObject;
 
@@ -117,7 +117,7 @@ enum class StaticObjectType{
 
 using EnemyPtr = std::shared_ptr<Enemy>;
 using ObjectPtr = std::shared_ptr<StaticObject>;
-using ThingPtr = std::shared_ptr<RenderableThing>;
+using ThingPtr = std::shared_ptr<IRenderable>;
 
 
 /*

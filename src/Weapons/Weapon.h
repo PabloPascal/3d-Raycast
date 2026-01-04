@@ -17,6 +17,7 @@ public:
 	virtual bool getShootIndicate() = 0;
 	virtual void setCooldownTime(float time_as_millisec) = 0;
 	virtual void draw(sf::RenderWindow&) = 0; 
+	virtual ~Weapon(){}
 };
 
 

@@ -18,7 +18,7 @@ enum class TypeState{
 
 
 
-class Enemy : public RenderableThing
+class Enemy : public IRenderable
 {
 public:
 
@@ -36,6 +36,8 @@ public:
 	virtual void set_damage_indicate(bool is_dmg) = 0;
 	virtual bool is_get_damage() = 0;
 	virtual float get_height() = 0;
+	
+	virtual ~Enemy(){}
 };
 
 

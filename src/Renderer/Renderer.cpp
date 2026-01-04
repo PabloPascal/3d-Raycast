@@ -381,14 +381,12 @@ void Renderer::renderRowFloor(const Camera& camera, const size_t y)
 
 	bool is_floor = y > m_ScreenHeight / 2 + camera.pitch;
 
-
-	//int p = y - m_window.getSize().y / 2.f;
 	int p = is_floor ? (y - m_ScreenHeight / 2.f - camera.pitch) : (m_ScreenHeight / 2 - y + camera.pitch);
 
-	//float camZ = 0.5 * m_window.getSize().y;
 	float camZ = is_floor ? (0.5 * m_ScreenHeight + camera.posZ) : (0.5 * m_ScreenHeight - camera.posZ);
 
 	float rowDistance = camZ / (float)p;
+
 	sf::Vector2f floorStep = rowDistance * (rayDirLeft - rayDirRight) / (float)m_ScreenWidth;
 
 	sf::Vector2f floorPos = camera.m_position + rowDistance * rayDirRight;
@@ -408,6 +406,7 @@ void Renderer::renderRowFloor(const Camera& camera, const size_t y)
 
 			int index = 4 * (y * m_ScreenWidth + x);
 			sf::Color color = ResourceManager::getInstance()->getImage(textureID::floor).getPixel(texCoords.x, texCoords.y);
+			
 			m_pfloorPixels[index + 0] = color.r;
 			m_pfloorPixels[index + 1] = color.g;
 			m_pfloorPixels[index + 2] = color.b;
@@ -434,7 +433,7 @@ void Renderer::threadPoolRenderFloor(const Camera& camera)
 		size_t start = i * numRowsPerTask;
 		size_t end = i == NUM_THREADS - 1 ? m_ScreenHeight : start + numRowsPerTask;
 
-		thread_pool->add_task([&]{ rowLoop(start, end); });
+		thread_pool->add_task([=]{ rowLoop(start, end); });
 
 	}
 

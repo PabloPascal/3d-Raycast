@@ -4,7 +4,7 @@
 #include "Thing.h"
 
 
-class StaticObject : public RenderableThing
+class StaticObject : public IRenderable
 {
 	sf::Vector2f m_position;
 	textureID m_textureID;
